@@ -180,11 +180,15 @@ class Node{
         if ((!node)||((node->key)==value)){
             return node;
         }
-        if (value < node->key){
+        if ((value < node->key)&&((node->lower)!=NULL)){
             return findNode(node->lower, value);
         } 
-        else{
+        else if ((value > node->key)&&((node->higher)!=NULL)){
             return findNode(node->higher, value);
+        }
+        else{
+            cout << "No such node\n";
+            return NULL;
         }
     }
 };
@@ -212,7 +216,9 @@ int main() {
                 cout << "Enter number \n";
                 cin >> number;
                 Node *temp = koren->findNode(koren, number);
-                cout << "Height: " << temp->height << "\n";
+                if (temp!=NULL){
+                    cout << "Height: " << temp->height << "\n";
+                }
                 break;
             }
             case 'w' :{
