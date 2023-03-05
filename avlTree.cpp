@@ -8,15 +8,23 @@ class Node{
         int height;
         Node *lower, *higher;
     Node(){
-        //height=0;
-        higher=NULL;
-        lower=NULL;
+        this->higher=NULL;
+        this->lower=NULL;
     }
     Node(int hodnota){
-        height=1;
-        key=hodnota;
-        lower=NULL;
-        higher=NULL;
+        this->height=1;
+        this->key=hodnota;
+        this->lower=NULL;
+        this->higher=NULL;
+    }
+    Node* destructTree(Node** node){
+        if (*(node)==NULL){
+            return NULL;
+        } 
+        destructTree(&(*node)->lower);
+        destructTree(&(*node)->higher);
+        delete *(node);
+        return NULL;
     }
     int getHeight(Node* node){
         if (node==NULL){
@@ -25,13 +33,15 @@ class Node{
         else return (node->height);
     }
     int getBalance(Node* node){
-        if (node==nullptr) {
+        if (node==NULL) {
             return 0;
         }
         else return (getHeight(node->lower) - getHeight(node->higher));
     }
     void updateHeight(Node* node){
+        if (node!=NULL){
         node->height = (max(getHeight(node->lower), getHeight(node->higher)) + 1);
+        }
     }
     void printTree(Node* node, int depth = 0) {
         if (node == NULL) {
@@ -62,75 +72,106 @@ class Node{
         updateHeight(temp);
         return temp;
     }
-    Node* leftRotate(Node* node){
+    Node* leftRotate(Node** node){
         //cout <<"rotL\n";
-        Node* temp = (node)->higher;
+        Node* temp = (*node)->higher;
         Node* temp2 = temp->lower;
-        temp->lower = (node);
-        (node)->higher = temp2;
-        updateHeight(node);
+        temp->lower = (*node);
+        (*node)->higher = temp2;
+        updateHeight(*node);
         updateHeight(temp);
         return temp;
     }
-    Node* rightRotate(Node* node){
+    Node* rightRotate(Node** node){
         //cout <<"rotR\n";
-        Node* temp = (node)->lower;
+        Node* temp = (*node)->lower;
         Node* temp2 = temp->higher;
-        temp->higher = (node);
-        (node)->lower = temp2;
+        temp->higher = (*node);
+        (*node)->lower = temp2;
         updateHeight(temp);
-        updateHeight(node);
+        updateHeight(*node);
         return temp;
     }
-    Node* addNode(Node* node, int value){
-        if (!node){
+    Node* addNode(Node** node, int value){
+        updateHeight(*node);
+        if (!(*node)){
             return new Node(value);
         }
-        if (value>(node->key)){
-            node->higher = addNode(node->higher, value);
+        if (value>((*node)->key)){
+            updateHeight(*node);
+            (*node)->higher = addNode((&(*node)->higher), value);
         }
-        else if (value<(node->key)){
-            node->lower = addNode(node->lower, value);
+        else if (value<((*node)->key)){
+            updateHeight(*node);
+            (*node)->lower = addNode((&(*node)->lower), value);
         }
         else{
-            return node;
+            updateHeight(*node);
+            return (*node);
         }
-        updateHeight(node);
-        int balance = getBalance(node);
-        if ((balance > 1)&&(value < node->lower->key)){
-            return leftleftRotate(&node);
+        updateHeight(*node);
+        int balance = getBalance(*node);
+        if ((balance > 1)&&(value < (((*node)->lower)->key))){
+            return leftleftRotate(&(*node));
         }
-        if ((balance < (-1))&&(value > node->higher->key)){
-            return rightrightRotate(&node);
+        if ((balance < (-1))&&(value > (((*node)->higher)->key))){
+            return rightrightRotate(&(*node));
         }
-        if ((balance > 1)&&(value > (node->lower->key))){
-            node->lower = leftRotate(node->lower);
-            return rightRotate(node);
+        if ((balance > 1)&&(value > (((*node)->lower)->key))){
+            (*node)->lower = leftRotate(&((*node)->lower));
+            return rightRotate(&(*node));
         }
-        if ((balance < (-1))&&(value < (node->higher->key))){
-            node->higher = rightRotate(node->higher);
-            return leftRotate(node);
+        if ((balance < (-1))&&(value < (((*node)->higher)->key))){
+            (*node)->higher = rightRotate(&((*node)->higher));
+            return leftRotate(&(*node));
         }
-        return node;
+        return (*node);
+    }
+    Node* extraBalans(Node** node, int value){
+        if (value>((*node)->key)){
+            updateHeight(*node);
+            (*node)->higher = addNode((&(*node)->higher), value);
+        }
+        else if (value<((*node)->key)){
+            updateHeight(*node);
+            (*node)->lower = addNode((&(*node)->lower), value);
+        }
+        else{
+            updateHeight(*node);
+            int balance = getBalance(*node);
+            if ((balance > 1)&&(value < (((*node)->lower)->key))){
+                return leftleftRotate(&(*node));
+            }
+            if ((balance < (-1))&&(value > (((*node)->higher)->key))){
+                return rightrightRotate(&(*node));
+            }
+            if ((balance > 1)&&(value > (((*node)->lower)->key))){
+                (*node)->lower = leftRotate(&((*node)->lower));
+                return rightRotate(&(*node));
+            }
+            if ((balance < (-1))&&(value < (((*node)->higher)->key))){
+                (*node)->higher = rightRotate(&((*node)->higher));
+                return leftRotate(&(*node));
+            }
+        }
+        return (*node);
     } 
     Node* deleteNode(Node** node, int value){
         if (!(*node)){
             return (*node);
         }
         if (value < ((*node)->key)){
-            (*node)->lower = deleteNode(&(*node)->lower, value);
+            ((*node)->lower) = deleteNode(&((*node)->lower), value);
         } 
-        else if (value > ((*node)->key)){
-            (*node)->higher = deleteNode(&(*node)->higher, value);
+        else if (value > (((*node)->key))){
+            ((*node)->higher) = deleteNode(&((*node)->higher), value);
         } 
         else{
             if ((((*node)->lower) == NULL)&&(((*node)->higher) == NULL)){
-                //cout <<"case 1\n";
                 delete (*node);
                 (*node)=NULL;
             }
             else if ((((*node)->lower) == NULL)&&(((*node)->higher) != NULL)){
-                //cout <<"case 2\n";
                 Node* temp = (*node);
                 (*node) = ((*node)->higher);
                 delete temp;
@@ -138,7 +179,6 @@ class Node{
                 return (*node);
             } 
             else if ((((*node)->higher) == NULL)&&(((*node)->lower) != NULL)){
-                //cout <<"case 2b\n";
                 Node* temp = (*node);
                 (*node) = ((*node)->lower);
                 delete temp;
@@ -146,13 +186,12 @@ class Node{
                 return (*node);
             }
             else{
-                //cout <<"case 3\n";
-                Node* temp = (*node)->higher;
-                while (temp->lower!=NULL){
-                    temp=temp->lower;
+                Node* temp = ((*node)->higher);
+                while ((temp->lower)!=NULL){
+                    temp=(temp->lower);
                 }
-                (*node)->key = temp->key;
-                (*node)->higher = deleteNode(&(*node)->higher, temp->key);
+                (*node)->key = (temp->key);
+                ((*node)->higher) = deleteNode(&((*node)->higher), (temp->key));
             }
         }
         if ((*node)==NULL) {
@@ -164,15 +203,15 @@ class Node{
             (*node) =  leftleftRotate(&(*node));
         }
         if ((balance > 1) && (getBalance((*node)->lower) < 0)){
-            (*node)->lower = leftRotate((*node)->lower);
-            (*node) = rightRotate(*node);
+            (*node)->lower = leftRotate(&((*node)->lower));
+            (*node) = rightRotate(&(*node));
         }
         if ((balance < -1) && (getBalance((*node)->higher) <= 0)){
             (*node) = rightrightRotate(&(*node));
         }
         if ((balance < -1) && (getBalance((*node)->higher) > 0)){
-            (*node)->higher = rightRotate((*node)->higher);
-            (*node) = leftRotate(*node);
+            (*node)->higher = rightRotate(&((*node)->higher));
+            (*node) = leftRotate(&(*node));
         }
         return (*node);
     }
@@ -193,7 +232,7 @@ class Node{
     }
 };
 
-int main() {
+int main(){
     int number, zastav=0;
     char vstup;
     Node *koren = NULL;
@@ -203,7 +242,8 @@ int main() {
             case 'a' :{
                 cout << "Enter number \n";
                 cin >> number;
-                koren = (koren)->addNode(koren, number);
+                koren = (koren)->addNode(&koren, number);
+                koren = (koren)->extraBalans(&koren, number);
                 break;
             }
             case 'd' :{
@@ -226,6 +266,7 @@ int main() {
                 break;
             }
             case 'q' :{
+                koren = koren->destructTree(&koren);
                 zastav=1;
                 break;
             }
