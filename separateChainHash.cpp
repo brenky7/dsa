@@ -1,7 +1,16 @@
 #include <iostream>
 #include <list>
 #include <string>
+#include <chrono>
+#include <fstream>
 using namespace std;
+using namespace chrono;
+
+struct node{
+    string name;
+    int value;
+};
+
 
 class HashTable{
     public:
@@ -9,12 +18,11 @@ class HashTable{
         int pocet, maxPocet;
         const float maxLoad = 0.75;
         const float minLoad = 0.2;
-        list<string>* table;
-       
+        list<node>* table;
     HashTable(int maxPocet){
         pocet = 0;
         (this->maxPocet) = maxPocet;
-        table = new list<string>[maxPocet];
+        table = new list<node>[maxPocet];
     }
     ~HashTable(){
         delete[] table;
@@ -29,11 +37,11 @@ class HashTable{
     void resizeTable(){
         if (Switch==false){
             maxPocet = (maxPocet<<1);
-            list<string>* temp = new list<string>[maxPocet];
+            list<node>* temp = new list<node>[maxPocet];
             for (int i = 0; i < (maxPocet>>1); i++) {
-                for (auto node = (table[i].begin()); (node != (table[i].end())); node++) {
-                    int tablePlace = hashit(*node, maxPocet);
-                    temp[tablePlace].push_back(*node);
+                for (auto temp2 = (table[i].begin()); (temp2 != (table[i].end())); temp2++) {
+                    int tablePlace = hashit((temp2)->name, maxPocet);
+                    temp[tablePlace].push_back(*temp2);
                 }
             }
             //cout << "Maxpocet is: " << maxPocet <<endl;
@@ -42,11 +50,11 @@ class HashTable{
         }
         else{
             maxPocet = (maxPocet>>1);
-            list<string>* temp = new list<string>[maxPocet];
+            list<node>* temp = new list<node>[maxPocet];
             for (int i = 0; i < (maxPocet<<1); i++) {
-                for (auto node = (table[i].begin()); (node != (table[i].end())); node++) {
-                    int tablePlace = hashit(*node, maxPocet);
-                    temp[tablePlace].push_back(*node);
+                for (auto temp2 = (table[i].begin()); (temp2 != (table[i].end())); temp2++) {
+                    int tablePlace = hashit((temp2)->name, maxPocet);
+                    temp[tablePlace].push_back(*temp2);
                 }
             }
             //cout << "Maxpocet is: " << maxPocet <<endl;
@@ -54,9 +62,12 @@ class HashTable{
             table = temp;
         }
     }
-    void addString(string name){
+    void addString(string name, int value){
         int tablePlace = hashit(name, maxPocet);
-        table[tablePlace].push_back(name);
+        node temp;
+        temp.name = name;
+        temp.value = value;
+        table[tablePlace].push_back(temp);
         pocet++;
         //cout << "pocet je: " << pocet <<endl;
         //cout << "maxpocet je: " << maxPocet <<endl;
@@ -67,7 +78,7 @@ class HashTable{
             Switch = false; 
             //cout << "scaling up\n";
             resizeTable();
-        }   
+        }  
     }
     void deleteString(string name) {
         string findMy = findString(name);
@@ -76,7 +87,12 @@ class HashTable{
             return;
         }
         int tablePlace = hashit(name, maxPocet);
-        table[tablePlace].remove(name);
+        for (auto it = table[tablePlace].begin(); it != table[tablePlace].end(); it++) {
+            if (it->name == name) {
+                table[tablePlace].erase(it);
+                break;
+            }
+        }
         pocet--;
         double ratio = pocet ;
         ratio = (ratio/maxPocet);
@@ -89,17 +105,17 @@ class HashTable{
     }
     string findString(string name){
         int tablePlace = hashit(name, maxPocet);
-        for(auto node = table[tablePlace].begin(); (node != table[tablePlace].end()); node++){
-            if (name == (*node)){
-                return (*node);
+        for(auto temp = table[tablePlace].begin(); (temp != table[tablePlace].end()); temp++){
+            if (name == ((temp)->name)){
+                return ((temp)->name);
             }
         }
         return "Not found";
     }
     void printTable(){
         for (int i=0; i<maxPocet; i++){
-            for (auto node = table[i].begin(); node!=table[i].end(); node++){
-                cout << (*node) << "  ";
+            for (auto temp = table[i].begin(); temp!=table[i].end(); temp++){
+                cout << ((temp)->name) << "  " << ((temp)->value) << "  ";
             }
             cout << endl;
         }
@@ -111,14 +127,39 @@ class HashTable{
 int main(){
     string input;
     char mode;
-    int quit=0;
-    HashTable hash(2);
+    int quit=0, number;
+    HashTable hash(10000000);
+    ifstream numero10("NUMBS_10.txt");
+    ifstream numero100("NUMBS_100.txt");
+    ifstream numero1k("NUMBS_1000.txt");
+    ifstream numero100k("NUMBS_100000.txt");
+    ifstream numero1M("NUMBS_1000000.txt");
+    ifstream numero10M("NUMBS_10000000.txt");
+    ifstream gringo10("NAMES_10.txt");
+    ifstream gringo100("NAMES_100.txt");
+    ifstream gringo1k("NAMES_1k.txt");
+    ifstream gringo100k("NAMES_100k.txt");
+    ifstream gringo1M("NAMES_1M.txt");
+    ifstream gringo10M("NAMES_10M.txt");
+    auto start_time = high_resolution_clock::now();
+    for (long long i = 0; i< 10000000; i++){
+        numero10M >> number;
+        gringo10M >> input;
+        hash.addString(input, number);
+    }
+    auto end_time = high_resolution_clock::now();
+    auto duration = duration_cast<milliseconds>(end_time - start_time).count();
+    cout << "Time taken: " << duration << " milliseconds." << endl;
+    cout << hash.maxPocet << endl;
+    cout << hash.pocet << endl;
+    /*
     while(quit==0){
         cin >>mode;
         switch(mode){
             case 'a' :{
                 cin >> input;
-                hash.addString(input);
+                cin >> number;
+                hash.addString(input, number);
                 break;
             }
             case 's' :{
@@ -144,6 +185,6 @@ int main(){
                 break;
             }
         }
-    }
+    }*/
     return 0;
 }
