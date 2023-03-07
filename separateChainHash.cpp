@@ -28,11 +28,14 @@ class HashTable{
         delete[] table;
     }
     int hashit(string name, int maxPocet){
-        int asciiValue=0;
-        for (int i=0; i< name.length() ;i++){
-            asciiValue+= (name[i]);
+        unsigned int offset=1083019949, prime = 8388817;
+        unsigned int hash = offset;
+        for (int i=0; i < name.length() ;i++){
+            unsigned int letter = name[i]; 
+            hash = (hash ^ letter);
+            hash = (hash * prime);
         }
-        return (asciiValue%maxPocet);
+        return (hash%maxPocet);
     }
     void resizeTable(){
         if (Switch==false){

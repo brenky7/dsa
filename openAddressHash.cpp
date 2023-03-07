@@ -254,35 +254,7 @@ int main(){
     ifstream gringo1M("NAMES_1M.txt");
     ifstream gringo10M("NAMES_10M.txt");
     auto start_time = high_resolution_clock::now();
-    for (long long i = 0; i< 2000000; i++){
-        numero10M >> number;
-        gringo10M >> input;
-        hash.addString(input, number);
-    }
-    cout << hash.maxPocet << endl;
-    cout << hash.pocet << endl;
-    for (long long i = 2000000; i< 4000000; i++){
-        numero10M >> number;
-        gringo10M >> input;
-        hash.addString(input, number);
-    }
-    cout << hash.maxPocet << endl;
-    cout << hash.pocet << endl;
-    for (long long i = 4000000; i< 6000000; i++){
-        numero10M >> number;
-        gringo10M >> input;
-        hash.addString(input, number);
-    }
-    cout << hash.maxPocet << endl;
-    cout << hash.pocet << endl;
-    for (long long i = 6000000; i< 8000000; i++){
-        numero10M >> number;
-        gringo10M >> input;
-        hash.addString(input, number);
-    }
-    cout << hash.maxPocet << endl;
-    cout << hash.pocet << endl;
-    for (long long i = 8000000; i< 10000000; i++){
+    for (long long i = 0; i< 10000000; i++){
         numero10M >> number;
         gringo10M >> input;
         hash.addString(input, number);
@@ -292,14 +264,6 @@ int main(){
     cout << "Time taken: " << duration << " milliseconds." << endl;
     cout << hash.maxPocet << endl;
     cout << hash.pocet << endl;
-    
-    
-    
-    
-    
-    
-    
-    
     /*while(quit==0){
         cin >>mode;
         switch(mode){
