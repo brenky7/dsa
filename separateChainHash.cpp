@@ -84,9 +84,8 @@ class HashTable{
         }  
     }
     void deleteString(string name) {
-        string findMy = findString(name);
-        if (findMy == "Not found"){
-            cout << "No such entry" <<endl;
+        if (findString(name)==false){
+            cout << "No such entry: " << name <<endl;
             return;
         }
         int tablePlace = hashit(name, maxPocet);
@@ -106,14 +105,14 @@ class HashTable{
             resizeTable();
         }
     }
-    string findString(string name){
+    bool findString(string name){
         int tablePlace = hashit(name, maxPocet);
         for(auto temp = table[tablePlace].begin(); (temp != table[tablePlace].end()); temp++){
             if (name == ((temp)->name)){
-                return ((temp)->name);
+                return true;
             }
         }
-        return "Not found";
+        return false;
     }
     void printTable(){
         for (int i=0; i<maxPocet; i++){
@@ -131,25 +130,127 @@ int main(){
     string input;
     char mode;
     int quit=0, number;
-    HashTable hash(10000000);
+    HashTable hash(20);
     ifstream numero10("NUMBS_10.txt");
     ifstream numero100("NUMBS_100.txt");
     ifstream numero1k("NUMBS_1000.txt");
+    ifstream numero10k("NUMBS_10000.txt");
     ifstream numero100k("NUMBS_100000.txt");
     ifstream numero1M("NUMBS_1000000.txt");
     ifstream numero10M("NUMBS_10000000.txt");
     ifstream gringo10("NAMES_10.txt");
     ifstream gringo100("NAMES_100.txt");
     ifstream gringo1k("NAMES_1k.txt");
+    ifstream gringo10k("NAMES_10k.txt");
     ifstream gringo100k("NAMES_100k.txt");
     ifstream gringo1M("NAMES_1M.txt");
     ifstream gringo10M("NAMES_10M.txt");
     auto start_time = high_resolution_clock::now();
-    for (long long i = 0; i< 10000000; i++){
+    /*for (int i = 0; i< 10; i++){
+        numero10 >> number;
+        gringo10 >> input;
+        hash.addNode(input, number);
+    }*/
+    /*gringo10.seekg(0);
+    for (int i = 0; i< 10; i++){
+        gringo10 >> input;
+        hash.findNode(input);
+    }*/
+    /*gringo10.seekg(0);
+    for (int i = 0; i< 10; i++){
+        gringo10 >> input;
+        hash.deleteNode(input);
+    }*/
+    /*for (int i = 0; i< 100; i++){
+        numero100 >> number;
+        gringo100 >> input;
+        hash.addNode(input, number);
+    }*/
+    /*gringo100.seekg(0);
+    for (int i = 0; i< 100; i++){
+        gringo100 >> input;
+        hash.findNode(input);
+    }*/
+    /*gringo100.seekg(0);
+    for (int i = 0; i< 100; i++){
+        gringo100 >> input;
+        hash.deleteNode(input);
+    }*/
+    /*for (int i = 0; i< 1000; i++){
+        numero1k >> number;
+        gringo1k >> input;
+        hash.addNode(input, number);
+    }*/
+    /*gringo1k.seekg(0);
+    for (int i = 0; i< 1000; i++){
+        gringo1k >> input;
+        hash.findNode(input);
+    }*/
+    /*gringo1k.seekg(0);
+    for (int i = 0; i< 1000; i++){
+        gringo1k >> input;
+        hash.deleteNode(input);
+    }*/
+    /*for (int i = 0; i< 10000; i++){
+        numero10k >> number;
+        gringo10k >> input;
+        hash.addNode(input, number);
+    }*/
+    /*gringo10k.seekg(0);
+    for (int i = 0; i< 10000; i++){
+        gringo10k >> input;
+        hash.findNode(input);
+    }*/
+    /*gringo10k.seekg(0);
+    for (int i = 0; i< 10000; i++){
+        gringo10k >> input;
+        hash.deleteNode(input);
+    }*/
+    /*for (int i = 0; i< 100000; i++){
+        numero100k >> number;
+        gringo100k >> input;
+        hash.addNode(input, number);
+    }*/
+    /*gringo100k.seekg(0);
+    for (int i = 0; i< 100000; i++){
+        gringo100k >> input;
+        hash.findNode(input);
+    }*/
+    /*gringo100k.seekg(0);
+    for (int i = 0; i< 100000; i++){
+        gringo100k >> input;
+        hash.deleteNode(input);
+    }*/
+    /*for (int i = 0; i < 1000000; i++){
+        numero1M >> number;
+        gringo1M >> input;
+        hash.addNode(input, number);
+    }*/
+    /*gringo1M.seekg(0);
+    for (int i = 0; i< 1000000; i++){
+        gringo1M >> input;
+        hash.findNode(input);
+    }*/
+    /*gringo1M.seekg(0);
+    for (int i = 0; i< 1000000; i++){
+        gringo1M >> input;
+        hash.deleteNode(input);
+    }*/
+    /*for (int i = 0; i< 10000000; i++){
         numero10M >> number;
         gringo10M >> input;
-        hash.addString(input, number);
-    }
+        hash.addNode(input, number);
+    }*/
+    /*gringo10M.seekg(0);
+    for (int i = 0; i< 10000000; i++){
+        gringo10M >> input;
+        hash.findNode(input);
+    }*/
+    /*gringo10M.seekg(0);
+    for (int i = 0; i< 10000000; i++){
+        gringo10M >> input;
+        hash.deleteNode(input);
+    }*/
     auto end_time = high_resolution_clock::now();
     auto duration = duration_cast<milliseconds>(end_time - start_time).count();
     cout << "Time taken: " << duration << " milliseconds." << endl;

@@ -82,7 +82,7 @@ class SplayTree{
                 if (myNode == Parent->lower){
                     rightRotate(Parent);
                 }
-                else{
+                else if (myNode == Parent->higher){
                     leftRotate(Parent);
                 }   
             }
@@ -142,13 +142,13 @@ class SplayTree{
             }
         }
     }
-    string findNode(Node* myNode, int key){
+    bool findNode(Node* myNode, int key){
         if (!myNode){
-            return "No such node";
+            return false;
         }
         if (myNode->key == key){
             splayNode(myNode, nullptr);
-            return myNode->name;
+            return true;
         }
         else if (myNode->key > key){
             return findNode(myNode->lower, key);
@@ -156,19 +156,14 @@ class SplayTree{
         else if (myNode->key < key){
             return findNode(myNode->higher, key);
         }
-        else{
-            return "No such node";
-        }
     }
     Node* deleteNode(Node* myNode, int key){
+        //cout << findNode(myNode, key) << endl;
         if (myNode == nullptr){
             return nullptr;
         }
         else{
-            if (findNode(myNode, key) == "No such node"){
-                cout << "No such node\n";
-                return myNode;
-            }
+            findNode(root, key);
         }
         if((root->lower == nullptr)&&(root->higher == nullptr)){
             delete root;
@@ -224,37 +219,127 @@ int main(){
     ifstream numero10("NUMBS_10.txt");
     ifstream numero100("NUMBS_100.txt");
     ifstream numero1k("NUMBS_1000.txt");
+    ifstream numero10k("NUMBS_10000.txt");
     ifstream numero100k("NUMBS_100000.txt");
     ifstream numero1M("NUMBS_1000000.txt");
     ifstream numero10M("NUMBS_10000000.txt");
     ifstream gringo10("NAMES_10.txt");
     ifstream gringo100("NAMES_100.txt");
     ifstream gringo1k("NAMES_1k.txt");
+    ifstream gringo10k("NAMES_10k.txt");
     ifstream gringo100k("NAMES_100k.txt");
     ifstream gringo1M("NAMES_1M.txt");
     ifstream gringo10M("NAMES_10M.txt");
     auto start_time = high_resolution_clock::now();
-    for (int i = 0; i< 10000000; i++){
+    /*for (int i = 0; i< 10; i++){
+        numero10 >> number;
+        gringo10 >> input;
+        groot = myTree->addNode(groot, number, meno);
+    }*/
+    /*numero10.seekg(0);
+    for (int i = 0; i< 10; i++){
+        gringo10 >> input;
+        myTree->findNode(groot, number);
+    }*/
+    /*numero10.seekg(0);
+    for (int i = 0; i< 10; i++){
+        gringo10 >> input;
+        groot = myTree->deleteNode(groot, number);
+    }*/
+    /*for (int i = 0; i< 100; i++){
+        numero100 >> number;
+        gringo100 >> input;
+        groot = myTree->addNode(groot, number, meno);
+    }*/
+    /*numero100.seekg(0);
+    for (int i = 0; i< 100; i++){
+        gringo100 >> input;
+        myTree->findNode(groot, number);
+    }*/
+    /*numero100.seekg(0);
+    for (int i = 0; i< 100; i++){
+        gringo100 >> input;
+        groot = myTree->deleteNode(groot, number);
+    }*/
+    /*for (int i = 0; i< 1000; i++){
+        numero1k >> number;
+        gringo1k >> input;
+        groot = myTree->addNode(groot, number, meno);
+    }*/
+    /*numero1k.seekg(0);
+    for (int i = 0; i< 1000; i++){
+        gringo1k >> input;
+        myTree->findNode(groot, number);
+    }*/
+    /*numero1k.seekg(0);
+    for (int i = 0; i< 1000; i++){
+        gringo1k >> input;
+        groot = myTree->deleteNode(groot, number);
+    }*/
+    /*for (int i = 0; i< 10000; i++){
+        numero10k >> number;
+        gringo10k >> input;
+        groot = myTree->addNode(groot, number, meno);
+    }*/
+    /*numero10k.seekg(0);
+    for (int i = 0; i< 10000; i++){
+        gringo10k >> input;
+        myTree->findNode(groot, number);
+    }*/
+    /*numero10k.seekg(0);
+    for (int i = 0; i< 10000; i++){
+        gringo10k >> input;
+        groot = myTree->deleteNode(groot, number);
+    }*/
+    /*for (int i = 0; i< 100000; i++){
+        numero100k >> number;
+        gringo100k >> input;
+        groot = myTree->addNode(groot, number, meno);
+    }*/
+    /*numero100k.seekg(0);
+    for (int i = 0; i< 100000; i++){
+        gringo100k >> input;
+        myTree->findNode(groot, number);
+    }*/
+    /*numero100k.seekg(0);
+    for (int i = 0; i< 100000; i++){
+        gringo100k >> input;
+        groot = myTree->deleteNode(groot, number);
+    }*/
+    /*for (int i = 0; i < 1000000; i++){
+        numero1M >> number;
+        gringo1M >> input;
+        groot = myTree->addNode(groot, number, meno);
+    }*/
+    /*numero1M.seekg(0);
+    for (int i = 0; i< 1000000; i++){
+        gringo1M >> input;
+        myTree->findNode(groot, number);
+    }*/
+    /*numero1M.seekg(0);
+    for (int i = 0; i< 1000000; i++){
+        gringo1M >> input;
+        groot = myTree->deleteNode(groot, number);
+    }*/
+    /*for (int i = 0; i< 10000000; i++){
         numero10M >> number;
-        gringo10M >> name;
-        root = myTree->addNode(root, number, name);
-    }
-    numero10M.seekg(0);
+        gringo10M >> input;
+        groot = myTree->addNode(groot, number, meno);
+    }*/
+    /*numero10M.seekg(0);
     for (int i = 0; i< 10000000; i++){
-        numero10M >> number;
-        if (myTree->findNode(root, number) == "No such node"){
-            cout << "japierdole\n";
-        }
-    }
-    numero10M.seekg(0);
+        gringo10M >> input;
+        myTree->findNode(groot, number);
+    }*/
+    /*numero10M.seekg(0);
     for (int i = 0; i< 10000000; i++){
-        numero10M >> number;
-        root = myTree->deleteNode(root, number);
-    };
+        gringo10M >> input;
+        groot = myTree->deleteNode(groot, number);
+    }*/
     auto end_time = high_resolution_clock::now();
     auto duration = duration_cast<milliseconds>(end_time - start_time).count();
+    //myTree->printSplayTree(root);
     cout << "Time taken: " << duration << " milliseconds." << endl;
-    myTree->printSplayTree(root);
     /*while(zastav==0){
         cin >>vstup;
         switch(vstup){
