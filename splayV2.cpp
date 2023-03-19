@@ -153,13 +153,13 @@ class SplayTree{
             }
         }
     }
-    bool findNode(Node* myNode, int key){
+    string findNode(Node* myNode, int key){
         if (!myNode){
-            return false;
+            return "No such node\n";
         }
         if (myNode->key == key){
             splayNode(myNode, nullptr);
-            return true;
+            return myNode->name;
         }
         else if (myNode->key > key){
             return findNode(myNode->lower, key);
@@ -176,7 +176,6 @@ class SplayTree{
             findNode(root, key);
         }
         if (root->key != key){
-            //cout << "No such node: " << key <<endl;
             return nullptr;
         }
         if((root->lower == nullptr)&&(root->higher == nullptr)){
@@ -273,7 +272,7 @@ int main(){
                         case 's' :{
                             cout << "Enter number \n";
                             cin >> number;
-                            myTree->findNode(root, number);
+                            cout << myTree->findNode(root, number) << endl;;
                             break;
                         }
                         case 'w' :{

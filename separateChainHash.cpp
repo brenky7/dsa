@@ -24,8 +24,10 @@ class HashTable{
         (this->maxPocet) = maxPocet;
         table = new list<node>[maxPocet];
     }
-    ~HashTable(){
-        delete[] table;
+    void destructHashTable(){
+        for (int i = 0; i< maxPocet; i++){
+            table[i].clear();
+        }
     }
     int hashit(string name, int maxPocet){
         unsigned int offset=1083019949, prime = 8388817;
@@ -47,7 +49,6 @@ class HashTable{
                     temp[tablePlace].push_back(*temp2);
                 }
             }
-            //cout << "Maxpocet is: " << maxPocet <<endl;
             delete[] table;
             table = temp;
         }
@@ -60,31 +61,26 @@ class HashTable{
                     temp[tablePlace].push_back(*temp2);
                 }
             }
-            //cout << "Maxpocet is: " << maxPocet <<endl;
             delete[] table;
             table = temp;
         }
     }
-    void addString(string name, int value){
+    void addNode(string name, int value){
         int tablePlace = hashit(name, maxPocet);
         node temp;
         temp.name = name;
         temp.value = value;
         table[tablePlace].push_back(temp);
         pocet++;
-        //cout << "pocet je: " << pocet <<endl;
-        //cout << "maxpocet je: " << maxPocet <<endl;
         double ratio = pocet ;
         ratio = (ratio/ maxPocet);
-        //cout << "ratio is :"<< ratio <<endl;
         if (ratio >= maxLoad){
             Switch = false; 
-            //cout << "scaling up\n";
             resizeTable();
         }  
     }
-    void deleteString(string name) {
-        if (findString(name)==false){
+    void deleteNode(string name) {
+        if (findNode(name)==false){
             cout << "No such entry: " << name <<endl;
             return;
         }
@@ -98,14 +94,12 @@ class HashTable{
         pocet--;
         double ratio = pocet ;
         ratio = (ratio/maxPocet);
-        //cout << "ratio is :"<< ratio <<endl;
         if (ratio <= minLoad){
             Switch = true;
-            //cout << "scaling down\n"; 
             resizeTable();
         }
     }
-    bool findString(string name){
+    bool findNode(string name){
         int tablePlace = hashit(name, maxPocet);
         for(auto temp = table[tablePlace].begin(); (temp != table[tablePlace].end()); temp++){
             if (name == ((temp)->name)){
@@ -127,17 +121,17 @@ class HashTable{
 
 
 int main(){
-    string input;
-    char mode;
-    int quit=0, number;
+    string meno;
+    char vstup;
+    int zastav=0, number;
     HashTable hash(20);
-    ifstream numero10("NUMBS_10.txt");
-    ifstream numero100("NUMBS_100.txt");
-    ifstream numero1k("NUMBS_1000.txt");
-    ifstream numero10k("NUMBS_10000.txt");
-    ifstream numero100k("NUMBS_100000.txt");
-    ifstream numero1M("NUMBS_1000000.txt");
-    ifstream numero10M("NUMBS_10000000.txt");
+    ifstream numero10("NUMBERS_10.txt");
+    ifstream numero100("NUMBERS_100.txt");
+    ifstream numero1k("NUMBERS_1k.txt");
+    ifstream numero10k("NUMBERS_10k.txt");
+    ifstream numero100k("NUMBERS_100k.txt");
+    ifstream numero1M("NUMBERS_1M.txt");
+    ifstream numero10M("NUMBERS_10M.txt");
     ifstream gringo10("NAMES_10.txt");
     ifstream gringo100("NAMES_100.txt");
     ifstream gringo1k("NAMES_1k.txt");
@@ -145,150 +139,299 @@ int main(){
     ifstream gringo100k("NAMES_100k.txt");
     ifstream gringo1M("NAMES_1M.txt");
     ifstream gringo10M("NAMES_10M.txt");
-    auto start_time = high_resolution_clock::now();
-    /*for (int i = 0; i< 10; i++){
-        numero10 >> number;
-        gringo10 >> input;
-        hash.addNode(input, number);
-    }*/
-    /*gringo10.seekg(0);
-    for (int i = 0; i< 10; i++){
-        gringo10 >> input;
-        hash.findNode(input);
-    }*/
-    /*gringo10.seekg(0);
-    for (int i = 0; i< 10; i++){
-        gringo10 >> input;
-        hash.deleteNode(input);
-    }*/
-    /*for (int i = 0; i< 100; i++){
-        numero100 >> number;
-        gringo100 >> input;
-        hash.addNode(input, number);
-    }*/
-    /*gringo100.seekg(0);
-    for (int i = 0; i< 100; i++){
-        gringo100 >> input;
-        hash.findNode(input);
-    }*/
-    /*gringo100.seekg(0);
-    for (int i = 0; i< 100; i++){
-        gringo100 >> input;
-        hash.deleteNode(input);
-    }*/
-    /*for (int i = 0; i< 1000; i++){
-        numero1k >> number;
-        gringo1k >> input;
-        hash.addNode(input, number);
-    }*/
-    /*gringo1k.seekg(0);
-    for (int i = 0; i< 1000; i++){
-        gringo1k >> input;
-        hash.findNode(input);
-    }*/
-    /*gringo1k.seekg(0);
-    for (int i = 0; i< 1000; i++){
-        gringo1k >> input;
-        hash.deleteNode(input);
-    }*/
-    /*for (int i = 0; i< 10000; i++){
-        numero10k >> number;
-        gringo10k >> input;
-        hash.addNode(input, number);
-    }*/
-    /*gringo10k.seekg(0);
-    for (int i = 0; i< 10000; i++){
-        gringo10k >> input;
-        hash.findNode(input);
-    }*/
-    /*gringo10k.seekg(0);
-    for (int i = 0; i< 10000; i++){
-        gringo10k >> input;
-        hash.deleteNode(input);
-    }*/
-    /*for (int i = 0; i< 100000; i++){
-        numero100k >> number;
-        gringo100k >> input;
-        hash.addNode(input, number);
-    }*/
-    /*gringo100k.seekg(0);
-    for (int i = 0; i< 100000; i++){
-        gringo100k >> input;
-        hash.findNode(input);
-    }*/
-    /*gringo100k.seekg(0);
-    for (int i = 0; i< 100000; i++){
-        gringo100k >> input;
-        hash.deleteNode(input);
-    }*/
-    /*for (int i = 0; i < 1000000; i++){
-        numero1M >> number;
-        gringo1M >> input;
-        hash.addNode(input, number);
-    }*/
-    /*gringo1M.seekg(0);
-    for (int i = 0; i< 1000000; i++){
-        gringo1M >> input;
-        hash.findNode(input);
-    }*/
-    /*gringo1M.seekg(0);
-    for (int i = 0; i< 1000000; i++){
-        gringo1M >> input;
-        hash.deleteNode(input);
-    }*/
-    /*for (int i = 0; i< 10000000; i++){
-        numero10M >> number;
-        gringo10M >> input;
-        hash.addNode(input, number);
-    }*/
-    /*gringo10M.seekg(0);
-    for (int i = 0; i< 10000000; i++){
-        gringo10M >> input;
-        hash.findNode(input);
-    }*/
-    /*gringo10M.seekg(0);
-    for (int i = 0; i< 10000000; i++){
-        gringo10M >> input;
-        hash.deleteNode(input);
-    }*/
-    auto end_time = high_resolution_clock::now();
-    auto duration = duration_cast<milliseconds>(end_time - start_time).count();
-    cout << "Time taken: " << duration << " milliseconds." << endl;
-    cout << hash.maxPocet << endl;
-    cout << hash.pocet << endl;
-    /*
-    while(quit==0){
-        cin >>mode;
-        switch(mode){
+        while (true){
+        cout << "m->MANUAL/a->AUTO/q->QUIT\n";
+        cin >> vstup;
+        switch(vstup){
+            case 'm' :{
+                zastav=0;
+                cout << "a->ADD/d->DELETE/s->SEARCH/w->WRITEOUT/q->QUIT\n";
+                while(zastav==0){
+                    cin >> vstup;
+                    switch(vstup){
+                        case 'a' :{
+                            cout << "Enter string \n";
+                            cin >> meno;
+                            cout << "Enter number \n";
+                            cin >> number;
+                            hash.addNode(meno, number);
+                            break;
+                        }
+                        case 'd' :{
+                            cout << "Enter string \n";
+                            cin >> meno;
+                            hash.deleteNode(meno);
+                            break;
+                        }
+                        case 's' :{
+                            cout << "Enter string \n";
+                            cin >> meno;
+                            cout << hash.findNode(meno) << endl;
+                            break;
+                        }
+                        case 'w' :{
+                            hash.printTable();
+                            break;
+                        }
+                        case 'q' :{
+                            hash.destructHashTable();
+                            zastav=1;
+                            break;
+                        }
+                        default :{
+                            cout << "a->ADD/d->DELETE/s->SEARCH/w->WRITEOUT/q->QUIT\n";
+                            break;
+                        }
+                    }
+                }
+                break;
+            }
             case 'a' :{
-                cin >> input;
-                cin >> number;
-                hash.addString(input, number);
+                zastav=0;
+                cout << "a->10/b->100/c->1K/d->10K/e->100K/f->1M/g->10M/q->QUIT\n";
+                while(zastav==0){
+                    cin >> vstup;
+                    switch(vstup){
+                        case 'a' :{
+                            auto startTime = high_resolution_clock::now();
+                            for (int i = 0; i< 10; i++){
+                                numero10 >> number;
+                                gringo10 >> meno;
+                                hash.addNode(meno, number);
+                            }
+                            auto insertTime = high_resolution_clock::now();
+                            gringo10.seekg(0);
+                            for (int i = 0; i< 10; i++){
+                                gringo10 >> meno;
+                                hash.findNode(meno);
+                            }
+                            auto searchTime = high_resolution_clock::now();
+                            gringo10.seekg(0);
+                            for (int i = 0; i< 10; i++){
+                                gringo10 >> meno;
+                                hash.deleteNode(meno);
+                            }
+                            auto endTime = high_resolution_clock::now();
+                            auto insertion = duration_cast<microseconds>(insertTime - startTime).count();
+                            cout << "Insert took: " << insertion << " microseconds." << endl;
+                            auto search = duration_cast<microseconds>(searchTime - insertTime).count();
+                            cout << "Search took: " << search << " microseconds." << endl;
+                            auto deletion = duration_cast<microseconds>(endTime - searchTime).count();
+                            cout << "Delete took: " << deletion << " microseconds." << endl;
+                            auto duration = duration_cast<microseconds>(endTime - startTime).count();
+                            cout << "Total time taken: " << duration << " microseconds." << endl;
+                            gringo10.seekg(0);
+                            break;
+                        }
+                        case 'b' :{
+                            auto startTime = high_resolution_clock::now();
+                            for (int i = 0; i< 100; i++){
+                                numero100 >> number;
+                                gringo100 >> meno;
+                                hash.addNode(meno, number);
+                            }
+                            auto insertTime = high_resolution_clock::now();
+                            gringo100.seekg(0);
+                            for (int i = 0; i< 100; i++){
+                                gringo100 >> meno;
+                                hash.findNode(meno);
+                            }
+                            auto searchTime = high_resolution_clock::now();
+                            gringo100.seekg(0);
+                            for (int i = 0; i< 100; i++){
+                                gringo100 >> meno;
+                                hash.deleteNode(meno);
+                            }
+                            auto endTime = high_resolution_clock::now();
+                            auto insertion = duration_cast<microseconds>(insertTime - startTime).count();
+                            cout << "Insert took: " << insertion << " microseconds." << endl;
+                            auto search = duration_cast<microseconds>(searchTime - insertTime).count();
+                            cout << "Search took: " << search << " microseconds." << endl;
+                            auto deletion = duration_cast<microseconds>(endTime - searchTime).count();
+                            cout << "Delete took: " << deletion << " microseconds." << endl;
+                            auto duration = duration_cast<microseconds>(endTime - startTime).count();
+                            cout << "Total time taken: " << duration << " microseconds." << endl;
+                            gringo100.seekg(0);
+                            break;
+                        }
+                        case 'c' :{
+                            auto startTime = high_resolution_clock::now();
+                            for (int i = 0; i< 1000; i++){
+                                numero1k >> number;
+                                gringo1k >> meno;
+                                hash.addNode(meno, number);
+                            }
+                            auto insertTime = high_resolution_clock::now();
+                            gringo1k.seekg(0);
+                            for (int i = 0; i< 1000; i++){
+                                gringo1k >> meno;
+                                hash.findNode(meno);
+                            }
+                            auto searchTime = high_resolution_clock::now();
+                            gringo1k.seekg(0);
+                            for (int i = 0; i< 1000; i++){
+                                gringo1k >> meno;
+                                hash.deleteNode(meno);
+                            }
+                            auto endTime = high_resolution_clock::now();
+                            auto insertion = duration_cast<microseconds>(insertTime - startTime).count();
+                            cout << "Insert took: " << insertion << " microseconds." << endl;
+                            auto search = duration_cast<microseconds>(searchTime - insertTime).count();
+                            cout << "Search took: " << search << " microseconds." << endl;
+                            auto deletion = duration_cast<microseconds>(endTime - searchTime).count();
+                            cout << "Delete took: " << deletion << " microseconds." << endl;
+                            auto duration = duration_cast<microseconds>(endTime - startTime).count();
+                            cout << "Total time taken: " << duration << " microseconds." << endl;
+                            gringo1k.seekg(0);
+                            break;
+                            
+                        }
+                        case 'd' :{
+                            auto startTime = high_resolution_clock::now();
+                            for (int i = 0; i< 10000; i++){
+                                numero10k >> number;
+                                gringo10k >> meno;
+                                hash.addNode(meno, number);
+                            }
+                            auto insertTime = high_resolution_clock::now();
+                            gringo10k.seekg(0);
+                            for (int i = 0; i< 10000; i++){
+                                gringo10k >> meno;
+                                hash.findNode(meno);
+                            }
+                            auto searchTime = high_resolution_clock::now();
+                            gringo10k.seekg(0);
+                            for (int i = 0; i< 10000; i++){
+                                gringo10k >> meno;
+                                hash.deleteNode(meno);
+                            }
+                            auto endTime = high_resolution_clock::now();
+                            auto insertion = duration_cast<microseconds>(insertTime - startTime).count();
+                            cout << "Insert took: " << insertion << " microseconds." << endl;
+                            auto search = duration_cast<microseconds>(searchTime - insertTime).count();
+                            cout << "Search took: " << search << " microseconds." << endl;
+                            auto deletion = duration_cast<microseconds>(endTime - searchTime).count();
+                            cout << "Delete took: " << deletion << " microseconds." << endl;
+                            auto duration = duration_cast<microseconds>(endTime - startTime).count();
+                            cout << "Total time taken: " << duration << " microseconds." << endl;
+                            gringo10k.seekg(0);
+                            break;
+                        }
+                        case 'e' :{
+                            auto startTime = high_resolution_clock::now();
+                            for (int i = 0; i< 100000; i++){
+                                numero100k >> number;
+                                gringo100k >> meno;
+                                hash.addNode(meno, number);
+                            }
+                            auto insertTime = high_resolution_clock::now();
+                            gringo100k.seekg(0);
+                            for (int i = 0; i< 100000; i++){
+                                gringo100k >> meno;
+                                hash.findNode(meno);
+                            }
+                            auto searchTime = high_resolution_clock::now();
+                            gringo100k.seekg(0);
+                            for (int i = 0; i< 100000; i++){
+                                gringo100k >> meno;
+                                hash.deleteNode(meno);
+                            }
+                            auto endTime = high_resolution_clock::now();
+                            auto insertion = duration_cast<microseconds>(insertTime - startTime).count();
+                            cout << "Insert took: " << insertion << " microseconds." << endl;
+                            auto search = duration_cast<microseconds>(searchTime - insertTime).count();
+                            cout << "Search took: " << search << " microseconds." << endl;
+                            auto deletion = duration_cast<microseconds>(endTime - searchTime).count();
+                            cout << "Delete took: " << deletion << " microseconds." << endl;
+                            auto duration = duration_cast<microseconds>(endTime - startTime).count();
+                            cout << "Total time taken: " << duration << " microseconds." << endl;
+                            gringo100.seekg(0);
+                            break;
+                        }
+                        case 'f' :{
+                            auto startTime = high_resolution_clock::now();
+                            for (int i = 0; i< 1000000; i++){
+                                numero1M >> number;
+                                gringo1M >> meno;
+                                hash.addNode(meno, number);
+                            }
+                            auto insertTime = high_resolution_clock::now();
+                            gringo1M.seekg(0);
+                            for (int i = 0; i< 1000000; i++){
+                                gringo1M >> meno;
+                                hash.findNode(meno);
+                            }
+                            auto searchTime = high_resolution_clock::now();
+                            gringo1M.seekg(0);
+                            for (int i = 0; i< 1000000; i++){
+                                gringo1M >> meno;
+                                hash.deleteNode(meno);
+                            }
+                            auto endTime = high_resolution_clock::now();
+                            auto insertion = duration_cast<milliseconds>(insertTime - startTime).count();
+                            cout << "Insert took: " << insertion << " milliseconds." << endl;
+                            auto search = duration_cast<milliseconds>(searchTime - insertTime).count();
+                            cout << "Search took: " << search << " milliseconds." << endl;
+                            auto deletion = duration_cast<milliseconds>(endTime - searchTime).count();
+                            cout << "Delete took: " << deletion << " milliseconds." << endl;
+                            auto duration = duration_cast<milliseconds>(endTime - startTime).count();
+                            cout << "Total time taken: " << duration << " milliseconds." << endl;
+                            gringo1M.seekg(0);
+                            break; 
+                        }
+                        case 'g' :{
+                            auto startTime = high_resolution_clock::now();
+                            for (int i = 0; i< 10000000; i++){
+                                numero10M >> number;
+                                gringo10M >> meno;
+                                hash.addNode(meno, number);
+                            }
+                            auto insertTime = high_resolution_clock::now();
+                            gringo10M.seekg(0);
+                            for (int i = 0; i< 10000000; i++){
+                                gringo10M >> meno;
+                                hash.findNode(meno);
+                            }
+                            auto searchTime = high_resolution_clock::now();
+                            gringo10M.seekg(0);
+                            for (int i = 0; i< 10000000; i++){
+                                gringo10M >> meno;
+                                hash.deleteNode(meno);
+                            }
+                            auto endTime = high_resolution_clock::now();
+                            auto insertion = duration_cast<milliseconds>(insertTime - startTime).count();
+                            cout << "Insert took: " << insertion << " milliseconds." << endl;
+                            auto search = duration_cast<milliseconds>(searchTime - insertTime).count();
+                            cout << "Search took: " << search << " milliseconds." << endl;
+                            auto deletion = duration_cast<milliseconds>(endTime - searchTime).count();
+                            cout << "Delete took: " << deletion << " milliseconds." << endl;
+                            auto duration = duration_cast<milliseconds>(endTime - startTime).count();
+                            cout << "Total time taken: " << duration << " milliseconds." << endl;
+                            gringo10M.seekg(0);
+                            break; 
+                        }
+                        case 'q' :{
+                            hash.destructHashTable();
+                            zastav=1;
+                            break; 
+                        }
+                        default :{
+                            cout << "a->10/b->100/c->1K/d->10K/e->100K/f->1M/g->10M/q->QUIT\n";
+                            break;
+                        }
+                    }
+                }
                 break;
             }
-            case 's' :{
-                cin >> input;
-                cout << hash.findString(input) <<endl;
-                break;
-            }
-            case 'd' :{
-                cin >> input;
-                hash.deleteString(input);
-                break;
-            }
-            case 'w' :{
-                hash.printTable();
-                break;
-            }
-            case 'q': {
-                quit = 1;
-                break;
+            case 'q' :{
+                delete[] hash.table;
+                return 0;
             }
             default :{
-                cout << "a-ADD/d-DELETE/s-SEARCH/w-WRITEOUT/q-QUIT\n";
+                cout << "m->MANUAL/A->AUTO/q->QUIT\n";
                 break;
             }
         }
-    }*/
+    }
     return 0;
 }
