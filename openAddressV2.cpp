@@ -39,6 +39,17 @@ class HashTable {
         double temp = (chokePoint*tableSize);
         tableChokePoint = round(temp);
     }
+    node** destructHashTable(){
+        for (int i = 0; i < tableSize; i++){
+            delete table[i];
+        }
+        delete[] table;
+        table = new node*[tableSize];
+        for (int i = 0; i < tableSize; i++){
+            table[i] = nullptr;
+        }
+        return table;
+    }
     int hashit(string name){
         unsigned int offset=8388817, prime = 4194419;
         unsigned int hash = offset;
@@ -149,7 +160,7 @@ class HashTable {
     bool findNode(string name){
         unsigned int index = hashit(name);
         unsigned int j = 1;
-        if (table[(index%tableSize)]->name==name){
+        if ((table[(index%tableSize)]!=nullptr)&&(table[(index%tableSize)]->name==name)){
             return true;
         }
         else{
@@ -165,7 +176,7 @@ class HashTable {
                 }
             }
         }
-        if (table[(index%tableSize)]->name == name){
+        if ((table[(index%tableSize)] != nullptr)&&(table[(index%tableSize)]->name == name)){
             return true;
         }
         else{
@@ -175,7 +186,7 @@ class HashTable {
     bool deleteNode(string name){
         unsigned int index = hashit(name);
         unsigned int j = 1;
-        if (table[(index%tableSize)]->name==name){
+        if ((table[(index%tableSize)] != nullptr)&&(table[(index%tableSize)]->name==name)){
             delete table[(index%tableSize)];
             table[(index%tableSize)] = new node();
             elementCount--;
@@ -188,20 +199,19 @@ class HashTable {
             return true;
         }
         else{
-            while ((table[(index%tableSize)]!=nullptr)&&(table[(index%tableSize)]->name!=name)){
+            while ((table[(index%tableSize)] != nullptr)&&(table[(index%tableSize)]->name!=name)){
                 index = (index + (j*j));
                 j++;
                 if ( j >  chokePoint){
                     unsigned int k = 1;
                     while ((table[(index%tableSize)]!=nullptr)&&(table[(index%tableSize)]->name!=name)){
-                        //cout << "zapajam linear\n";
                         index  = (index + k);
                         k++;
-                    }    
+                    } 
                 }
             }
         }
-        if (table[(index%tableSize)]->name == name){
+        if ((table[(index%tableSize)] != nullptr)&&(table[(index%tableSize)]->name == name)){
             delete table[(index%tableSize)];
             table[(index%tableSize)] = new node();
             elementCount--;
@@ -215,6 +225,13 @@ class HashTable {
         }
         else{
             return false;
+        }
+    }
+    void printTable(){
+        for(int i = 0; i < tableSize; i++){
+            if (table[i] != nullptr){
+                cout << table[i]->name << "  " << table[i]->value << endl;
+            }
         }
     }
 };
@@ -225,7 +242,6 @@ int main(){
     string meno;
     char vstup;
     int zastav=0, number;
-    HashTable hash(20);
     ifstream numero10("NUMBERS_10.txt");
     ifstream numero100("NUMBERS_100.txt");
     ifstream numero1k("NUMBERS_1k.txt");
@@ -245,6 +261,9 @@ int main(){
         cin >> vstup;
         switch(vstup){
             case 'm' :{
+                cout << "Enter table size\n";
+                cin >> number;
+                HashTable hash(number);
                 zastav=0;
                 cout << "a->ADD/d->DELETE/s->SEARCH/w->WRITEOUT/q->QUIT\n";
                 while(zastav==0){
@@ -261,7 +280,9 @@ int main(){
                         case 'd' :{
                             cout << "Enter string \n";
                             cin >> meno;
-                            hash.deleteNode(meno);
+                            if (hash.deleteNode(meno) == false){
+                                cout << "No such node\n";
+                            }
                             break;
                         }
                         case 's' :{
@@ -275,7 +296,7 @@ int main(){
                             break;
                         }
                         case 'q' :{
-                            //hash.destructHashTable();
+                            hash.table = hash.destructHashTable();
                             zastav=1;
                             break;
                         }
@@ -288,6 +309,7 @@ int main(){
                 break;
             }
             case 'a' :{
+                HashTable hash(20);
                 zastav=0;
                 cout << "a->10/b->100/c->1K/d->10K/e->100K/f->1M/g->10M/q->QUIT\n";
                 while(zastav==0){
@@ -322,6 +344,7 @@ int main(){
                             auto duration = duration_cast<microseconds>(endTime - startTime).count();
                             cout << "Total time taken: " << duration << " microseconds." << endl;
                             gringo10.seekg(0);
+                            numero10.seekg(0);
                             break;
                         }
                         case 'b' :{
@@ -353,6 +376,7 @@ int main(){
                             auto duration = duration_cast<microseconds>(endTime - startTime).count();
                             cout << "Total time taken: " << duration << " microseconds." << endl;
                             gringo100.seekg(0);
+                            numero100.seekg(0);
                             break;
                         }
                         case 'c' :{
@@ -384,6 +408,7 @@ int main(){
                             auto duration = duration_cast<microseconds>(endTime - startTime).count();
                             cout << "Total time taken: " << duration << " microseconds." << endl;
                             gringo1k.seekg(0);
+                            numero1k.seekg(0);
                             break;
                             
                         }
@@ -416,6 +441,7 @@ int main(){
                             auto duration = duration_cast<microseconds>(endTime - startTime).count();
                             cout << "Total time taken: " << duration << " microseconds." << endl;
                             gringo10k.seekg(0);
+                            numero10k.seekg(0);
                             break;
                         }
                         case 'e' :{
@@ -446,7 +472,8 @@ int main(){
                             cout << "Delete took: " << deletion << " microseconds." << endl;
                             auto duration = duration_cast<microseconds>(endTime - startTime).count();
                             cout << "Total time taken: " << duration << " microseconds." << endl;
-                            gringo100.seekg(0);
+                            gringo100k.seekg(0);
+                            numero100k.seekg(0);
                             break;
                         }
                         case 'f' :{
@@ -478,6 +505,7 @@ int main(){
                             auto duration = duration_cast<milliseconds>(endTime - startTime).count();
                             cout << "Total time taken: " << duration << " milliseconds." << endl;
                             gringo1M.seekg(0);
+                            numero1M.seekg(0);
                             break; 
                         }
                         case 'g' :{
@@ -509,10 +537,11 @@ int main(){
                             auto duration = duration_cast<milliseconds>(endTime - startTime).count();
                             cout << "Total time taken: " << duration << " milliseconds." << endl;
                             gringo10M.seekg(0);
+                            numero10M.seekg(0);
                             break; 
                         }
                         case 'q' :{
-                            //hash.destructHashTable();
+                            hash.table = hash.destructHashTable();
                             zastav=1;
                             break; 
                         }
@@ -525,7 +554,7 @@ int main(){
                 break;
             }
             case 'q' :{
-                delete[] hash.table;
+                //delete[] hash.table;
                 return 0;
             }
             default :{
