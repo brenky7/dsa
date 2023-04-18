@@ -32,21 +32,26 @@ class BDD {
         nullNode = new Node('0');
         oneNode = new Node('1');
     }
-    void printVariables(){
-        for (char pismeno : variables){
-            cout << pismeno << endl;
-        }
-    }
     Node* bdd_addNodes(int height, string function, string order, Node* parent){
+        Node* node = new Node(order[order.length()-height]);
         if (height == 0){
-            return nullptr;
+            size_t position = function.find('1');
+            if (position != string::npos){
+                return oneNode;
+            }
+            else{
+                return nullNode;
+            }
         }
-        Node* root = new Node(order[order.length()-height]); 
-        root->function = function;
-        root->parent = parent;  
-        root->negative = bdd_addNodes(height-1, bdd_splitString(function, order[order.length()-height], false), order, root);
-        root->positive = bdd_addNodes(height-1, bdd_splitString(function, order[order.length()-height], true), order, root);
-        return root;
+        node->parent = parent; 
+        node->function = function;
+        string cut1 = bdd_splitString(function, order[order.length()-height], false);
+        string cut2 = bdd_splitString(function, order[order.length()-height], true);
+        //cout << cut1 << endl;
+        //cout << cut2 << endl;
+        node->negative = bdd_addNodes(height-1, cut1, order, node);
+        node->positive = bdd_addNodes(height-1, cut2, order, node);
+        return node;
     }
     string bdd_splitString(string function, char variable, bool child){
         vector<string> functionCut;
@@ -76,22 +81,9 @@ class BDD {
         }
         return cut;
     }
-    Node* bdd_create(int height, string function, string order, Node* parent){
-        Node* node = new Node(order[order.length()-height]);
-        if (height == 0){
-            size_t position = function.find('1');
-            if (position != string::npos){
-                return oneNode;
-            }
-            else{
-                return nullNode;
-            }
-        }
-        node->parent = parent; 
-        node->function = function;
-        node->negative = bdd_addNodes(height-1, bdd_splitString(function, order[order.length()-height], false), order, node);
-        node->positive = bdd_addNodes(height-1, bdd_splitString(function, order[order.length()-height], true), order, node);
-        return node;
+    Node* bdd_create(string function, string order){
+        root = bdd_addNodes(order.length(), function, order, nullptr);
+        return root;
     }
     void printTree(Node* node, int depth = 0){
             if (node == nullptr){
@@ -108,7 +100,7 @@ class BDD {
 
 int main() {
     BDD strom;
-    strom.root =  strom.bdd_create(3, "!AB+ABC+!A!B", "ACB", nullptr);
+    strom.root =  strom.bdd_create("!AB+ABC+!A!B", "ABC");
     //strom.printVariables();
     cout << strom.function << endl;
     //cout << strom.root->negative->function << endl;
