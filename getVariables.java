@@ -25,5 +25,3 @@ public class getVariables {
         return String.join("", variables);
     }
 }
-
-/**/

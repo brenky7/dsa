@@ -11,21 +11,34 @@ public class SplitFunction {
         for (String i: split){
             if (i.contains("!" + variable)){
                 i = i.replace("!" + variable, Character.toString('1'));
-                negative.add(i);
+                if (!negative.contains(i)){
+                    negative.add(i);
+                }
             }
             else if (i.contains(Character.toString( variable))){
                 i = i.replace(Character.toString(variable), Character.toString('1'));
-                positive.add(i);
+                if (!positive.contains(i)){
+                    positive.add(i);
+                }
             }
             else {
-                positive.add(i);
-                negative.add(i);
+                if (!positive.contains(i)){
+                    positive.add(i);
+                }
+                if (!negative.contains(i)){
+                    negative.add(i);
+                }
             }
         }
         String positiv = String.join("+", positive);
         positiv = expressionModifier.modify(positiv);
         String negativ = String.join("+", negative);
         negativ = expressionModifier.modify(negativ);
-        return new String[] {negativ, positiv};
+        if (positiv.length() == negativ.length()){
+            return equalExpressionFinder.find(negativ, positiv);
+        }
+        else {
+            return new String[]{negativ, positiv};
+        }
     }
 }
