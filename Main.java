@@ -1,30 +1,28 @@
 import string.*;
 import testStuff.*;
 import tree.*;
-
-import java.util.ArrayList;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
 
 public class Main {
     public static HashMap<String, node> nodeMap = new HashMap<String, node>();
     public static void main(String[] args) {
-
-        //bdd tree = BDDcreate("!A!CDE!FGHIJ+!A!B!DEFGH!IK+A!B!CDE!FG!HI!JL+ABC!DEFGH!IJ!KM+!A!B!C!DEFGHIJKL+A!BCD!EFGH!IJK!L!M+!ABC!D!EFGHIJ!K!L!M+!ABC!DE!F!GHIJKL+A!B!C!DEFGH!IJKL!M+!ABCD!E!F!GHIJK!L!M+A!BCDEFG!HIJK!L!M+!ABC!DEFGH!IJKLM+AB!CDEFGHIJKLM+!A!BCDEFGHI!JKLM+A!B!C!DE!FGHIJ!KLM", "ABCDEFGHIJKLM");
-        //bdd tree = BDDcreate_with_best_order("!A!CDE!FGHIJ+!A!B!DEFGH!IK+A!B!CDE!FG!HI!JL+ABC!DEFGH!IJ!KM+!A!B!C!DEFGHIJKL+A!BCD!EFGH!IJK!L!M+!ABC!D!EFGHIJ!K!L!M+!ABC!DE!F!GHIJKL+A!B!C!DEFGH!IJKL!M+!ABCD!E!F!GHIJK!L!M+A!BCDEFG!HIJK!L!M+!ABC!DEFGH!IJKLM+AB!CDEFGHIJKLM+!A!BCDEFGHI!JKLM+A!B!C!DE!FGHIJ!KLM");
-        /*bdd tree = BDDcreate("!AB!C+B+B!C+A!B!C+!BC+!ABC", "ABC");
-        System.out.println("Number of nodes: " + tree.numberOfNodes);
-        printTree(tree.root, 0);
-        for (String i : nodeMap.keySet()){
-            System.out.println(i);
-        }*/
-        testSpravnosti(13);
+         for (int i = 0; i < 10; i++) {
+             testTime(18);
+             System.out.println("\n\n\n\n---------------------------------------------------------------------------------------------------------------------------\n\n\n\n");
+         }
+        //testSpravnosti(10);
     }
 
     public static bdd BDDcreate(String function, String order){
         nodeMap.put("1", new node("1", '1'));
         nodeMap.put("0", new node("0", '0'));
         bdd tree = new bdd(order);
+        function = expressionModifier.check(function);
         tree.root = BDDaddNodes(function, order, 0);
         tree.numberOfVariables = order.length();
         if ( tree.root.left != null && tree.root.right != null && tree.root.left.function.equals(tree.root.right.function)){
@@ -104,15 +102,17 @@ public class Main {
     }
     public static bdd BDDcreate_with_best_order(String function){
         bdd tree = new bdd();
+        bdd demoTree;
         String variables = getVariables.get(function);
         String[] orders = orderShuffle.shuffle(variables);
         double minNodes = Double.POSITIVE_INFINITY;
         for (String i : orders){
-            bdd demoTree = BDDcreate(function, i);
-            if (tree.numberOfNodes < minNodes){
-                minNodes = tree.numberOfNodes;
+            demoTree = BDDcreate(function, i);
+            if (demoTree.numberOfNodes < minNodes){
+                minNodes = demoTree.numberOfNodes;
                 tree = demoTree;
             }
+            nodeMap.clear();
         }
         return tree;
     }
@@ -149,15 +149,69 @@ public class Main {
         return Integer.parseInt(current.function);
     }
     public static void testSpravnosti(int numberOfVariables){
-        for (int i = 0; i < 100; i++){
-            String DNF = DNFgenerator.generateDNF(numberOfVariables);
-            bdd tree = BDDcreate(DNF, getVariables.get(DNF));
+        try{
+            Scanner scanner = new Scanner(new File("DNF"+numberOfVariables+".txt"));
             List<String> list = DNFgenerator.generate(numberOfVariables);
-            for (String j : list){
-                if (BDD_use(tree, j) != expressionEvaluator.evaluate(DNF, j)){
-                    System.out.println("Error");
+            while (scanner.hasNextLine()){
+                bdd tree;
+                String DNF = scanner.nextLine();
+                tree = BDDcreate(DNF, getVariables.get(DNF));
+                for (String j : list){
+                    if (BDD_use(tree, j) != expressionEvaluator.evaluate(DNF, j)){
+                        System.out.println("Error");
+                    }
                 }
+                nodeMap.clear();
             }
+        }
+        catch (Exception e){
+            System.out.println("File error");
+        }
+    }
+
+    public static void testTime(int numberOfVariables){
+        String[] testArr = new String[100];
+        double[] createArr = new double[100];
+        double[] createWBOArr = new double[100];
+        double[] createPercentArr = new double[100];
+        double[] createWBOPercentArr = new double[100];
+        long startTime = System.nanoTime();
+        try{
+            Scanner scanner = new Scanner(new File("DNF"+numberOfVariables+".txt"));
+            int index = 0;
+            while (scanner.hasNextLine()){
+                bdd tree;
+                bdd betterTree;
+                String DNF = scanner.nextLine();
+                tree = BDDcreate(DNF, getVariables.get(DNF));
+                nodeMap.clear();
+                betterTree = BDDcreate_with_best_order(DNF);
+                nodeMap.clear();
+                double maxNodes = Math.pow(2, numberOfVariables+1)-1;
+                double create = tree.numberOfNodes;
+                double createWBO = betterTree.numberOfNodes;
+                testArr[index] = String.format("Max nodes: %.0f, create: %.0f, create with best order: %.0f\nPercento redukcie create: %.2f%%, percento redukcie create with best order: %.2f%%",
+                        maxNodes, create, createWBO,
+                        ((maxNodes - create) / maxNodes) * 100, ((create - createWBO) / create) * 100);
+                createArr[index] = create;
+                createWBOArr[index] = createWBO;
+                createPercentArr[index] = (maxNodes - create) / maxNodes * 100;
+                createWBOPercentArr[index] = (create - createWBO) / create * 100;
+                index++;
+            }
+            long endTime = System.nanoTime();
+            for (String i : testArr){
+                System.out.println(i);
+            }
+            System.out.println("Total time: " + (endTime - startTime) / 1000000 + "ms");
+            System.out.println("Average time: " + (endTime - startTime) / 1000000 / 100 + "ms");
+            System.out.println("Average percento redukcie create: " + Arrays.stream(createPercentArr).average().getAsDouble() + "%");
+            System.out.println("Average percento redukcie create with best order: " + Arrays.stream(createWBOPercentArr).average().getAsDouble() + "%");
+            System.out.println("Average create nodes: " + Arrays.stream(createArr).average().getAsDouble());
+            System.out.println("Average create with best order nodes: " + Arrays.stream(createWBOArr).average().getAsDouble());
+        }
+        catch (FileNotFoundException e){
+            System.out.println("File error");
         }
     }
 }

@@ -2,6 +2,8 @@ package string;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class expressionModifier {
 
@@ -40,5 +42,22 @@ public class expressionModifier {
             input = expressionChecker.check(input);
         }
         return input;
+    }
+    public static String check(String dnf){
+        String[] inputList = dnf.split("\\+");
+        String pattern = "!(\\p{Upper})\\p{Upper}*\\1";
+        String pattern2 = "(\\p{Upper})[\\p{Upper}]*!(?=.*\\1)";
+        Pattern regex = Pattern.compile(pattern);
+        Pattern regex2 = Pattern.compile(pattern2);
+        Matcher matcher, matcher2;
+        ArrayList<String> finalList = new ArrayList<String>();
+        for (String i: inputList){
+            matcher = regex.matcher(i);
+            matcher2 = regex2.matcher(i);
+            if (!matcher.find() && !matcher2.find()){
+               finalList.add(i);
+            }
+        }
+        return String.join("+", finalList);
     }
 }

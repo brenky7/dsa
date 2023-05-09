@@ -5,8 +5,6 @@ import java.util.List;
 
 public class equalExpressionFinder {
     public static String[] find(String left, String right){
-        List leftList = new ArrayList<String>();
-        List rightList = new ArrayList<String>();
         String[] leftSplit = left.split("\\+");
         String[] rightSplit = right.split("\\+");
         int equal = 0;

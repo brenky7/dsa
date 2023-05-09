@@ -35,12 +35,11 @@ public class DNFgenerator {
         List<String> myList = new ArrayList<String>();
         boolean one = false;
         Random random = new Random();
-        int size = random.nextInt(numberOfVariables+1);
+        int size = random.nextInt(numberOfVariables+5);
         if (size == 0){
             size = 3;
         }
-        myList.add(fullList.get(random.nextInt(numberOfVariables)));
-        for (int i = 1; i < size; i++){
+        for (int i = 0; i < size-1; i++){
             int index = random.nextInt(fullList.size());
             String element = fullList.get(index);
             if (!myList.contains(element)){
@@ -53,6 +52,7 @@ public class DNFgenerator {
                 }
             }
         }
+        myList.add(fullList.get(random.nextInt(numberOfVariables)));
         return myList;
     }
 
