@@ -1,0 +1,462 @@
+\documentclass[12pt, twoside]{book}
+\usepackage[a4paper,top=2.5cm,bottom=2.5cm,left=3.5cm,right=2cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{adjustbox}
+\usepackage{pdfpages}
+\usepackage{listings}
+\usepackage{url}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage[utf8]{inputenc}
+\usepackage[hidelinks,breaklinks]{hyperref}
+\usepackage[slovak]{babel}
+\usepackage{indentfirst}
+\usepackage{tocloft} 
+\usepackage[numbers,sort&compress]{natbib}
+
+\linespread{1.25} % hodnota 1.25 by mala zodpovedat 1.5 riadkovaniu
+
+\lstset{		 % Customizacia zobrazenia kódu
+  basicstyle=\ttfamily,      
+  keywordstyle=\color{blue},     
+  frame=single,        
+  breaklines=true,      
+}
+
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
+\newcolumntype{C}[1]{>{\centering\arraybackslash}m{#1}}
+
+% -------------------
+% --- Definicia zakladnych pojmov
+% -------------------
+\def\mfrok{december 2024}
+\def\mfnazov{Slovn\'{i}kov\'{e} a brute-force \'{u}toky na  hesl\'{a} od WiFi siet\'{i}}
+\def\mfautor{Peter Brenkus}
+\def\mfveduci{Ing. Norbert Varga}
+\def\mfpredmet{Princ\'{i}py informa\v{c}nej bezpe\v{c}nosti}
+\def\mfgarant{Doc. Ing. Ladislav Hudec, CSc.}
+
+
+\newcommand{\subsubsubsection}[1]{%
+  \textbf{#1} \\ 
+}
+
+\begin{document} 
+   
+\frontmatter
+
+
+
+
+% -------------------
+% --- Titulný list
+% -------------------
+
+%\thispagestyle{empty}
+\noindent
+
+\begin{center}
+\sc  
+\large
+
+Slovenská technická univerzita v Bratislave\\
+Fakulta informatiky a informačných technológií\\
+\bigskip
+
+\vfill
+
+\mfautor\\
+\bigskip
+{\mfnazov}\\
+\end{center}
+
+\vfill
+
+\noindent
+\begin{tabular}{@{}ll}
+Predmet: & \mfpredmet \\
+Zodpovedný za predmet: & \mfgarant \\
+Cvičiaci: & \mfveduci \\
+\end{tabular}
+
+\bigskip
+
+
+
+\noindent
+\begin{tabular}{@{}ll}
+\mfrok\\
+\end{tabular}
+
+
+% -------------------
+%   čestné vyhlásenie
+% -------------------
+\newpage
+\thispagestyle{empty}
+\vspace*{20cm}
+\noindent
+Čestne vyhlasujem, že som túto prácu vypracoval samostatne, na základe konzultácií a s použitím uvedenej literatúry.
+
+\bigskip
+\bigskip
+\noindent
+V Bratislave, 1.12.2024
+
+{\raggedleft Peter Brenkus\quad \par}
+\bigskip
+
+% -------------------
+%  Anotácia - Slovensky
+% -------------------
+~
+
+\vfill
+\noindent
+
+\newpage 
+
+\section*{Anotácia}
+\noindent
+Slovenská technická univerzita v Bratislave\\
+FAKULTA INFORMATIKY A INFORMAČNÝCH TECHNOLÓGIÍ\\
+
+\begin{tabular}{@{}ll}
+Autor: & \mfautor\\
+Predmet: & \mfpredmet \\
+Zodpovedn 7 za predmet: &  \mfgarant \\
+Cvičiaci: & \mfveduci \\
+\mfrok
+\end{tabular}
+
+\bigskip
+\bigskip 
+\bigskip 
+\noindent
+
+Cieľom tejto práce je analyzovať a porovnať efektívnosť brute-force a slovníkových útokov pri prelomení hesiel WiFi sietí zabezpečených protokolom WPA2. Experimenty boli vykonané na vlastnej domácej sieti v súlade s legislatívnymi a etickými zásadami. Kvôli enormným časovým nárokom brute-force útokov na 8 a 9 miestne heslá bola táto metóda modifikovaná zúžením množiny znakov a využitím predpripravených permutácií. Slovníkové útoky boli testované s využitím databázy bežne používaných hesiel "rockyou.txt". Výsledky experimentov poskytujú náhľad na účinnosť oboch metód v rôznych scenároch, vykreslujú od čoho efektivita lámania hesiel závisí a zdôrazňujú dôležitosť výberu silných hesiel na zvýšenie bezpečnosti WiFi sietí.
+
+% --- Koniec Anotácie - Slovensky
+
+
+% -------------------
+% --- Obsah
+% -------------------
+\newpage 
+\pagestyle{plain}
+\setcounter{page}{13}
+\fancyfoot[C]{\thepage}
+\setlength\cftaftertoctitleskip{20pt}
+\tableofcontents
+
+% ---  Koniec Obsahu
+
+
+
+\newpage
+
+
+\listoffigures
+
+
+\newpage
+\begin{table}[H]
+\begin{center}
+\renewcommand\thetable{1}
+\caption{Použité skratky}
+\begin{tabular}{ |c|C{10cm}| } 
+ \hline
+\textbf{Skratka} & \textbf{Vysvetlenie} 
+ \\ \hline
+WEP  & Wired Equivalent Privacy
+\\ \hline
+WPA  & WiFi Protected Access
+\\ \hline
+WPA2  & WiFi Protected Access 2
+\\ \hline
+WPA3  & WiFi Protected Access 3
+\\ \hline
+CCMP  & Counter Mode with Cipher Block Chaining Message Authentication Code Protocol
+\\ \hline
+AES  & Advanced Encryption Standard
+\\ \hline
+PSK  & Pre-Shared Key
+\\ \hline
+SAE & Simultaneous Authentication of Equals
+\\ \hline
+PTK & Pairwise Transient Key
+\\ \hline
+MIC & Message Integrity Code
+\\ \hline
+MD5 & Message Digest 5
+\\ \hline
+SHA & Secure Hash Algorithm 1
+\\ \hline
+SHA-256 & Secure Hash Algorithm 256-bit
+\\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+
+
+\newpage
+
+\pagestyle{fancy}
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\fancyhf{} 
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot[C]{\thepage}
+\renewcommand\thesection{\arabic{section}}
+
+\floatstyle{plaintop}
+\restylefloat{table}
+
+\section{Úvod}
+WiFi siete predstavujú jeden z najrozšírenejších spôsobov bezdrôtového pripojenia k internetu. Vďaka svojej jednoduchosti, dostupnosti a nízkym nákladom sa stali neoddeliteľnou súčasťou domácností, podnikov a verejných priestorov. Táto technológia, založená na štandardoch IEEE 802.11, umožňuje používateľom pripojiť sa k internetu alebo lokálnym sieťam bez potreby fyzického kábla.
+
+WiFi siete môžu byť verejné, teda voľne prístupné, alebo môžu byť zabezpečené heslom, ktoré slúži ako hlavný mechanizmus na ochranu siete pred neoprávneným prístupom. Mnohí používatelia predpokladajú, že ich sieť je vďaka heslu  bezpečná, no v skutočnosti môže byť zabezpečenie často nedostatočné. Slabé alebo predvolené heslá, neaktualizovaný bezpečnostný protokol či nevedomé chyby používateľov môžu viesť k tomu, že útočník dokáže sieť pomerne jednoducho prelomiť a získať neoprávnený prístup. To poukazuje na dôležitosť nielen správneho zabezpečenia, ale aj pochopenia potenciálnych rizík spojených s používaním WiFi sietí, ktorým sa táto práca venuje.
+
+
+\section{Teoretická časť}
+V tejto kapitole stručne prejdeme históriu WiFi sietí a ich bezpečnostných opatrení, pozrieme sa bližšie na WPA2 protokol a jeho slabiny a predstavíme si nástroje potrebné na vykonanie útoku na WiFi siete a prelomenie jej hesla.
+
+\subsection{História WiFi sietí}
+WiFi siete, ktoré sú založené na štandarde IEEE 802.11, sa od svojho vzniku stretávali s potrebou zaistiť bezpečné pripojenie pre používateľov. Prvým bezpečnostným protokolom, ktorý bol vyvinutý, bol WEP, zavedený v roku 1997. Tento protokol bol navrhnutý s cieľom poskytnúť bezpečnosť porovnateľnú s káblovými sieťami. WEP používa RC4 šifrovací algoritmus na šifrovanie dát a 40-bitový alebo 104-bitový šifrovací kľúč spolu s 24-bitovým inicializačným vektorom.\cite{vseob_1, vseob_2} Napriek tomu, že bol WEP považovaný za dostatočný pre svoju dobu, jeho implementácia obsahovala závažné chyby, ktoré útočníkom umožňovali prelomenie ochrany v priebehu niekoľkých minút. Najväčšou slabinou WEP bol jeho statický inicializačný vektor, ktorý sa opakoval, čo útočníci dokázali efektívne využiť.\cite{slabiny_po_2, vseob_2} Z týchto dôvodov bol WEP oficiálne označený za zastaraný a neodporúčaný v roku 2004.
+
+V reakcii na nedostatky WEP bol v roku 2003 zavedený nový bezpečnostný protokol WPA. Tento protokol priniesol niekoľko vylepšení, najmä použitie TKIP, ktorý dynamicky generuje šifrovacie kľúče pre každú prenosovú reláciu, čím sa eliminuje problém statických kľúčov jeho predchodcu.\cite{slabiny_po_2} WPA tiež obsahoval mechanizmus na detekciu neoprávnených prístupových bodov, čím prispel k zvýšeniu bezpečnosti. Napriek tomu, že WPA bol výrazným zlepšením oproti WEP, bol len dočasným riešením, pretože už v čase jeho zavedenia sa aktívne pracovalo na štandarde WPA2, ktorý mal byť uvedený v krátkom časovom horizonte a priniesť ešte vyššiu úroveň zabezpečenia.
+
+Definitívnym krokom k zvýšeniu bezpečnosti WiFi sietí bolo zavedenie protokolu WPA2 v roku 2004. WPA2 nahradil RC4 algoritmus pokročilejším šifrovaním AES, ktoré je dodnes považované za vysoko bezpečné. Okrem toho WPA2 používa protokol CCMP, ktorý poskytuje silnú ochranu integrity a dôvernosti dát. WPA2 sa stal štandardom pre bezpečné pripojenie na WiFi siete a je široko používaný dodnes. \cite{wpa3_adoption} Avšak aj tento protokol má svoje slabiny, najmä ak používatelia zvolia slabé heslá, ktoré môžu byť prelomené slovníkovým alebo brute force útokom. Keďže je dodnes bežne používaný a podporovaný, práve týmto slabinám sa budeme v tejto práci ďalej venovať.
+
+Najnovšou generáciou bezpečnostných protokolov je WPA3, predstavený v roku 2018. WPA3 priniesol niekoľko významných vylepšení v oblasti bezpečnosti, ktoré reagovali na slabiny WPA2. Jedným z kľúčových prvkov WPA3 je použitie protokolu SAE namiesto tradičného PSK. SAE poskytuje ochranu proti útokom založeným na zachytení dátového prenosu, pretože heslá už nie je možné získať zo zachytených handshakeov. Okrem toho WPA3 zlepšil ochranu pre IoT zariadenia a zaviedol mechanizmy na ochranu siete pred útokmi brute force, ktoré obmedzujú počet pokusov o zadanie hesla.\cite{vseob_2}
+
+Vývoj bezpečnostných protokolov pre WiFi siete odráža neustále sa meniace výzvy v oblasti kybernetickej bezpečnosti. Od zlyhaní WEP cez dočasné riešenie WPA až po robustný WPA3 je zrejmé, že bezpečnosť WiFi sietí sa musí neustále prispôsobovať novým hrozbám a požiadavkám používateľov.
+
+\subsection{WPA2 protokol}
+WPA2 bol predstavený ako významné vylepšenie oproti starším protokolom WEP a WPA. Vďaka použitiu šifrovania AES a protokolu CCMP poskytuje silnú ochranu dát a integritu komunikácie. Tento protokol sa stal štandardom pre zabezpečenie WiFi sietí a dodnes je široko využívaný.\cite{wpa3_adoption} Napriek tomu však WPA2 nie je neprelomiteľné. Slabiny sa nachádzajú nielen v implementácii, ale aj v spôsobe, akým sa autentifikácia vykonáva. V tejto podkapitole sa zameriame na jeden z najzraniteľnejších aspektov WPA2 – proces tzv. four-way handshake.
+
+Keď sa zariadenie (klient) pokúša pripojiť k zabezpečenej WiFi sieti, WPA2 používa mechanizmus four-way handshake na overenie, či zariadenie a prístupový bod (router) zdieľajú rovnaké heslo. Tento proces umožňuje výmenu šifrovacích kľúčov bez toho, aby bolo samotné heslo odhalené počas prenosu a je rovnaký ako v protokole WPA.\cite{vseob_1, slabiny_po_2}
+
+\begin{figure}[H] 
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/handshake.png}
+    \caption{Schéma four-way handshake v protokole WPA/WPA2.}
+    \label{fig:handshake}
+\end{figure}
+
+Handshake prebieha v štyroch krokoch:
+
+\textbf{1. Inicializácia handshake:} Prístupový bod (AP) posiela klientovi náhodné číslo (nonce) známe ako "ANonce".
+
+\textbf{2. Odpoveď klienta:} Klient na základe prijatého "ANonce" vygeneruje vlastné náhodné číslo (SNonce) a použije ho spolu s heslom PSK na výpočet PTK. Tento kľúč slúži na šifrovanie komunikácie. Klient odošle svoje SNonce späť prístupovému bodu.
+
+\textbf{3. Overenie klienta:} Prístupový bod vypočíta PTK pomocou hesla, ANonce a SNonce, a odošle klientovi správu s MIC, ktorú môže klient použiť na overenie správnosti kľúča.
+
+\textbf{4. Ukončenie handshake:} Klient potvrdí prijatie správneho kľúča a obe strany začnú šifrovanú komunikáciu.
+
+
+\subsection{Slabiny WPA2 handshakeu}
+Aj keď WPA2 pri pripojení klienta samotné heslo neprenáša, implementácia four-way handshakeu obsahuje závažnú slabinu, ktorá môže byť zneužitá útočníkom. Proces propojenia môže byť totiž zachytený útočníkom, ktorý sa nachádza v dosahu siete. Útočník môže dokonca vynútiť handshake tým, že pošle deautentifikačné pakety, čím zariadenia odpojí od siete a donúti ich znovu sa pripojiť.
+
+Keď útočník takto zachytí handshake, môže spustiť off-line útok na heslo. Zachytené údaje sú totiž postačujúce na výpočet všetkých možných hesiel, kým sa nenájde správne heslo. Tento proces je obzvlášť efektívny, ak používateľ zvolil slabé alebo krátke heslo. Pomocou rôznych známych techník lámania hesiel môže útočník získať prístup do siete bez potreby ďalšej interakcie so zariadením.
+
+\subsection{Techniky lámania hesiel}
+Proces lámania hesiel je založený na pokusoch o nájdenie správnej kombinácie znakov, ktorá zodpovedá zachyteným autentifikačným údajom. Úspešnosť útoku závisí od použitej techniky, výpočtového výkonu a zložitosti samotného hesla. Medzi najčastejšie používané techniky lámania hesiel patria:
+
+\begin{itemize}
+\item Slovníkový útok
+\item Brute force útok
+\item Hybridný útok
+\item Rainbow tabuľky
+\end{itemize}
+
+\textbf{Slovníkový útok} je jednou z najznámejších a najpoužívanejších metód lámania hesiel. Pri tomto útoku sa využíva preddefinovaný zoznam (slovník) bežne používaných hesiel, ktorý útočník postupne porovnáva so zachytenými údajmi z handshake. Slovníkové útoky sú účinné najmä proti slabým heslám, ktoré sú jednoduché, krátke alebo bežne používané (napr. "12345678", "password"). Úspešnosť tejto metódy závisí od kvality a veľkosti použitého slovníka. Táto metóda však zlyháva, ak je heslo dostatočne dlhé, komplexné alebo nie je bežne používané.
+
+\textbf{Brute force útok}, alebo útok hrubou silou, je technika, pri ktorej útočník postupne skúša všetky možné kombinácie znakov, kým nenájde správne heslo. Táto metóda je garantovaná na prelomenie hesla, pokiaľ útočník disponuje dostatočným výpočtovým výkonom a časom. Brute force útok je však výrazne náročný pri komplexných a dlhých heslách. Napríklad, ak je heslo dlhé 8 znakov a obsahuje malé a veľké písmená, čísla a špeciálne znaky, počet možných kombinácií sa pohybuje v miliardách. Úspešnosť brute force útoku je preto závislá od zložitosti hesla a výpočtovej sily dostupného hardvéru.
+
+\textbf{Rainbow tabuľky} sú predgenerované tabuľky hashov, ktoré umožňujú útočníkom rýchlo overiť zhodu medzi hashmi a potenciálnymi heslami. Táto metóda je efektívna najmä v prípadoch, keď útočník má prístup k veľkému množstvu dát a času na ich predgenerovanie. Pri WPA2 sa však rainbow tabulky stávajú menej praktickými, pretože handshake obsahuje unikátne náhodné hodnoty (nonce), ktoré bránia opakovanej použiteľnosti predgenerovaných hashov. 
+
+
+\textbf{Hybridný útok} kombinuje prvky slovníkového a brute force útoku. Namiesto generovania všetkých možných kombinácií znakov útočník použije základný slovník hesiel a aplikuje naň pravidlá, ktoré pridávajú, modifikujú alebo kombinujú znaky. Napríklad heslo password môže byť testované aj ako Password123 alebo p@ssw0rd. Hybridné útoky sú účinné, ak používatelia vytvárajú heslá založené na známych vzoroch s malými úpravami.
+
+Okrem vyššie spomenutých techník útočníci používajú na získanie hesiel aj ďalšie spôsoby, ako phishing alebo sociálne inžinierstvo. Vzhľadom na to, že tieto metódy sú postavené na podvodoch či manipulácii, a nie na technikách lámania hesiel, sú mimo zámeru tejto práce.
+
+\subsection{Voľne dostupné nástroje na lámanie hesiel}
+Vďaka širokej dostupnosti open-source nástrojov sú techniky lámania hesiel voľne dostupné každému, kto má počítač. Medzi najznámejšie bežne používané nástroje patria John the Ripper, Hashcat a Aircrack-ng, ktoré poskytujú efektívne možnosti pre analýzu hesiel a testovanie bezpečnosti sietí.
+
+\textbf{John the Ripper} je jeden z najpopulárnejších nástrojov na prelomenie hesiel, ktorý sa používa na testovanie ich odolnosti. Tento nástroj dokáže pracovať s rôznymi typmi hashov a šifrovaní, vrátane hesiel operačných systémov, súborových systémov a ďalších. Podporuje slovníkové útoky, brute force útoky aj hybridné útoky. Je vysoko konfigurovateľný, čo umožňuje používateľovi definovať pravidlá, ktoré prispôsobia generovanie hesiel na základe špecifických potrieb. Vďaka jeho efektivite a možnosti paralelného spracovania je vhodný na použitie na bežnom hardvéri aj v profesionálnych prostrediach. John the Ripper je dostupný ako open-source a je aktívne udržiavaný komunitou, čo zaručuje pravidelné aktualizácie a rozšírenia.
+
+
+\textbf{Hashcat} je ďalší výkonný nástroj na prelomenie hesiel, ktorý sa špecializuje na rýchlu analýzu hashov. Na rozdiel od Johna the Rippera je Hashcat optimalizovaný na využitie grafických kariet, čo dramaticky zvyšuje jeho výpočtový výkon. Hashcat podporuje tisíce algoritmov hashovania vrátane MD5, SHA-1, SHA-256, bcrypt, a WPA2 handshake. Podobne ako John the Ripper, aj Hashcat umožňuje vykonávať slovníkové útoky, brute force útoky a hybridné útoky. Hashcat je často využívaný bezpečnostnými špecialistami na analýzu hesiel vo veľkých dátových súboroch a jeho podpora hardvérovej akcelerácie ho robí jedným z najrýchlejších nástrojov v tejto oblasti.
+
+
+\textbf{Aircrack-ng} je balík nástrojov špeciálne navrhnutý na testovanie bezpečnosti bezdrôtových sietí. Aircrack-ng umožňuje zachytávať dátový prenos v sieti, analyzovať pakety a vykonávať útoky na heslá WiFi sietí chránených WEP, WPA alebo WPA2. 
+
+Najdôležitejšou funkciou Aircrack-ng je schopnosť zachytiť WPA/WPA2 handshake, čo je kľúčový krok pri lámaní hesiel zabezpečených WiFi sietí. Po zachytení handshakeu je možné použiť slovníkový útok na prelomenie hesla. Okrem toho Aircrack-ng obsahuje nástroje na vynútenie deautentifikácie klientov zo siete, čo umožňuje simulovať nové pripojenie a získať handshake rýchlejšie. Tento nástroj sa stal štandardom pri testovaní bezpečnosti WiFi sietí a je široko používaný komunitou etických hackerov aj profesionálnych testerov bezpečnosti.
+
+
+\section{Praktická časť}
+V tejto kapitole sa budeme venovať lámaniu hesiel od WiFi sietí zabezpečených pomocou WPA/WPA2 protokolu. Prejdeme si hardvérové aj softvérové nástroje potrebné na vykonanie útoku na sieť, postup monitorovania sieťovej prevádzky, postup, stavbu a limitácie experimentu, automatizáciu a uvedieme výsledky.
+
+
+\subsection{Potrebné nástroje}
+Ako sme už spomenuli v predošlej kapitole, na rozlúsknutie hesla od WiFi siete zabezpečenej cez WPA/WPA2 je potrebné najprv zachytiť handshake. Z toho vyplývajú dve základné požiadavky:
+
+\begin{enumerate}
+\item Útočník musí byť schopný zachytávať sieťovú prevádzku
+\item Útočník musí byť v dosahu cieľovej WiFI siete
+\end{enumerate}
+
+Schopnosť zachytávať sieťovú prevádzku, tzv. monitorovací režim, nie je bežnou vlastnosťou WiFi kariet zabudovaných v notebookoch alebo stolných počítačoch. Tento režim vyžaduje špeciálny hardvér – externý WiFi adaptér s vnútorným čipom uspôsobeným na túto úlohu. Pre účely experimentu bol použitý externý WiFi adaptér Alfa AWUS036NHA s čipom Atheros AR9271.
+
+Okrem hardvéru sú potrebné aj softvérové nástroje, ktoré umožňujú ovládať špecifické funkcie WiFi adaptéra. Softvér zohráva kľúčovú úlohu pri zachytávaní dátovej prevádzky, analyzovaní získaných údajov a následnom vykonávaní útoku. Pre účely experimentu bola použitá špecializovaná linuxová distribúcia Kali Linux, ktorá je určená pre penetračné testovanie a bezpečnostné analýzy. Táto distribúcia obsahuje širokú škálu predinštalovaných nástrojov, potrebných na analýzu a testovanie bezpečnosti WiFi sietí, na experiment boli použité nástroje z balíka Aircrack-ng.
+
+
+\subsection{Postup monitorovania sieťovej prevádzky}
+Monitorovanie sieťovej prevádzky je kľúčovým krokom pri analýze bezpečnosti WiFi sietí. Tento proces zahŕňa zachytávanie dát prenášaných medzi zariadeniami v sieti, čo umožňuje identifikovať potenciálne zraniteľnosti, ako aj zachytiť handshake potrebný na prelomenie hesla. Nasledujúci postup opisuje kroky, ktoré boli vykonané počas experimentu.
+
+\subsubsection{Príprava na monitorovací režim} Pred prechodom WiFi adaptéra do monitorovacieho režimu je potrebné vypnúť všetky procesy, ktoré by mohli rušiť experiment alebo blokovať používanie adaptéra v tomto režime. Na tento účel bol použitý príkaz:
+
+\begin{verbatim} airmon-ng check kill \end{verbatim}
+
+Tento príkaz identifikuje a ukončí procesy, ktoré by mohli rušiť prácu nástrojov ako Airmon-ng alebo Airodump-ng. Typicky ide o služby spravujúce bezdrôtové pripojenie, napríklad NetworkManager. Po ukončení týchto procesov je adaptér pripravený na prechod do monitorovacieho režimu.
+
+\subsubsection{Prechod do monitorovacieho režimu} 
+Následovný krok je prechod WiFi adaptéra do tzv. monitorovacieho režimu, ktorý umožňuje zachytávanie všetkej sieťovej prevádzky v dosahu adaptéra, vrátane paketov, ktoré nie sú priamo adresované zariadeniu útočníka. Na tento účel bol použitý nástroj Airmon-ng, ktorý je súčasťou balíka Aircrack-ng.
+
+\begin{verbatim} airmon-ng start wlan1 \end{verbatim}
+
+Týmto príkazom bol WiFi adaptér prepnutý do monitorovacieho režimu, pričom \texttt{wlan[číslo]} predstavuje názov sieťového rozhrania. V prípade úspešného prechodu sa v systéme vytvorí nové rozhranie, zvyčajne označené ako \texttt{wlan[číslo]mon}.
+
+\subsubsection{Identifikácia cieľovej siete} 
+Po aktivovaní monitorovacieho režimu je potrebné identifikovať cieľovú WiFi sieť. Na tento účel bol použitý nástroj Airodump-ng, ktorý poskytuje prehľad všetkých sietí v dosahu adaptéra.
+
+\begin{verbatim} airodump-ng wlan1mon \end{verbatim}
+
+Tento príkaz zobrazí zoznam sietí vrátane SSID (názvu siete), MAC adresy prístupového bodu (BSSID), použitých bezpečnostných protokolov a kanálu siete. Po identifikovaní cieľovej siete bola zvolená konkrétna sieť na ďalšiu analýzu. Samozrejme pre účely tohto experimentu som pracoval so svojou domácou sieťou, inak by to bolo nelegálne.
+
+\subsubsection{Zachytávanie dátovej prevádzky} 
+Na zachytávanie paketov v cieľovej sieti opäť slúži nástroj Airodump-ng. Tento nástroj umožňuje filtrovanie paketov na základe BSSID cieľovej siete a kanála, na ktorom sieť operuje.
+
+\begin{verbatim} airodump-ng -c [kanál] --bssid [BSSID] -w [súbor] wlan1mon \end{verbatim}
+
+Uvedený príkaz berie tieto argumenty: 
+
+\begin{itemize} 
+\item \texttt{-c [kanál]} – špecifikuje kanál cieľovej siete, napríklad 3 
+\item \texttt{--bssid [BSSID]} – MAC adresa prístupového bodu. 
+\item \texttt{-w [súbor]} – názov súboru, do ktorého sa budú ukladať zachytené pakety. 
+\end{itemize}
+
+Tento krok umožňuje priebežné ukladanie sieťovej prevádzky na analýzu a zároveň zachytenie handshakeu potrebného pre ďalšie kroky. Príkaz má kontinuálny výstup do konzoly, ktorý blokuje zadávanie ďalších príkazov používateľom a ukončuje sa stlačením kombinácie klávesov \texttt{Ctrl + C} (táto kombinácia odošle procesu signál \texttt{SIGINT}, čím sa proces preruší). Po detekovaní WPA/WPA2 handshakeu v dátovej prevádzke sa táto udalosť zobrazí priamo vo výstupe príkazového riadku.
+
+Je potrebné spomenúť, že počas experimentu nebola využitá funkcia na injektovanie paketov do siete, keďže nebolo potrebné odosielať deautentifikačné pakety. Vzhľadom na to, že experiment prebiehal na mojej domácej sieti, jednoducho som zariadenie manuálne odpojil a následne znovu pripojil, vďaka čomu prebehol potrebný handshake.
+
+\subsection{Stavba experimentu}
+Experiment bol navrhnutý tak, aby simuloval realistické scenáre prelomenia hesiel WiFi sietí a zároveň poskytol merateľné údaje o efektivite slovníkových a brute-force útokov. Celý proces bol rozdelený do piatich kôl, pričom v každom kole boli testované štyri rôzne heslá s rôznymi charakteristikami. Cieľom bolo analyzovať, ako rôzne typy hesiel ovplyvňujú čas potrebný na ich prelomenie a úspešnosť zvolených útokov.
+
+Každé kolo experimentu obsahovalo nasledovné typy hesiel: 
+\begin{enumerate} 
+\item Náhodné heslo (8 miest) – Heslo generované náhodne, obsahujúce malé a veľké písmená a čísla. Tento typ hesla je zameraný na vyzdvihnutie brute-force útoku.
+\item Slovníkové heslo (8 miest) – Heslo vybrané zo známeho slovníka \texttt{rockyou.txt}, ktorý obsahuje veľkú databázu bežne používaných hesiel. Toto heslo je zamerané na vyzdvihnutie slovníkového útoku. 
+\item Náhodné heslo (9 miest) – Rovnaký princíp ako pri 8-miestnom náhodnom hesle, avšak s vyšším počtom znakov, čo zvyšuje zložitosť útoku. 
+\item Slovníkové heslo (9 miest) – Rovnaký princíp ako pri 8-miestnom slovníkovom hesle, avšak s vyšším počtom znakov, čo zvyšuje zložitosť útoku.
+ \end{enumerate}
+
+Každé z týchto hesiel bolo podrobené obom typom útokov: slovníkovému aj brute-force. Pre každý typ útoku bol zaznamenaný čas potrebný na prelomenie hesla, pričom v prípade neúspešného pokusu bol výsledok označený ako \texttt{N/A}.
+
+
+\subsection{Limitácie experimentu}
+Dĺžky hesiel testovaných v tomto experimente boli podmienené obmedzeniami môjho routera, ktorý podporuje minimálne 8-miestne heslá. Aby som pokryl viac rôznych dĺžiek hesiel a otestoval ich vplyv na čas potrebný na prelomenie, musel som testovať heslá s dĺžkou 8 a 9 znakov.
+
+Tento prístup však prináša problém pri brute-force útokoch. Počet všetkých možných permutácií hesiel je exponenciálne závislý od dĺžky hesla a veľkosti množiny povolených znakov. Pre heslá obsahujúce malé a veľké písmená, číslice a špeciálne znaky je veľkosť množiny povolených znakov 94. Na základe výpočtov:
+
+\begin{itemize} 
+\item Pre 8-miestne heslo je možné vytvoriť $94^8 \approx 6,095,689,385,410,816$ rôznych kombinácií.
+ \item Pre 9-miestne heslo je možné vytvoriť $94^9 \approx 572,994,802,228,616,704$ rôznych kombinácií. 
+\end{itemize}
+
+Tieto počty predstavujú enormné množstvo možností, ktoré by na mojom hardvéri vyžadovali nereálny čas na úplné vyčerpanie všetkých kombinácií. Napríklad brute-force útok na 9-miestne heslo by trval približne 2 milióny rokov.
+
+Na vyriešenie tejto výzvy som namiesto čistého brute-force útoku použil slovníkový útok, ktorý sa k brute-force útoku len približuje. Optimalizácie vykonané na zníženie počtu kombinácií boli nasledovné:
+
+\begin{itemize} 
+\item Obmedzenie množiny znakov: Množinu možných znakov som zúžil na malé a veľké písmená a číslice, čím som znížil veľkosť množiny z pôvodných 94 znakov na 62 znakov (26 malých písmen + 26 veľkých písmen + 10 číslic). Táto redukcia dramaticky znížila počet možných permutácií. 
+\item Generovanie permutácií znakov hesla: Vzhľadom na to, že som poznal testované heslá, použil som príkaz \texttt{crunch} na generovanie všetkých možných permutácií znakov konkrétneho hesla. Napríklad, pre heslo \texttt{mtpqb7Dv} som vytvoril slovník obsahujúci všetky možné permutácie jeho znakov. 
+\item Zavedenie opakovania znakov: Pri 9-miestnych heslách som zaviedol mierne opakovanie znakov, aby som znížil počet permutácií. Ak by heslo obsahovalo výlučne unikátne znaky, množstvo kombinácií by bolo stále príliš vysoké.
+\item Oddelenie procesov: Generovanie slovníkov som oddelil od samotného procesu prelomenia hesla. Týmto spôsobom čas potrebný na vytvorenie permutácií neovplyvnil čas potrebný na samotné prelomenie hesla. 
+\end{itemize}
+
+Týmito opatreniami som zabezpečil, že experiment zostal v prakticky zvládnuteľných časových rámcoch, pričom zachoval realistický prístup k testovaniu efektivity brute-force útokov a slovníkových útokov.
+
+
+\subsection{Príprava experimentu}
+Každé z piatich kôl experimentu si vyžadovalo vykonanie presne definovaných krokov, aby bolo možné získať potrebné dáta na testovanie efektivity útokov. Príprava pre každé kolo zahŕňala následovné činnosti:
+
+\begin{enumerate} 
+\item Zmena hesla WiFi siete: Pre každé zo štyroch hesiel v danom kole (dve náhodné a dve zo slovníka) som musel manuálne zmeniť heslo na svojom WiFi routeri. Toto zabezpečilo, že testované heslo bolo aktuálne použité na zabezpečenie siete.
+
+\item Odpojenie a znovupripojenie zariadenia: Po zmene hesla som svoje zariadenie (stolný počítač) odpojil od WiFi siete a následne ho znovu pripojil. Tento krok bol nevyhnutný na generovanie WPA2 handshake, ktorý je kľúčový pre testovanie útokov.
+
+\item Zachytenie handshake: Pomocou postupu uvedeného v sekcii 3.2 som na svojom notebooku zachytil WPA2 handshake pomocou nástroja \texttt{Airodump-ng}. Zachytené dáta som uložil do súboru s príponou \texttt{.pcap}, ktorý slúži ako vstupný súbor pre ďalšie kroky analýzy a testovania.
+
+\item Príprava "brute force" slovníkov: Pre náhodne generované heslá som vytvoril špecifické slovníky na vykonanie brute-force simulácie. Tento proces zahŕňal použitie nástroja \texttt{crunch}, ktorým som generoval všetky možné permutácie znakov daného hesla.
+\end{enumerate}
+
+Tieto kroky som vykonal pre každé zo štyroch hesiel v danom kole, pričom všetky získané \texttt{.pcap} súbory a generované slovníky boli organizované a pripravené na nasledujúcu fázu experimentu, ktorá zahŕňala samotné útoky.
+
+\subsection{Vykonanie experimentu}
+Na automatizáciu samotného prelomenia hesiel v jednotlivých kolách som vytvoril Bash skript, ktorého zdrojový kód je uvedený na priloženom obrázku nižšie. Skript zjednodušuje proces útoku na heslo pomocou nástroja \texttt{aircrack-ng}, pričom vypisuje čas potrebný na prelomenie hesla aj výstup príkazu o úspešnosti prelomenia hesla.
+
+\begin{figure}[H] 
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/skript.png}
+    \caption{Zdrojový kód skriptu.}
+    \label{fig:skript}
+\end{figure}
+
+\subsubsection{Popis a použitie skriptu} 
+Skript prijíma dva vstupné parametre. Prvým je slovník hesiel, respektíve cesta k súboru obsahujúcemu zoznam hesiel na vykonanie slovníkového útoku. Druhým je súbor vo formáte .pcap, ktorý obsahuje zachytené dáta z WPA/WPA2 handshakeom. 
+
+
+\subsubsection{Praktické využitie v experimente} Tento skript som použil pre každé testované heslo v rámci všetkých piatich kôl experimentu. Pre slovníkové heslá som použil predom pripravený slovník \texttt{rockyou.txt} a pre náhodné heslá som použil vlastné generované slovníky s permutáciami znakov hesla. Výsledné časy prelomenia hesla, prípadne informácia o neúspechu (\texttt{N/A}), boli následne zaznamenané do excelových tabuliek. Automatizácia pomocou skriptu výrazne zjednodušila proces a umožnila zamerať sa na analýzu výsledkov.
+
+
+\subsection{Výsledky experimentu}
+
+
+\section{Zhodnotenie}
+-- popis vysledky testov
+-- odporucania pre zvysenie bezpecnosti pre uzivatelov
+
+
+
+\makeatletter
+\addtocontents{toc}{\def\string\@dotsep{100}}
+\makeatother
+
+%\thispagestyle{plain}
+\phantomsection
+\addcontentsline{toc}{section}{Literatúra}
+
+%\pagenumbering{gobble}
+
+\bibliographystyle{unsrtnat} 
+
+\bibliography{mybib}
+%\setcounter{page}{46}
+
+\addtocontents{toc}{\def\string\@dotsep{4.5}}  % 4.5 might be a different 
+
+
+\end{document}
+
+
+
