@@ -1,12 +1,15 @@
 \documentclass[12pt, twoside]{book}
 \usepackage[a4paper,top=2.5cm,bottom=2.5cm,left=3.5cm,right=2cm]{geometry}
 \usepackage[T1]{fontenc}
+\usepackage{longtable} 
+\usepackage{multirow} 
 \usepackage{fancyhdr}
 \usepackage{float}
 \usepackage{graphicx}
 \usepackage{adjustbox}
 \usepackage{pdfpages}
 \usepackage{listings}
+\usepackage{amsmath}
 \usepackage{url}
 \usepackage{array}
 \usepackage{multirow}
@@ -186,11 +189,19 @@ AES  & Advanced Encryption Standard
 \\ \hline
 PSK  & Pre-Shared Key
 \\ \hline
-SAE & Simultaneous Authentication of Equals
-\\ \hline
 PTK & Pairwise Transient Key
 \\ \hline
 MIC & Message Integrity Code
+\\ \hline
+SAE & Simultaneous Authentication of Equals
+\\ \hline
+PE  & Password Element
+\\ \hline
+SS  & Shared Secret
+\\ \hline
+KCK  & Key Confirmation key
+\\ \hline
+MK  & Master Key
 \\ \hline
 MD5 & Message Digest 5
 \\ \hline
@@ -222,11 +233,11 @@ SHA-256 & Secure Hash Algorithm 256-bit
 \section{Úvod}
 WiFi siete predstavujú jeden z najrozšírenejších spôsobov bezdrôtového pripojenia k internetu. Vďaka svojej jednoduchosti, dostupnosti a nízkym nákladom sa stali neoddeliteľnou súčasťou domácností, podnikov a verejných priestorov. Táto technológia, založená na štandardoch IEEE 802.11, umožňuje používateľom pripojiť sa k internetu alebo lokálnym sieťam bez potreby fyzického kábla.
 
-WiFi siete môžu byť verejné, teda voľne prístupné, alebo môžu byť zabezpečené heslom, ktoré slúži ako hlavný mechanizmus na ochranu siete pred neoprávneným prístupom. Mnohí používatelia predpokladajú, že ich sieť je vďaka heslu  bezpečná, no v skutočnosti môže byť zabezpečenie často nedostatočné. Slabé alebo predvolené heslá, neaktualizovaný bezpečnostný protokol či nevedomé chyby používateľov môžu viesť k tomu, že útočník dokáže sieť pomerne jednoducho prelomiť a získať neoprávnený prístup. To poukazuje na dôležitosť nielen správneho zabezpečenia, ale aj pochopenia potenciálnych rizík spojených s používaním WiFi sietí, ktorým sa táto práca venuje.
+WiFi siete môžu byť verejné, teda voľne prístupné, alebo môžu byť zabezpečené heslom, ktoré slúži ako hlavný mechanizmus na ochranu siete pred neoprávneným prístupom. Mnohí používatelia predpokladajú, že ich sieť je vďaka heslu  bezpečná, no v skutočnosti môže byť zabezpečenie často nedostatočné. Slabé alebo predvolené heslá, neaktualizovaný bezpečnostný protokol či nevedomé chyby používateľov môžu viesť k tomu, že útočník dokáže sieť pomerne jednoducho kompromitovať a získať neoprávnený prístup. To poukazuje na dôležitosť nielen správneho zabezpečenia, ale aj pochopenia potenciálnych rizík spojených s používaním WiFi sietí, ktorým sa táto práca venuje.
 
 
 \section{Teoretická časť}
-V tejto kapitole stručne prejdeme históriu WiFi sietí a ich bezpečnostných opatrení, pozrieme sa bližšie na WPA2 protokol a jeho slabiny a predstavíme si nástroje potrebné na vykonanie útoku na WiFi siete a prelomenie jej hesla.
+V tejto kapitole stručne prejdeme históriu WiFi sietí a ich bezpečnostných opatrení, pozrieme sa bližšie na WPA2 protokol a jeho slabiny, uvedieme opatrenia pre ošetrenie týchto slabín v najnovšom protokole WPA3 a predstavíme si nástroje potrebné na vykonanie útoku na WiFi sieť s protokolom WPA2 a prelomenie jej hesla.
 
 \subsection{História WiFi sietí}
 WiFi siete, ktoré sú založené na štandarde IEEE 802.11, sa od svojho vzniku stretávali s potrebou zaistiť bezpečné pripojenie pre používateľov. Prvým bezpečnostným protokolom, ktorý bol vyvinutý, bol WEP, zavedený v roku 1997. Tento protokol bol navrhnutý s cieľom poskytnúť bezpečnosť porovnateľnú s káblovými sieťami. WEP používa RC4 šifrovací algoritmus na šifrovanie dát a 40-bitový alebo 104-bitový šifrovací kľúč spolu s 24-bitovým inicializačným vektorom.\cite{vseob_1, vseob_2} Napriek tomu, že bol WEP považovaný za dostatočný pre svoju dobu, jeho implementácia obsahovala závažné chyby, ktoré útočníkom umožňovali prelomenie ochrany v priebehu niekoľkých minút. Najväčšou slabinou WEP bol jeho statický inicializačný vektor, ktorý sa opakoval, čo útočníci dokázali efektívne využiť.\cite{slabiny_po_2, vseob_2} Z týchto dôvodov bol WEP oficiálne označený za zastaraný a neodporúčaný v roku 2004.
@@ -235,37 +246,104 @@ V reakcii na nedostatky WEP bol v roku 2003 zavedený nový bezpečnostný proto
 
 Definitívnym krokom k zvýšeniu bezpečnosti WiFi sietí bolo zavedenie protokolu WPA2 v roku 2004. WPA2 nahradil RC4 algoritmus pokročilejším šifrovaním AES, ktoré je dodnes považované za vysoko bezpečné. Okrem toho WPA2 používa protokol CCMP, ktorý poskytuje silnú ochranu integrity a dôvernosti dát. WPA2 sa stal štandardom pre bezpečné pripojenie na WiFi siete a je široko používaný dodnes. \cite{wpa3_adoption} Avšak aj tento protokol má svoje slabiny, najmä ak používatelia zvolia slabé heslá, ktoré môžu byť prelomené slovníkovým alebo brute force útokom. Keďže je dodnes bežne používaný a podporovaný, práve týmto slabinám sa budeme v tejto práci ďalej venovať.
 
-Najnovšou generáciou bezpečnostných protokolov je WPA3, predstavený v roku 2018. WPA3 priniesol niekoľko významných vylepšení v oblasti bezpečnosti, ktoré reagovali na slabiny WPA2. Jedným z kľúčových prvkov WPA3 je použitie protokolu SAE namiesto tradičného PSK. SAE poskytuje ochranu proti útokom založeným na zachytení dátového prenosu, pretože heslá už nie je možné získať zo zachytených handshakeov. Okrem toho WPA3 zlepšil ochranu pre IoT zariadenia a zaviedol mechanizmy na ochranu siete pred útokmi brute force, ktoré obmedzujú počet pokusov o zadanie hesla.\cite{vseob_2}
+Najnovšou generáciou bezpečnostných protokolov je WPA3, predstavený v roku 2018. WPA3 priniesol niekoľko významných vylepšení v oblasti bezpečnosti, ktoré reagovali na slabiny WPA2. Jedným z kľúčových prvkov WPA3 je použitie protokolu SAE namiesto tradičného PSK. SAE poskytuje ochranu proti útokom založeným na zachytení dátového prenosu, pretože heslá už nie je možné odvodiť zo zachytených handshakeov. Okrem toho WPA3 zlepšil ochranu pre IoT zariadenia a zaviedol mechanizmy na ochranu siete pred útokmi brute force, ktoré obmedzujú počet pokusov o zadanie hesla.\cite{vseob_2}
 
 Vývoj bezpečnostných protokolov pre WiFi siete odráža neustále sa meniace výzvy v oblasti kybernetickej bezpečnosti. Od zlyhaní WEP cez dočasné riešenie WPA až po robustný WPA3 je zrejmé, že bezpečnosť WiFi sietí sa musí neustále prispôsobovať novým hrozbám a požiadavkám používateľov.
 
 \subsection{WPA2 protokol}
-WPA2 bol predstavený ako významné vylepšenie oproti starším protokolom WEP a WPA. Vďaka použitiu šifrovania AES a protokolu CCMP poskytuje silnú ochranu dát a integritu komunikácie. Tento protokol sa stal štandardom pre zabezpečenie WiFi sietí a dodnes je široko využívaný.\cite{wpa3_adoption} Napriek tomu však WPA2 nie je neprelomiteľné. Slabiny sa nachádzajú nielen v implementácii, ale aj v spôsobe, akým sa autentifikácia vykonáva. V tejto podkapitole sa zameriame na jeden z najzraniteľnejších aspektov WPA2 – proces tzv. four-way handshake.
+WPA2 bol predstavený ako významné vylepšenie oproti starším protokolom WEP a WPA. Vďaka použitiu šifrovania AES a protokolu CCMP poskytuje silnú ochranu dát a integritu komunikácie. Tento protokol sa stal štandardom pre zabezpečenie WiFi sietí a dodnes je široko využívaný.\cite{wpa3_adoption} Napriek tomu však WPA2 nie je neprelomiteľné. Slabiny sa nachádzajú najmä v spôsobe, akým sa vykonáva autentifikácia. V tejto podkapitole sa zameriame na jeden z najzraniteľnejších aspektov WPA2 – proces tzv. four-way handshake.
 
 Keď sa zariadenie (klient) pokúša pripojiť k zabezpečenej WiFi sieti, WPA2 používa mechanizmus four-way handshake na overenie, či zariadenie a prístupový bod (router) zdieľajú rovnaké heslo. Tento proces umožňuje výmenu šifrovacích kľúčov bez toho, aby bolo samotné heslo odhalené počas prenosu a je rovnaký ako v protokole WPA.\cite{vseob_1, slabiny_po_2}
 
 \begin{figure}[H] 
     \centering
     \includegraphics[width=0.8\textwidth]{img/handshake.png}
-    \caption{Schéma four-way handshake v protokole WPA/WPA2.}
+    \caption{Schéma four-way handshakeu v protokole WPA/WPA2.}
     \label{fig:handshake}
 \end{figure}
 
 Handshake prebieha v štyroch krokoch:
 
-\textbf{1. Inicializácia handshake:} Prístupový bod (AP) posiela klientovi náhodné číslo (nonce) známe ako "ANonce".
+\textbf{1. Inicializácia handshake:} Prístupový bod (AP) posiela klientovi náhodné číslo (nonce) známe ako ANonce.
 
-\textbf{2. Odpoveď klienta:} Klient na základe prijatého "ANonce" vygeneruje vlastné náhodné číslo (SNonce) a použije ho spolu s heslom PSK na výpočet PTK. Tento kľúč slúži na šifrovanie komunikácie. Klient odošle svoje SNonce späť prístupovému bodu.
+\textbf{2. Odpoveď klienta:} Klient na základe prijatého ANonce vygeneruje vlastné náhodné číslo SNonce a použije ho spolu s heslom PSK na výpočet PTK. Kľúč PTK slúži na šifrovanie komunikácie. Klient odošle svoje SNonce späť prístupovému bodu.
 
 \textbf{3. Overenie klienta:} Prístupový bod vypočíta PTK pomocou hesla, ANonce a SNonce, a odošle klientovi správu s MIC, ktorú môže klient použiť na overenie správnosti kľúča.
 
 \textbf{4. Ukončenie handshake:} Klient potvrdí prijatie správneho kľúča a obe strany začnú šifrovanú komunikáciu.
 
 
-\subsection{Slabiny WPA2 handshakeu}
+\subsubsection{Slabiny WPA2 handshakeu}
 Aj keď WPA2 pri pripojení klienta samotné heslo neprenáša, implementácia four-way handshakeu obsahuje závažnú slabinu, ktorá môže byť zneužitá útočníkom. Proces propojenia môže byť totiž zachytený útočníkom, ktorý sa nachádza v dosahu siete. Útočník môže dokonca vynútiť handshake tým, že pošle deautentifikačné pakety, čím zariadenia odpojí od siete a donúti ich znovu sa pripojiť.
 
 Keď útočník takto zachytí handshake, môže spustiť off-line útok na heslo. Zachytené údaje sú totiž postačujúce na výpočet všetkých možných hesiel, kým sa nenájde správne heslo. Tento proces je obzvlášť efektívny, ak používateľ zvolil slabé alebo krátke heslo. Pomocou rôznych známych techník lámania hesiel môže útočník získať prístup do siete bez potreby ďalšej interakcie so zariadením.
+
+\subsection{WPA3 protokol}
+Na rozdiel od WPA2, WPA3 používa nový mechanizmus autentifikácie s názvom SAE. SAE eliminuje zraniteľnosti handshakeu WPA2 tým, že namiesto tradičných PSK autentifikácií využíva princípy výmeny kľúčov pomocou eliptických kriviek. Tento proces zaisťuje, že heslá nie sú nikdy priamo prenášané cez sieť ani neexistuje možnosť ich odvodenia zo zachytených dát.
+Na obrázku nižšie je uvedená schéma tohto procesu.
+
+\begin{figure}[H] 
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/dragonfly.png}
+    \caption{Zjednodušená schéma WPA3 handshakeu.}
+    \label{fig:dragonfly}
+\end{figure}
+
+\subsubsection{Krok 1: Inicializácia parametrov}
+Každé zariadenie (označené ako A a B) si vygeneruje svoje vlastné náhodné hodnoty:
+\begin{itemize}
+    \item \textbf{Zariadenie A:}
+        \begin{itemize}
+            \item Generuje náhodnú hodnotu \( r_A \) a výpočet \( m_A \).
+            \item Spočíta \( s_A = r_A + m_A \mod q \), kde \( q \) je veľkosť skupiny eliptickej krivky.
+            \item Vypočíta inverzný prvok \( E_A = (m_A \times PE)^{-1} \), kde \( PE \) je odvodený z hesla pomocou funkcie \( F(p, q, \text{password}) \), ktorá mapuje heslo na bod na eliptickej krivke.
+        \end{itemize}
+    \item \textbf{Zariadenie B:}
+        \begin{itemize}
+            \item Podobne ako A, generuje \( r_B \), \( m_B \), \( s_B \), a \( E_B \).
+        \end{itemize}
+\end{itemize}
+
+Obidve zariadenia si následne vymenia svoje hodnoty \( s_A, E_A \) a \( s_B, E_B \).
+
+\subsubsection{Krok 2: Výpočet spoločného tajomstva}
+
+Po výmene parametrov obe zariadenia vypočítajú spoločné tajomstvo \( SS \):
+
+\begin{itemize}
+    \item \textbf{Zariadenie A:} 
+    \[
+    ss = r_A \times (E_B + (s_B \times PE))
+    \]
+    \item \textbf{Zariadenie B:} 
+    \[
+    ss = r_B \times (E_A + (s_A \times PE))
+    \]
+\end{itemize}
+
+Týmto spôsobom obe zariadenia získajú rovnakú hodnotu \( ss \) bez toho, aby museli priamo preniesť svoje heslá alebo iné citlivé informácie.
+
+\subsubsection{Krok 3: Generovanie kľúčov}
+Zdieľané tajomstvo \( ss \) sa použije na odvodenie kľúčov:
+\begin{itemize}
+    \item \textbf{Kľúčové komponenty:} \( KCK \) a \( MK \) sú generované pomocou Key Derivation Function \( \text{KDF-n}(ss) \).
+\end{itemize}
+
+\subsubsection{Krok 4: Potvrdenie autentifikácie}
+
+Každé zariadenie vyšle druhému autentifikačné potvrdenie (\( \text{confirm}_A \) a \( \text{confirm}_B \)), ktoré obsahuje:
+\[
+\text{confirm} = H(kck + s_A + s_B + E_A + E_B + \text{device})
+\]
+
+Tieto potvrdenia zabezpečujú, že komunikácia medzi zariadeniami bola úspešne autentifikovaná a že obe strany majú rovnaké kľúče.
+
+\subsubsection{Hlavné výhody SAE Handshake}
+\begin{itemize}
+    \item \textbf{Ochrana hesla:} Heslo nie je nikdy prenášané v akejkoľvek podobe, čo eliminuje možnosť jeho zachytenia.
+    \item \textbf{Odolnosť voči offline útokom:} Použitie eliptických kriviek a SAE zabezpečuje, že útočník nemôže vykonať offline útok na zachytené údaje.
+\end{itemize}
+
 
 \subsection{Techniky lámania hesiel}
 Proces lámania hesiel je založený na pokusoch o nájdenie správnej kombinácie znakov, ktorá zodpovedá zachyteným autentifikačným údajom. Úspešnosť útoku závisí od použitej techniky, výpočtového výkonu a zložitosti samotného hesla. Medzi najčastejšie používané techniky lámania hesiel patria:
@@ -279,7 +357,7 @@ Proces lámania hesiel je založený na pokusoch o nájdenie správnej kombinác
 
 \textbf{Slovníkový útok} je jednou z najznámejších a najpoužívanejších metód lámania hesiel. Pri tomto útoku sa využíva preddefinovaný zoznam (slovník) bežne používaných hesiel, ktorý útočník postupne porovnáva so zachytenými údajmi z handshake. Slovníkové útoky sú účinné najmä proti slabým heslám, ktoré sú jednoduché, krátke alebo bežne používané (napr. "12345678", "password"). Úspešnosť tejto metódy závisí od kvality a veľkosti použitého slovníka. Táto metóda však zlyháva, ak je heslo dostatočne dlhé, komplexné alebo nie je bežne používané.
 
-\textbf{Brute force útok}, alebo útok hrubou silou, je technika, pri ktorej útočník postupne skúša všetky možné kombinácie znakov, kým nenájde správne heslo. Táto metóda je garantovaná na prelomenie hesla, pokiaľ útočník disponuje dostatočným výpočtovým výkonom a časom. Brute force útok je však výrazne náročný pri komplexných a dlhých heslách. Napríklad, ak je heslo dlhé 8 znakov a obsahuje malé a veľké písmená, čísla a špeciálne znaky, počet možných kombinácií sa pohybuje v miliardách. Úspešnosť brute force útoku je preto závislá od zložitosti hesla a výpočtovej sily dostupného hardvéru.
+\textbf{Brute force útok}, alebo útok hrubou silou, je technika, pri ktorej útočník postupne skúša všetky možné kombinácie znakov, kým nenájde správne heslo. Táto metóda garantuje prelomenie hesla, pokiaľ útočník disponuje dostatočným výpočtovým výkonom a časom. Brute force útok je však výrazne náročný pri komplexných a dlhých heslách. Napríklad, ak je heslo dlhé 8 znakov a obsahuje malé a veľké písmená, čísla a špeciálne znaky, počet možných kombinácií sa pohybuje v miliardách. Úspešnosť brute force útoku je preto závislá od zložitosti hesla a výpočtovej sily dostupného hardvéru.
 
 \textbf{Rainbow tabuľky} sú predgenerované tabuľky hashov, ktoré umožňujú útočníkom rýchlo overiť zhodu medzi hashmi a potenciálnymi heslami. Táto metóda je efektívna najmä v prípadoch, keď útočník má prístup k veľkému množstvu dát a času na ich predgenerovanie. Pri WPA2 sa však rainbow tabulky stávajú menej praktickými, pretože handshake obsahuje unikátne náhodné hodnoty (nonce), ktoré bránia opakovanej použiteľnosti predgenerovaných hashov. 
 
@@ -360,9 +438,9 @@ Tento krok umožňuje priebežné ukladanie sieťovej prevádzky na analýzu a z
 Je potrebné spomenúť, že počas experimentu nebola využitá funkcia na injektovanie paketov do siete, keďže nebolo potrebné odosielať deautentifikačné pakety. Vzhľadom na to, že experiment prebiehal na mojej domácej sieti, jednoducho som zariadenie manuálne odpojil a následne znovu pripojil, vďaka čomu prebehol potrebný handshake.
 
 \subsection{Stavba experimentu}
-Experiment bol navrhnutý tak, aby simuloval realistické scenáre prelomenia hesiel WiFi sietí a zároveň poskytol merateľné údaje o efektivite slovníkových a brute-force útokov. Celý proces bol rozdelený do piatich kôl, pričom v každom kole boli testované štyri rôzne heslá s rôznymi charakteristikami. Cieľom bolo analyzovať, ako rôzne typy hesiel ovplyvňujú čas potrebný na ich prelomenie a úspešnosť zvolených útokov.
+Experiment bol navrhnutý tak, aby simuloval realistické scenáre prelomenia hesiel WiFi sietí a zároveň poskytol merateľné údaje o efektivite slovníkových a brute-force útokov. Testované boli štyri rôzne druhy hesiel, pričom pre každý druh boli vytvorené tri rôzne inštancie. Týmto spôsobom bolo možné analyzovať, ako rôzne typy a variácie hesiel ovplyvňujú čas potrebný na ich prelomenie a úspešnosť zvolených metód útoku.
 
-Každé kolo experimentu obsahovalo nasledovné typy hesiel: 
+Typy hesiel použité v experimente:
 \begin{enumerate} 
 \item Náhodné heslo (8 miest) – Heslo generované náhodne, obsahujúce malé a veľké písmená a čísla. Tento typ hesla je zameraný na vyzdvihnutie brute-force útoku.
 \item Slovníkové heslo (8 miest) – Heslo vybrané zo známeho slovníka \texttt{rockyou.txt}, ktorý obsahuje veľkú databázu bežne používaných hesiel. Toto heslo je zamerané na vyzdvihnutie slovníkového útoku. 
@@ -370,7 +448,7 @@ Každé kolo experimentu obsahovalo nasledovné typy hesiel:
 \item Slovníkové heslo (9 miest) – Rovnaký princíp ako pri 8-miestnom slovníkovom hesle, avšak s vyšším počtom znakov, čo zvyšuje zložitosť útoku.
  \end{enumerate}
 
-Každé z týchto hesiel bolo podrobené obom typom útokov: slovníkovému aj brute-force. Pre každý typ útoku bol zaznamenaný čas potrebný na prelomenie hesla, pričom v prípade neúspešného pokusu bol výsledok označený ako \texttt{N/A}.
+Každé z  dvanástich testovaných hesiel bolo podrobené obom typom útokov, slovníkovému aj brute-force. Pre každý typ útoku bol zaznamenaný čas potrebný na prelomenie hesla, pričom v prípade neúspešného pokusu bol výsledok označený ako \texttt{NaN}.
 
 
 \subsection{Limitácie experimentu}
@@ -379,41 +457,51 @@ Dĺžky hesiel testovaných v tomto experimente boli podmienené obmedzeniami m�
 Tento prístup však prináša problém pri brute-force útokoch. Počet všetkých možných permutácií hesiel je exponenciálne závislý od dĺžky hesla a veľkosti množiny povolených znakov. Pre heslá obsahujúce malé a veľké písmená, číslice a špeciálne znaky je veľkosť množiny povolených znakov 94. Na základe výpočtov:
 
 \begin{itemize} 
-\item Pre 8-miestne heslo je možné vytvoriť $94^8 \approx 6,095,689,385,410,816$ rôznych kombinácií.
- \item Pre 9-miestne heslo je možné vytvoriť $94^9 \approx 572,994,802,228,616,704$ rôznych kombinácií. 
+\item Pre 8-miestne heslo je možné vytvoriť $94^8 = 6,095,689,385,410,816$ rôznych kombinácií.
+ \item Pre 9-miestne heslo je možné vytvoriť $94^9 = 572,994,802,228,616,704$ rôznych kombinácií. 
 \end{itemize}
 
-Tieto počty predstavujú enormné množstvo možností, ktoré by na mojom hardvéri vyžadovali nereálny čas na úplné vyčerpanie všetkých kombinácií. Napríklad brute-force útok na 9-miestne heslo by trval približne 2 milióny rokov.
+Počet možných kombinácií je tak obrovský, že na mojom hardvéri by úplné vyčerpanie všetkých možností pomocou brute-force útoku trvalo nereálne dlhý čas. Pri mojej rýchlosti spracovania 10 000 hesiel za sekundu by pre 9-miestne heslo, ak by skutočná kombinácia bola posledná v množine, útok trval približne 1,8 milióna rokov. Navyše, vytvorenie a uloženie slovníka s takýmto množstvom hesiel by ďaleko presahovalo kapacitu môjho disku.
 
 Na vyriešenie tejto výzvy som namiesto čistého brute-force útoku použil slovníkový útok, ktorý sa k brute-force útoku len približuje. Optimalizácie vykonané na zníženie počtu kombinácií boli nasledovné:
 
 \begin{itemize} 
 \item Obmedzenie množiny znakov: Množinu možných znakov som zúžil na malé a veľké písmená a číslice, čím som znížil veľkosť množiny z pôvodných 94 znakov na 62 znakov (26 malých písmen + 26 veľkých písmen + 10 číslic). Táto redukcia dramaticky znížila počet možných permutácií. 
 \item Generovanie permutácií znakov hesla: Vzhľadom na to, že som poznal testované heslá, použil som príkaz \texttt{crunch} na generovanie všetkých možných permutácií znakov konkrétneho hesla. Napríklad, pre heslo \texttt{mtpqb7Dv} som vytvoril slovník obsahujúci všetky možné permutácie jeho znakov. 
+
+\begin{figure}[H] 
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/crunch.png}
+    \caption{Vytvorenie slovníka pre simuláciu brute-force útoku.}
+    \label{fig:crunch}
+\end{figure}
+
 \item Zavedenie opakovania znakov: Pri 9-miestnych heslách som zaviedol mierne opakovanie znakov, aby som znížil počet permutácií. Ak by heslo obsahovalo výlučne unikátne znaky, množstvo kombinácií by bolo stále príliš vysoké.
 \item Oddelenie procesov: Generovanie slovníkov som oddelil od samotného procesu prelomenia hesla. Týmto spôsobom čas potrebný na vytvorenie permutácií neovplyvnil čas potrebný na samotné prelomenie hesla. 
 \end{itemize}
 
-Týmito opatreniami som zabezpečil, že experiment zostal v prakticky zvládnuteľných časových rámcoch, pričom zachoval realistický prístup k testovaniu efektivity brute-force útokov a slovníkových útokov.
+Týmito opatreniami som zabezpečil, že experiment sa uskutočnil v časovo zvládnuteľných rámcoch, pričom bol zameraný na získanie praktických poznatkov o efektivite brute-force a slovníkových útokov. Hoci experiment zjednodušoval niektoré aspekty reálnych podmienok, poskytol cenné údaje pre základné pochopenie problematiky prelomenia hesiel.
 
 
 \subsection{Príprava experimentu}
-Každé z piatich kôl experimentu si vyžadovalo vykonanie presne definovaných krokov, aby bolo možné získať potrebné dáta na testovanie efektivity útokov. Príprava pre každé kolo zahŕňala následovné činnosti:
+Každé z heisel použitých v experimente si vyžadovalo vykonanie presne definovaných krokov, aby bolo možné získať potrebné dáta na testovanie efektivity útokov. Príprava pre každé heslo zahŕňala následovné činnosti:
 
 \begin{enumerate} 
-\item Zmena hesla WiFi siete: Pre každé zo štyroch hesiel v danom kole (dve náhodné a dve zo slovníka) som musel manuálne zmeniť heslo na svojom WiFi routeri. Toto zabezpečilo, že testované heslo bolo aktuálne použité na zabezpečenie siete.
+\item Zmena hesla WiFi siete: Pre každé z hesiel som musel manuálne zmeniť heslo na svojom WiFi routeri. Toto zabezpečilo, že testované heslo bolo aktuálne použité na zabezpečenie siete.
 
-\item Odpojenie a znovupripojenie zariadenia: Po zmene hesla som svoje zariadenie (stolný počítač) odpojil od WiFi siete a následne ho znovu pripojil. Tento krok bol nevyhnutný na generovanie WPA2 handshake, ktorý je kľúčový pre testovanie útokov.
+\item Začatie zachytávania dátovej prevádzky: Pomocou nástroja \texttt{Airodump-ng} som spustil proces zachytávania dátovej prevádzky na príslušnej WiFi sieti. Tento krok bol potrebný na prípravu na zachytenie WPA2 handshake.
 
-\item Zachytenie handshake: Pomocou postupu uvedeného v sekcii 3.2 som na svojom notebooku zachytil WPA2 handshake pomocou nástroja \texttt{Airodump-ng}. Zachytené dáta som uložil do súboru s príponou \texttt{.pcap}, ktorý slúži ako vstupný súbor pre ďalšie kroky analýzy a testovania.
+\item Odpojenie a znovupripojenie zariadenia: Po začatí zachytávania dát som svoje zariadenie (stolný počítač) odpojil od WiFi siete a následne ho znovu pripojil. Tento krok bol nevyhnutný na generovanie WPA2 handshake, ktorý je kľúčový pre testovanie útokov.
 
-\item Príprava "brute force" slovníkov: Pre náhodne generované heslá som vytvoril špecifické slovníky na vykonanie brute-force simulácie. Tento proces zahŕňal použitie nástroja \texttt{crunch}, ktorým som generoval všetky možné permutácie znakov daného hesla.
+\item Zachytenie handshake: Po opätovnom pripojení zariadenia som zachytil WPA2 handshake pomocou nástroja \texttt{Airodump-ng}. Zachytené dáta som uložil do súboru s príponou \texttt{.pcap}, ktorý slúži ako vstupný súbor pre ďalšie kroky analýzy a testovania.
+
+\item Príprava "brute force" slovníkov: Pre náhodne generované heslá som vytvoril špecifické slovníky na vykonanie brute-force simulácie, tak ako je to opísané v predošlej podkapitole.
 \end{enumerate}
 
-Tieto kroky som vykonal pre každé zo štyroch hesiel v danom kole, pričom všetky získané \texttt{.pcap} súbory a generované slovníky boli organizované a pripravené na nasledujúcu fázu experimentu, ktorá zahŕňala samotné útoky.
+Tieto kroky som vykonal pre každé z dvanástich testovaných hesiel, pričom všetky získané \texttt{.pcap} súbory a generované slovníky boli organizované a pripravené na nasledujúcu fázu experimentu, ktorá zahŕňala samotné lámanie.
 
 \subsection{Vykonanie experimentu}
-Na automatizáciu samotného prelomenia hesiel v jednotlivých kolách som vytvoril Bash skript, ktorého zdrojový kód je uvedený na priloženom obrázku nižšie. Skript zjednodušuje proces útoku na heslo pomocou nástroja \texttt{aircrack-ng}, pričom vypisuje čas potrebný na prelomenie hesla aj výstup príkazu o úspešnosti prelomenia hesla.
+Na automatizáciu prelomenia hesiel som vytvoril Bash skript, ktorého zdrojový kód je uvedený na priloženom obrázku nižšie. Skript zjednodušuje proces útoku na heslo pomocou nástroja \texttt{aircrack-ng}, pričom vypisuje čas potrebný na prelomenie hesla aj výstup príkazu o úspešnosti prelomenia hesla.
 
 \begin{figure}[H] 
     \centering
@@ -423,19 +511,162 @@ Na automatizáciu samotného prelomenia hesiel v jednotlivých kolách som vytvo
 \end{figure}
 
 \subsubsection{Popis a použitie skriptu} 
-Skript prijíma dva vstupné parametre. Prvým je slovník hesiel, respektíve cesta k súboru obsahujúcemu zoznam hesiel na vykonanie slovníkového útoku. Druhým je súbor vo formáte .pcap, ktorý obsahuje zachytené dáta z WPA/WPA2 handshakeom. 
+Skript prijíma dva vstupné parametre. Prvým je slovník hesiel, respektíve cesta k súboru obsahujúcemu zoznam hesiel na vykonanie útoku. Druhým je súbor vo formáte .pcap, ktorý obsahuje zachytené dáta z WPA/WPA2 handshakeom. 
 
 
-\subsubsection{Praktické využitie v experimente} Tento skript som použil pre každé testované heslo v rámci všetkých piatich kôl experimentu. Pre slovníkové heslá som použil predom pripravený slovník \texttt{rockyou.txt} a pre náhodné heslá som použil vlastné generované slovníky s permutáciami znakov hesla. Výsledné časy prelomenia hesla, prípadne informácia o neúspechu (\texttt{N/A}), boli následne zaznamenané do excelových tabuliek. Automatizácia pomocou skriptu výrazne zjednodušila proces a umožnila zamerať sa na analýzu výsledkov.
+\subsubsection{Výstup skriptu} 
+Výstup skriptu poskytuje prehľad o priebehu útoku a jeho výsledkoch. Zobrazuje kľúčové informácie, ako počet testovaných kombinácií, rýchlosť spracovania, celkový čas hľadania, odhadovaný zostávajúci čas a konečný výsledok. Okrem toho obsahuje aj technické detaily o generovaných kľúčoch a parametroch spojených s WPA2 handshake. Na obrázku nižšie je uvedený ukážkový výstup pre jedno z testovaných hesiel.
 
+\begin{figure}[H] 
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/vystup_skriptu.png}
+    \caption{Výstup skriptu.}
+    \label{fig:vystup_skriptu}
+\end{figure}
+
+\subsubsection{Praktické využitie v experimente} 
+Tento skript som použil pre každé testované heslo v rámci experimentu. Pre slovníkové heslá som použil predom pripravený slovník \texttt{rockyou.txt} a pre náhodné heslá som použil vlastné generované slovníky s permutáciami znakov hesla. Výsledné časy prelomenia hesla, prípadne informácia o neúspechu (\texttt{NaN}), boli následne zaznamenané do excelovej tabuľky. Automatizácia pomocou skriptu výrazne zjednodušila proces a umožnila zamerať sa na analýzu výsledkov.
+
+\subsubsection{Testované heslá} 
+Nižšie je uvedená tabuľka so zoznamom testovaných hesiel spolu s ich typom (dĺžka a druh hesla):
+
+\begin{longtable}{|c|c|}
+\hline
+\textbf{Heslo} & \textbf{Typ hesla} \\ \hline
+mtpqb7Dv & 8-miestne náhodné \\ \hline
+H7Dk2PqX & 8-miestne náhodné \\ \hline
+P3xL1aN2 & 8-miestne náhodné \\ \hline
+williams & 8-miestne slovníkové \\ \hline
+grabass1 & 8-miestne slovníkové \\ \hline
+FIANCE22 & 8-miestne slovníkové \\ \hline
+mtpvb7Dvm & 9-miestne náhodné \\ \hline
+W4Xn7Xk7B & 9-miestne náhodné \\ \hline
+P8Rm2L8Z & 9-miestne náhodné \\ \hline
+capricorn & 9-miestne slovníkové \\ \hline
+grabapunk & 9-miestne slovníkové \\ \hline
+kaitlynn4 & 9-miestne slovníkové \\ \hline
+\caption{Zoznam testovaných hesiel a ich typov.} % Popis tabuľky
+\end{longtable}
 
 \subsection{Výsledky experimentu}
+Nižšie uvedená tabuľka obsahuje výsledky experimentu, kde pre každé heslo je čas potrebný na prelomenie pomocou brute-force a slovníkového útoku zaznamenaný v sekundách. Hodnoty - označujú, že útok bol neúspešný, čiže nenašiel správne heslo. Stĺpec \# Možností zaznamenáva koľko rôznych možností bolo vyskúšaných, kým sa našlo správne heslo.
+
+\begin{longtable}{|c|c|c|c|c|}
+\hline
+\textbf{Heslo} & \multicolumn{2}{|c|}{\textbf{Brute-force}} & \multicolumn{2}{|c|}{\textbf{Slovníkový}} \\ \hline
+& \textbf{Čas (s)} & \textbf{\# Možností} & \textbf{Čas (s)} & \textbf{\# Možností} \\ \hline
+mtpqb7Dv & 1130 & 11,862,552 & - & 14,344,392 \\ \hline
+williams & 155 & 1,665,864& 0.1 & 798 \\ \hline
+mtpvb7Dvm & 2483 & 26,014,504 & - & 14,344,392 \\ \hline
+capricorn & 1861 & 19,527,168 & 0.1 & 786 \\ \hline
+H7Dk2PqX & 875 & 9,209,584 & - & 14,344,392  \\ \hline
+grabass1 & 79 & 900,880 & 739 & 7,772,495 \\ \hline
+W4Xn7Xk7B & 3642 & 38,144,952 & - & 14,344,392 \\ \hline
+grabapunk & 9295 & 97,196,856 & 740 & 7,799,457 \\ \hline
+P3xL1aN2 & 1254 & 13,086,228 & - & 14,344,392 \\ \hline
+FIANCE22 & 276 & 2,970,896 & 1054 & 11,080,387 \\ \hline
+P8Rm2L8Z & 1360 & 14,275,112 & - & 14,344,392 \\ \hline
+kaitlynn4 & 9247 & 96,704,920 & 633 & 6,598,420 \\ \hline
+\caption{Časy prelomenia hesiel a počet vyskúšaných možností.}
+\end{longtable}
 
 
-\section{Zhodnotenie}
--- popis vysledky testov
--- odporucania pre zvysenie bezpecnosti pre uzivatelov
+\section{Záver}
+V tejto kapitole zhodnotíme výsledky získané počas experimentu a poskytneme odporúčania pre zvýšenie bezpečnosti hesiel WiFi sietí na základe zistených informácií.
 
+\subsection{Zhodnotenie výsledkov}
+Výsledky experimentu ukazujú rôzne úrovne efektivity brute-force a slovníkových útokov pri prelomení hesiel rôznej dĺžky a zložitosti. Na základe zozbieraných údajov je možné identifikovať niekoľko dôležitých poznatkov.
+
+\subsubsection{Brute-force útoky}
+Počet vyskúšaných možností mal zásadný vplyv na čas potrebný na prelomenie hesiel touto metódou. S narastajúcim počtom možností, ktoré boli testované sa predlžoval čas trvania testu, pričom najkratší test bol vykonaný na hesle „grabass1“, kde brute-force útok prešiel 900,880 možností a trval iba 79 sekúnd. Na druhú stranu najdlhší test bol brute-force útok na heslo „grabapunk“, kde bolo testovaných 97,196,856 možností a proces trval až 9,295 sekúnd, čo predstavuje 2 hodiny, 34 minút a 55 sekúnd.
+
+Obrovský rozdiel medzi týmito dvoma testami vyzdvihuje význam zložitosti hesla a veľkosti vyhľadávacieho priestoru na čas potrebný na prelomenie hesla. Testy ukazujú, že efektívnosť útoku je úzko spätá s kombináciou dĺžky a zložitosti hesla. 
+
+\subsubsubsection{Grafické zobrazenie}
+Na grafe na obrázku 5 je možné vidieť vzťah medzi počtom vyskúšaných možností na osi x a časom testu v sekundách na osi y pre brute-force testy. Je vidieť významnú koreláciu medzi rastom dĺžky vykonania testu a rastom počtu vyskúšaných možností.
+
+\begin{figure}[H] 
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/brute_casy.png}
+    \caption{Graf časov a vyskúšaných možností pre brute-force útoky.}
+    \label{fig:brute_casy}
+\end{figure}
+
+Na presnejšiu analýzu tohto vzťahu treba ešte odizolovať jednu premennú, a to vyhľadávací priestor. Keďže rôzne heslá v mojich testoch mali rôzne dĺžky a rôzny stupeň opakovania znakov, počty všetkých ich permútácií sa tiež líšia. To docielime tak, že vybereme heslá, ktoré majú rovnaký počet možných permutácií, konkrétne tieto tri: 
+
+\begin{enumerate}
+    \item capricorn
+    \item mtpvb7Dvm
+    \item W4Xn7Xk7B
+\end{enumerate}
+
+Všetky tri heslá majú 9 znakov, z toho dva znaky obsahujú dva krát, čiže počet všetkých ich permutácií je $7^9 = 40,353,607$. Na následujúcom grafe je znázornený čas brute-force testov pre tieto heslá.
+
+\begin{figure}[H] 
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/vyber_cas.png}
+    \caption{Graf časov pre vybrané heslá.}
+    \label{fig:vyber_cas}
+\end{figure}
+
+Na treťom grafe je zobrazený počet vyskúšaných možností brute-force testov pre tieto heslá.  
+
+\begin{figure}[H] 
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/vyber_moznosti.png}
+    \caption{Graf vyskúšaných možností pre vybrané heslá.}
+    \label{fig:vyber_moznosti}
+\end{figure}
+
+Ako môžeme vidieť, nárast času potrebného na nájdenie týchto hesiel je rovnaký ako nárast vyskúšaných možností. Kombináciou analýzy času a počtu vyskúšaných možností sme nadobudli obraz o efektívnosti brute-force útokov. Pri heslách s rôznymi dĺžkami a zložitosťou, ako aj pri heslách s rovnakými dĺžkami a zložitosťou, je najdôležitejším faktorom pre tento typ útoku počet vyskúšaných možností. Z toho vyplýva, že efektivita brute-force útokov je predvídateľná podľa celkového počtu všetkých možností hesla.
+
+
+
+
+\subsubsection{Slovníkové útoky}
+Ako je z tabuľky výsledkov už na prvý pohľad zjavné, slovníkové útoky sú neúspešné, ak sa heslo, ktoré sa snažíme prelomiť v slovníku nenachádza. Na druhú stranu, ak sa heslo v slovníku nachádza, čas potrebný na jeho prelomenie je výrazne kratší v porovnaní s brute-force útokmi. Napríklad heslo „capricorn“ bolo prelomené za 0,1 sekundy s použitím slovníka obsahujúceho toto heslo, pričom brute-force útok na to isté heslo trval až 1,861 sekundy a prešiel vyše 19 miliónov možností. Podobne, heslo „grabapunk“ bolo v slovníkovom útoku prelomené za 740 sekúnd po vyskúšaní 7,799,457 možností, čo je výrazne kratší čas oproti 9,295 sekundám pri brute-force útoku, ktorý musel prejsť 97,196,856 možností. 
+
+
+\subsubsubsection{Grafické zobrazenie}
+Na tomto grafe je zobrazený vzťah času potrebného na nájdenie hesla a počtu vyskúšaných možností pre slovníkové útoky. 
+
+\begin{figure}[H] 
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/slov_casy.png}
+    \caption{Graf časov a vyskúšaných možností pre slovníkové útoky.}
+    \label{fig:slov_casy}
+\end{figure}
+
+Tu sa dá vidieť rovnaká závislosť ako pri brute-force útokoch. Čím viac možností sa výskúša, tým dlhšie to trvá. 
+
+\subsubsection{Porovnanie použitých metód}
+Obidva vyskúšané druhy útokov majú rovnakú závislosť medzi časovou náročnosťou a vyhľadávacím priestorom. Slovníkové útoky problém enormného vyhľadávacieho priestoru pri neznámom hesle riešia tým, že sa zameriavajú na známe najčastejšie používané heslá, čím výrazne znižujú časové nároky na nájdenie hesla, ale za cenu možného neúspechu.
+
+Brute-force útoky zase skúšajú všetky možnosti, čím maximalizujú teoretickú pravdepodobnosť nájdenia hesla, ale za cenu časovej zložistosti. Treba  podotknúť, že na to aby som vôbec mohol porovnávať brute-force útok a slovníkový útok, som musel robiť optimalizácie spomenuté v podkapitole 3.4, v rámci ktorých som z brute force útokov urobil vlastne tiež slovníkové útoky, tým že som výrazne okresal vyhľadávací priestor na základe poznanej dĺžky a znakov hesla. Keby som nepoznal dĺžku a znaky hesla, počet všetkých možností pre brute force útok by bol tak enormne veľký, že by bolo nemožné ich v reálnom čase všetky vyskúšať. Z toho vyplýva, že brute-force útok na neznáme heslo je rovnako neefektívny ako slovníkový útok na heslo, ktoré sa v slovníku nenachádza.
+
+Obidve metódy majú svoje silné a slabé stránky, ktoré predurčujú ich ideálne využitie. Brute-force útoky vynikajú svojou univerzálnosťou a schopnosťou prelomiť akékoľvek heslo za predpokladu dostatočného času a výpočtového výkonu. Ich hlavnou slabinou je však ich extrémna časová náročnosť, ktorá pri väčšom vyhľadávacom priestore môže dosiahnuť nerealizovateľné hodnoty. Preto ideálnym prípadom pre použitie brute-force útoku v praxi je, keď sú dostupné dostatočné informácie o hesle (napríklad počet znakov alebo množina znakov, z ktorých sa skladá), vďaka ktorým je vyhľadávací priestor okresaný, tak ako tomu bolo aj v mojom experimente.
+
+Naopak, slovníkové útoky sú mimoriadne efektívne pri prelomení bežných, často používaných hesiel, ale sú úplne závislé od kvality a rozsahu použitého slovníka. Ich hlavnou slabinou je teda obmedzená použiteľnosť pri unikátnych a silných heslách, ktoré nie sú v slovníku zahrnuté.
+
+Pre prelomenie väčšej sady hesiel by zase mohol byť optimálny prítup kombincia oboch týchto metód. Slovníkový útok môže slúžiť ako prvá fáza na rýchle prelomenie slabých hesiel, pričom brute-force útok by mohol byť aplikovaný až na heslá, ktoré neboli nájdené slovníkom.
+
+
+\subsection{Odporúčania pre zvýšenie bezpečnosti}
+Na základe výsledkov získaných počas experimentu je možné poskytnúť niekoľko konkrétnych odporúčaní pre zvýšenie bezpečnosti WiFi sietí. Tieto odporúčania sa týkajú predovšetkým výberu silných hesiel a implementácie modernejších bezpečnostných štandardov.
+
+\subsubsection{Používanie silných náhodných hesiel}
+
+Jedným z najdôležitejších opatrení na zvýšenie bezpečnosti WiFi siete je používanie dostatočne dlhých, komplexných a náhodne generovaných hesiel. Výsledky experimentu jasne ukázali, že heslá s väčším počtom znakov a vyššou zložitosťou vyžadujú dlhší čas na prelomenie. Napríklad náhodné 9-znakové heslá ako „W4Xn7Xk7B“ mali oveľa väčší počet možných kombinácií v porovnaní s jednoduchšími slovníkovými heslami, čo spôsobilo, že brute-force útok trval výrazne dlhšie. Navyše, heslá, ktoré sa nenachádzali v slovníku, boli proti slovníkovým útokom úplne odolné.
+
+Pre praktické účely sa odporúča vytvárať heslá ako náhodné kombinácie znakov. Takéto heslá by mali obsahovať veľké a malé písmená, čísla a špeciálne znaky a ich dĺžka by mala byť aspoň 9 znakov, aby sa zabezpečil dostatočne veľký vyhľadávací priestor. 
+
+\subsubsection{Unikátnosť hesiel}
+Okrem vytvorenia silného hesla je dôležité nepoužívať heslo od WiFi aj pre kontá na rôzne stránky a služby. Všeobecne platí, že heslá treba pravidelne kontrolovať, či náhodou neboli kompromitované pri úniku dát. Aj keď je heslo silné, v prípade jeho kompromitácie môže útočník získať pomerne ľahko neutorizovaný prístup pomocou prelomenia hesla útokom za použitia slovníka s uniknutými heslami. Pravidelná aktualizácia hesiel tiež znižuje riziko takýchto útokov.
+
+\subsubsection{Prechod na WPA3 protokol}
+Aj keď WPA2 bol dlhodobo považovaný za bezpečný štandard, uskutočnenie experimentu ukazuje, že je zraniteľný voči útokom založeným na zachytení handshakeu. Prechod na moderný WPA3 protokol prináša významné bezpečnostné výhody.
+
+Jednou z hlavných výhod  WPA3 je použitie protokolu SAE, ktorý eliminuje možnosť útoku na heslo pomocou handshakeu. V protokole SAE sa heslá neodosielajú priamo ani sa z nich neodvodzujú hodnoty, ktoré by útočník mohol použiť na offline analýzu. Okrem toho WPA3 zavádza ochranu proti brute-force útokom tým, že obmedzuje počet pokusov o prihlásenie.
 
 
 \makeatletter
