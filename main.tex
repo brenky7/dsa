@@ -1,15 +1,12 @@
 \documentclass[12pt, twoside]{book}
 \usepackage[a4paper,top=2.5cm,bottom=2.5cm,left=3.5cm,right=2cm]{geometry}
 \usepackage[T1]{fontenc}
-\usepackage{longtable} 
-\usepackage{multirow} 
 \usepackage{fancyhdr}
 \usepackage{float}
 \usepackage{graphicx}
 \usepackage{adjustbox}
 \usepackage{pdfpages}
 \usepackage{listings}
-\usepackage{amsmath}
 \usepackage{url}
 \usepackage{array}
 \usepackage{multirow}
@@ -36,16 +33,27 @@
 % -------------------
 % --- Definicia zakladnych pojmov
 % -------------------
-\def\mfrok{december 2024}
-\def\mfnazov{Slovn\'{i}kov\'{e} a brute-force \'{u}toky na  hesl\'{a} od WiFi siet\'{i}}
+\def\mfrok{máj 2025}
+\def\mferok{2025, May}
+\def\mfnazov{Zvýšenie efektivity OCSP komunikácie}
+\def\mfenazov{Increasing the efficiency of OCSP communication}
+\def\mftyp{Bakalárska práca}
 \def\mfautor{Peter Brenkus}
 \def\mfveduci{Ing. Norbert Varga}
-\def\mfpredmet{Princ\'{i}py informa\v{c}nej bezpe\v{c}nosti}
-\def\mfgarant{Doc. Ing. Ladislav Hudec, CSc.}
+\def\mfeveduci{Ing. Norbert Varga}
 
+
+\def\mfkonzultant{nikto}  
+
+
+\def\mfodbor{9.2.1 Informatika}%2508R11  Informatics B-IB}
+\def\program{ Informatika }
+\def\mfpracovisko{  Ústav počítačového inžinierstva a aplikovanej informatiky }
 
 \newcommand{\subsubsubsection}[1]{%
-  \textbf{#1} \\ 
+  \vspace{0.2em}  
+  \textbf{#1} \\[0.2em]
+  \hspace*{\parindent}
 }
 
 \begin{document} 
@@ -59,7 +67,7 @@
 % --- Titulný list
 % -------------------
 
-%\thispagestyle{empty}
+\thispagestyle{empty}
 \noindent
 
 \begin{center}
@@ -69,21 +77,25 @@
 Slovenská technická univerzita v Bratislave\\
 Fakulta informatiky a informačných technológií\\
 \bigskip
+FIIT-XXXXXX-XXXXXX % evidencne cislo par tyzdnov pred odovzdanim dostanem (ais)
 
 \vfill
 
 \mfautor\\
 \bigskip
 {\mfnazov}\\
+\bigskip
+\mftyp
 \end{center}
 
 \vfill
 
 \noindent
 \begin{tabular}{@{}ll}
-Predmet: & \mfpredmet \\
-Zodpovedný za predmet: & \mfgarant \\
-Cvičiaci: & \mfveduci \\
+Študijný program: & \program \\
+Študijný odbor: & \mfodbor \\
+Miesto vypracovania: & \mfpracovisko \\
+Vedúci práce: & \mfveduci \\
 \end{tabular}
 
 \bigskip
@@ -95,33 +107,73 @@ Cvičiaci: & \mfveduci \\
 \mfrok\\
 \end{tabular}
 
+\eject % EOP i
+
+
+% --- Koniec titulnej strany
+
+\newpage\null\thispagestyle{empty}\newpage
+
+
+
+%\newpage 
+%\pagestyle{empty}
+%\fancyhf{}
+%\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{zadanie.jpg}
+% XXXXXXXXX\includepdf{./images/zadanie.pdf} tuto dat zadanie z ais
+%\begin{figure}
+%\includegraphics[scale=0.8]{zadanie.jpg}
+%\end{figure}
+
+\newpage\null\thispagestyle{empty}\newpage
+
+% --- Koniec zadania
+
+\frontmatter
 
 % -------------------
 %   čestné vyhlásenie
 % -------------------
 \newpage
-\thispagestyle{empty}
-\vspace*{20cm}
+\thispagestyle{empty} 
+~
+
+\vfill
 \noindent
 Čestne vyhlasujem, že som túto prácu vypracoval samostatne, na základe konzultácií a s použitím uvedenej literatúry.
 
 \bigskip
 \bigskip
 \noindent
-V Bratislave, 1.12.2024
+V Bratislave, X.X.2025
 
 {\raggedleft Peter Brenkus\quad \par}
 \bigskip
 
+% --- Koniec vyhlásenia
+\newpage\null\thispagestyle{empty}\newpage
 % -------------------
 %  Anotácia - Slovensky
 % -------------------
+
+\newpage
+\thispagestyle{empty} 
 ~
 
 \vfill
 \noindent
 
+\section*{Poďakovanie}
+\bigskip
+\noindent
+Vedúcemu tejto práce, Norbertovi Vargovi, za vynikajúce vedenie, odborné znalosti a ochotu podeliť sa o cenné rady počas celého procesu tvorby tejto práce. 
+\bigskip
+\bigskip
+\bigskip
+\newpage\null\thispagestyle{empty}\newpage
+
 \newpage 
+\thispagestyle{empty}
 
 \section*{Anotácia}
 \noindent
@@ -129,10 +181,11 @@ Slovenská technická univerzita v Bratislave\\
 FAKULTA INFORMATIKY A INFORMAČNÝCH TECHNOLÓGIÍ\\
 
 \begin{tabular}{@{}ll}
-Autor: & \mfautor\\
-Predmet: & \mfpredmet \\
-Zodpovedn 7 za predmet: &  \mfgarant \\
-Cvičiaci: & \mfveduci \\
+Študijný program: & \program\bigskip
+\bigskip  \\
+Autor: & \mfautor \\
+Bakalárska práca: &  \mfnazov \\
+Vedúci bakalárskej práce: & \mfveduci \\
 \mfrok
 \end{tabular}
 
@@ -141,9 +194,56 @@ Cvičiaci: & \mfveduci \\
 \bigskip 
 \noindent
 
-Cieľom tejto práce je analyzovať a porovnať efektívnosť brute-force a slovníkových útokov pri prelomení hesiel WiFi sietí zabezpečených protokolom WPA2. Experimenty boli vykonané na vlastnej domácej sieti v súlade s legislatívnymi a etickými zásadami. Kvôli enormným časovým nárokom brute-force útokov na 8 a 9 miestne heslá bola táto metóda modifikovaná zúžením množiny znakov a využitím predpripravených permutácií. Slovníkové útoky boli testované s využitím databázy bežne používaných hesiel "rockyou.txt". Výsledky experimentov poskytujú náhľad na účinnosť oboch metód v rôznych scenároch, vykreslujú od čoho efektivita lámania hesiel závisí a zdôrazňujú dôležitosť výberu silných hesiel na zvýšenie bezpečnosti WiFi sietí.
+Cieľom tejto práce je zlepšenie efektivity OCSP protokolu, ktorý sa používa na zistenie neplatného stavu digitálnych certifikátov v reálnom čase. 
+
+Práca obsahuje analýzu problematiky, ktorej súčasťou je podrobný opis jeho architektúry, nedostatkov a ich existujúcich riešení ako OCSP Stapling, OCSP Must-Staple, OCSP Multi-Staple a Tiny OCSP. Na základe tejto analýzy boli sformulované požiadavky a následne návrh riešenia. 
+
+Súčasťou práce je návrh vlastného riešenia, ktoré implementuje HTTP server na cacheovanie POST požiadaviek pre účely OCSP, čím znižuje záťaž OCSP respondérov a zlepšuje efektivitu celého systému.
+
+Čo ešte ďalšie sa robilo...
+
+\newpage\null\thispagestyle{empty}\newpage
 
 % --- Koniec Anotácie - Slovensky
+
+
+% -------------------
+% --- Anotácia - Anglicky 
+% -------------------
+\newpage
+\thispagestyle{empty}
+ 
+\section*{Annotation}
+\noindent
+Slovak University of Technology in Bratislava\\
+FACULTY OF INFORMATICS AND INFORMATION TECHNOLOGIES\\
+
+\begin{tabular}{@{}ll}
+Degree course: & Informatics\bigskip
+\bigskip  \\
+Author: & \mfautor \\
+Bachelor’s Thesis: & \mfenazov \\
+Supervisor: & \mfeveduci \\
+\mferok
+\end{tabular}
+
+\bigskip
+\bigskip 
+\bigskip 
+\noindent
+
+The aim of this thesis is to improve the efficiency of the OCSP protocol, which is used for real-time validation of the revocation status of digital certificates.
+
+The thesis includes an analysis of the problem, comprising of a detailed description of the protocol’s architecture, its shortcomings, and existing solutions such as OCSP Stapling, OCSP Must-Staple, OCSP Multi-Stapling, and Tiny OCSP. Based on this analysis, requirements were formulated, followed by the proposal of a solution.
+
+The thesis also presents the design of a custom solution that implements an HTTP server for caching POST requests for OCSP purposes, thereby reducing the load on OCSP responders and improving the overall efficiency of the system.
+
+
+What else was done... 
+ 
+\newpage\null\thispagestyle{empty}\newpage
+
+% --- Koniec Anotácia - Anglicky
 
 
 % -------------------
@@ -157,6 +257,7 @@ Cieľom tejto práce je analyzovať a porovnať efektívnosť brute-force a slov
 \tableofcontents
 
 % ---  Koniec Obsahu
+\newpage\null\thispagestyle{empty}\newpage
 
 
 
@@ -165,8 +266,10 @@ Cieľom tejto práce je analyzovať a porovnať efektívnosť brute-force a slov
 
 \listoffigures
 
+\newpage\null\thispagestyle{empty}\newpage
 
 \newpage
+
 \begin{table}[H]
 \begin{center}
 \renewcommand\thetable{1}
@@ -175,46 +278,48 @@ Cieľom tejto práce je analyzovať a porovnať efektívnosť brute-force a slov
  \hline
 \textbf{Skratka} & \textbf{Vysvetlenie} 
  \\ \hline
-WEP  & Wired Equivalent Privacy
+OCSP  & Online Certificate Status Protocol
 \\ \hline
-WPA  & WiFi Protected Access
+CCSP  & Compressed Certificate Status Protocol
 \\ \hline
-WPA2  & WiFi Protected Access 2
+CRL  & Certificate Revocation List
 \\ \hline
-WPA3  & WiFi Protected Access 3
+CA  & Certificate Authority
 \\ \hline
-CCMP  & Counter Mode with Cipher Block Chaining Message Authentication Code Protocol
+DN  & Distinguished Name
 \\ \hline
-AES  & Advanced Encryption Standard
+PKI  & Public Key Infrastructure
 \\ \hline
-PSK  & Pre-Shared Key
+TLS  & Transport Layer Security
 \\ \hline
-PTK & Pairwise Transient Key
+SSL  & Secure Sockets Layer
 \\ \hline
-MIC & Message Integrity Code
+ASN.1 & Abstract Syntax Notation One
 \\ \hline
-SAE & Simultaneous Authentication of Equals
+DER & Distinguished Encoding Rules
 \\ \hline
-PE  & Password Element
+TLV & Tag Length Value
 \\ \hline
-SS  & Shared Secret
+MITM & Man in the Middle
 \\ \hline
-KCK  & Key Confirmation key
+CBOR & Concise Binary Object Representation
 \\ \hline
-MK  & Master Key
+AKID & Authority Key Identifier
 \\ \hline
-MD5 & Message Digest 5
+IoT & Internet of things
 \\ \hline
-SHA & Secure Hash Algorithm 1
+HTTP & Hypertext Transfer Protocol
 \\ \hline
-SHA-256 & Secure Hash Algorithm 256-bit
+URL & Uniform Resource Locator
+\\ \hline
+CDN & Content Delivery Network
 \\ \hline
 \end{tabular}
 \end{center}
 \end{table}
 
 
-
+\newpage\null\thispagestyle{empty}\newpage
 
 \newpage
 
@@ -231,443 +336,761 @@ SHA-256 & Secure Hash Algorithm 256-bit
 \restylefloat{table}
 
 \section{Úvod}
-WiFi siete predstavujú jeden z najrozšírenejších spôsobov bezdrôtového pripojenia k internetu. Vďaka svojej jednoduchosti, dostupnosti a nízkym nákladom sa stali neoddeliteľnou súčasťou domácností, podnikov a verejných priestorov. Táto technológia, založená na štandardoch IEEE 802.11, umožňuje používateľom pripojiť sa k internetu alebo lokálnym sieťam bez potreby fyzického kábla.
 
-WiFi siete môžu byť verejné, teda voľne prístupné, alebo môžu byť zabezpečené heslom, ktoré slúži ako hlavný mechanizmus na ochranu siete pred neoprávneným prístupom. Mnohí používatelia predpokladajú, že ich sieť je vďaka heslu  bezpečná, no v skutočnosti môže byť zabezpečenie často nedostatočné. Slabé alebo predvolené heslá, neaktualizovaný bezpečnostný protokol či nevedomé chyby používateľov môžu viesť k tomu, že útočník dokáže sieť pomerne jednoducho kompromitovať a získať neoprávnený prístup. To poukazuje na dôležitosť nielen správneho zabezpečenia, ale aj pochopenia potenciálnych rizík spojených s používaním WiFi sietí, ktorým sa táto práca venuje.
+S rastúcim využívaním digitálnych technológií v každodennom živote sa zvyšujú aj nároky na bezpečnosť online komunikácie. Jedným z prvkov, ktoré zaisťujú túto bezpečnosť sú digitálne certifikáty vydávané a spravované certifikačnými autoritami. Certifikačné autority overujú identitu subjektov a vydávajú im certifikáty, ktoré sú nevyhnutné pre bezpečné šifrované spojenia. Na overovanie platnosti týchto certifikátov v reálnom čase sa používa viacero metód, jednou z nich je protokol OCSP.\cite{certs2}
+
+Vyvinutý ako alternatíva ku CRL, OCSP poskytuje rýchlejší a efektívnejší spôsob overovania certifikátov. Klient, napríklad webový prehliadač, môže poslať dotaz na OCSP server a overiť konkrétny certifikát bez toho, aby musel sťahovať veľký zoznam certifikátov, ako je tomu v prípade CRL.\cite{certs2}
+
+OCSP hrá dôležitú úlohu v bezpečnostných mechanizmoch na internete. Z pohľadu efektivity a rýchlosti komunikácie však stále existuje priestor na jeho zlepšenie. Cieľom tejto práce je analyzovať súčasný stav protokolu OCSP, identifikovať jeho nedostatky a navrhnúť efektívnejšie poskytnutie služby overenia platnosti digitálnych certifikátov.
+
+Kapitola 2 obsahuje analýzu problematiky. Konkrétne úvod do oblasti PKI, digitálnych certifikátov, kontroly ich revokácie a komplexnú analýzu protokolu OCSP. 
+Kapitola 3 obsahuje špecifikáciu požiadaviek a prípady použitia. 
+Kapitola 4 obsahuje návrh riešenia, s prihliadnutím na ...
+Kapitola 5 popisuje implementáciu navrhnutého riešenia.
+V kapitole 6 je popísané testovanie implementovaného nástroja a obsahuje aj zhodnotenie toho, ako sa podarilo splniť špecifikované požiadavky. 
+Kapitola 7 obsahuje zhodnotenie celej práce.
+
+\newpage
+\section{Analýza problematiky}
+
+V tejto časti najprv uvedieme relevantné teoretické oblasti, potom analyzujeme ako presne protokol OCSP funguje a aké sú jeho slabé stránky. Ďalej sa pozrieme aké  vylepšenia už existujú a zameriame sa na oblasti možného ďalšieho vylepšenia.
+
+\subsection{PKI}
+PKI je systém, ktorý umožňuje bezpečnú výmenu informácií na internete prostredníctvom kryptografických kľúčov \cite{pki}. Hlavným cieľom PKI je zaručiť bezpečnosť údajov tým, že poskytuje mechanizmy na overenie identity a šifrovanie dát \cite{pki2}. Tento systém vychádza z asymetrickej kryptografie, čiže používa dva druhy kľúčov – verejný a súkromný. Verejný kľúč je zdieľaný verejne a slúži na šifrovanie informácií alebo na overenie podpisu \cite{pki}. Súkromný kľúč je známy len majiteľovi a slúži na dešifrovanie informácií alebo vytváranie digitálnych podpisov \cite{pki2}.
 
 
-\section{Teoretická časť}
-V tejto kapitole stručne prejdeme históriu WiFi sietí a ich bezpečnostných opatrení, pozrieme sa bližšie na WPA2 protokol a jeho slabiny, uvedieme opatrenia pre ošetrenie týchto slabín v najnovšom protokole WPA3 a predstavíme si nástroje potrebné na vykonanie útoku na WiFi sieť s protokolom WPA2 a prelomenie jej hesla.
+\subsubsection{Digitálne certifikáty}
+Digitálny certifikát je kľúčový komponent PKI.\cite{certs} Je to dátová štruktúra, ktorá spája verejný kľúč s identitou osoby alebo organizácie. Certifikáty vydáva dôveryhodná tretia strana nazývaná tiež certifikačná autorita. Existujú rôzne štandardy, ktoré definujú štruktúru digitálnych certifikátov, najpoužívanejší štandard je X.509.\cite{certs} Tento štandard definuje 3 povinné polia pomocou ASN.1.\cite{x509}
 
-\subsection{História WiFi sietí}
-WiFi siete, ktoré sú založené na štandarde IEEE 802.11, sa od svojho vzniku stretávali s potrebou zaistiť bezpečné pripojenie pre používateľov. Prvým bezpečnostným protokolom, ktorý bol vyvinutý, bol WEP, zavedený v roku 1997. Tento protokol bol navrhnutý s cieľom poskytnúť bezpečnosť porovnateľnú s káblovými sieťami. WEP používa RC4 šifrovací algoritmus na šifrovanie dát a 40-bitový alebo 104-bitový šifrovací kľúč spolu s 24-bitovým inicializačným vektorom.\cite{vseob_1, vseob_2} Napriek tomu, že bol WEP považovaný za dostatočný pre svoju dobu, jeho implementácia obsahovala závažné chyby, ktoré útočníkom umožňovali prelomenie ochrany v priebehu niekoľkých minút. Najväčšou slabinou WEP bol jeho statický inicializačný vektor, ktorý sa opakoval, čo útočníci dokázali efektívne využiť.\cite{slabiny_po_2, vseob_2} Z týchto dôvodov bol WEP oficiálne označený za zastaraný a neodporúčaný v roku 2004.
-
-V reakcii na nedostatky WEP bol v roku 2003 zavedený nový bezpečnostný protokol WPA. Tento protokol priniesol niekoľko vylepšení, najmä použitie TKIP, ktorý dynamicky generuje šifrovacie kľúče pre každú prenosovú reláciu, čím sa eliminuje problém statických kľúčov jeho predchodcu.\cite{slabiny_po_2} WPA tiež obsahoval mechanizmus na detekciu neoprávnených prístupových bodov, čím prispel k zvýšeniu bezpečnosti. Napriek tomu, že WPA bol výrazným zlepšením oproti WEP, bol len dočasným riešením, pretože už v čase jeho zavedenia sa aktívne pracovalo na štandarde WPA2, ktorý mal byť uvedený v krátkom časovom horizonte a priniesť ešte vyššiu úroveň zabezpečenia.
-
-Definitívnym krokom k zvýšeniu bezpečnosti WiFi sietí bolo zavedenie protokolu WPA2 v roku 2004. WPA2 nahradil RC4 algoritmus pokročilejším šifrovaním AES, ktoré je dodnes považované za vysoko bezpečné. Okrem toho WPA2 používa protokol CCMP, ktorý poskytuje silnú ochranu integrity a dôvernosti dát. WPA2 sa stal štandardom pre bezpečné pripojenie na WiFi siete a je široko používaný dodnes. \cite{wpa3_adoption} Avšak aj tento protokol má svoje slabiny, najmä ak používatelia zvolia slabé heslá, ktoré môžu byť prelomené slovníkovým alebo brute force útokom. Keďže je dodnes bežne používaný a podporovaný, práve týmto slabinám sa budeme v tejto práci ďalej venovať.
-
-Najnovšou generáciou bezpečnostných protokolov je WPA3, predstavený v roku 2018. WPA3 priniesol niekoľko významných vylepšení v oblasti bezpečnosti, ktoré reagovali na slabiny WPA2. Jedným z kľúčových prvkov WPA3 je použitie protokolu SAE namiesto tradičného PSK. SAE poskytuje ochranu proti útokom založeným na zachytení dátového prenosu, pretože heslá už nie je možné odvodiť zo zachytených handshakeov. Okrem toho WPA3 zlepšil ochranu pre IoT zariadenia a zaviedol mechanizmy na ochranu siete pred útokmi brute force, ktoré obmedzujú počet pokusov o zadanie hesla.\cite{vseob_2}
-
-Vývoj bezpečnostných protokolov pre WiFi siete odráža neustále sa meniace výzvy v oblasti kybernetickej bezpečnosti. Od zlyhaní WEP cez dočasné riešenie WPA až po robustný WPA3 je zrejmé, že bezpečnosť WiFi sietí sa musí neustále prispôsobovať novým hrozbám a požiadavkám používateľov.
-
-\subsection{WPA2 protokol}
-WPA2 bol predstavený ako významné vylepšenie oproti starším protokolom WEP a WPA. Vďaka použitiu šifrovania AES a protokolu CCMP poskytuje silnú ochranu dát a integritu komunikácie. Tento protokol sa stal štandardom pre zabezpečenie WiFi sietí a dodnes je široko využívaný.\cite{wpa3_adoption} Napriek tomu však WPA2 nie je neprelomiteľné. Slabiny sa nachádzajú najmä v spôsobe, akým sa vykonáva autentifikácia. V tejto podkapitole sa zameriame na jeden z najzraniteľnejších aspektov WPA2 – proces tzv. four-way handshake.
-
-Keď sa zariadenie (klient) pokúša pripojiť k zabezpečenej WiFi sieti, WPA2 používa mechanizmus four-way handshake na overenie, či zariadenie a prístupový bod (router) zdieľajú rovnaké heslo. Tento proces umožňuje výmenu šifrovacích kľúčov bez toho, aby bolo samotné heslo odhalené počas prenosu a je rovnaký ako v protokole WPA.\cite{vseob_1, slabiny_po_2}
-
-\begin{figure}[H] 
-    \centering
-    \includegraphics[width=0.8\textwidth]{img/handshake.png}
-    \caption{Schéma four-way handshakeu v protokole WPA/WPA2.}
-    \label{fig:handshake}
+\begin{figure}[H]
+\begin{lstlisting}
+Certificate  ::=  SEQUENCE  {
+    tbsCertificate       TBSCertificate,
+    signatureAlgorithm   AlgorithmIdentifier,
+    signatureValue       BIT STRING
+}
+\end{lstlisting}
+\caption{Štruktúra X.509 certifikátu}
 \end{figure}
 
-Handshake prebieha v štyroch krokoch:
+Každé pole má stanovenú presnú syntax a je zakódované do sekvencie bytov. Na kódovanie sa používa ASN.1 DER, čo je systém založený na kódovaní štýlom TLV. Znamená to, že každý prvok v štruktúre certifikátu je zakódovaný samostatne pomocou troch zložiek:\cite{asn1}
+\begin{itemize}
+\item Tag identifikuje typ dát (napr. celé číslo, reťazec, sekvencia)
+\item Length udáva dĺžku daného prvku v bajtoch
+\item Value obsahuje samotné údaje daného prvku.
+\end{itemize}
 
-\textbf{1. Inicializácia handshake:} Prístupový bod (AP) posiela klientovi náhodné číslo (nonce) známe ako ANonce.
+Prvé povinné pole obsahuje údaje o CA, ktorá certifikát vydala a subjekte, ktorému bol certifikát vydaný. Hlavnými údajmi sú názvy CA a subjektu, verejný kľúč subjektu, perióda platnosti certifikátu, číslo verzie cetifikátu a sériové číslo certifikátu. Môžu tu však byť aj ďalšie nepovinné údaje.\cite{x509} 
 
-\textbf{2. Odpoveď klienta:} Klient na základe prijatého ANonce vygeneruje vlastné náhodné číslo SNonce a použije ho spolu s heslom PSK na výpočet PTK. Kľúč PTK slúži na šifrovanie komunikácie. Klient odošle svoje SNonce späť prístupovému bodu.
-
-\textbf{3. Overenie klienta:} Prístupový bod vypočíta PTK pomocou hesla, ANonce a SNonce, a odošle klientovi správu s MIC, ktorú môže klient použiť na overenie správnosti kľúča.
-
-\textbf{4. Ukončenie handshake:} Klient potvrdí prijatie správneho kľúča a obe strany začnú šifrovanú komunikáciu.
-
-
-\subsubsection{Slabiny WPA2 handshakeu}
-Aj keď WPA2 pri pripojení klienta samotné heslo neprenáša, implementácia four-way handshakeu obsahuje závažnú slabinu, ktorá môže byť zneužitá útočníkom. Proces propojenia môže byť totiž zachytený útočníkom, ktorý sa nachádza v dosahu siete. Útočník môže dokonca vynútiť handshake tým, že pošle deautentifikačné pakety, čím zariadenia odpojí od siete a donúti ich znovu sa pripojiť.
-
-Keď útočník takto zachytí handshake, môže spustiť off-line útok na heslo. Zachytené údaje sú totiž postačujúce na výpočet všetkých možných hesiel, kým sa nenájde správne heslo. Tento proces je obzvlášť efektívny, ak používateľ zvolil slabé alebo krátke heslo. Pomocou rôznych známych techník lámania hesiel môže útočník získať prístup do siete bez potreby ďalšej interakcie so zariadením.
-
-\subsection{WPA3 protokol}
-Na rozdiel od WPA2, WPA3 používa nový mechanizmus autentifikácie s názvom SAE. SAE eliminuje zraniteľnosti handshakeu WPA2 tým, že namiesto tradičných PSK autentifikácií využíva princípy výmeny kľúčov pomocou eliptických kriviek. Tento proces zaisťuje, že heslá nie sú nikdy priamo prenášané cez sieť ani neexistuje možnosť ich odvodenia zo zachytených dát.
-Na obrázku nižšie je uvedená schéma tohto procesu.
-
-\begin{figure}[H] 
-    \centering
-    \includegraphics[width=0.8\textwidth]{img/dragonfly.png}
-    \caption{Zjednodušená schéma WPA3 handshakeu.}
-    \label{fig:dragonfly}
+\begin{figure}[H]
+\begin{lstlisting}
+TBSCertificate  ::=  SEQUENCE  {
+    version         [0]  EXPLICIT Version DEFAULT v1,
+    serialNumber         CertificateSerialNumber,
+    signature            AlgorithmIdentifier,
+    issuer               Name,
+    validity             Validity,
+    subject              Name,
+    subjectPublicKeyInfo SubjectPublicKeyInfo,
+    issuerUniqueID  [1]  IMPLICIT UniqueIdentifier OPTIONAL,
+    subjectUniqueID [2]  IMPLICIT UniqueIdentifier OPTIONAL,
+    extensions      [3]  EXPLICIT Extensions OPTIONAL
+}
+\end{lstlisting}
+\caption{Štruktúra poľa TBSCertificate}
 \end{figure}
 
-\subsubsection{Krok 1: Inicializácia parametrov}
-Každé zariadenie (označené ako A a B) si vygeneruje svoje vlastné náhodné hodnoty:
+X.509 certifikáty môžu byť v troch rôznych verziách: v1, v2, a v3. Verzia v1 bola pôvodnou špecifikáciou, avšak nedostatočná pre moderné potreby, najmä kvôli absencii rozšírení. Verzia v2 pridala podporu pre identifikátory vydavateľa a subjektu, čo bolo užitočné pri použití s viacnásobnými certifikačnými autoritami. Verzia v3 je najnovšia a pridáva možnosť rozšírení, ktoré umožňujú špecifikovať ďalšie atribúty, napríklad obmedzenie účelu certifikátu alebo detaily o politíkách certifikácie. Rozšírenia sú kľúčové pre flexibilitu a prispôsobenie certifikátov špecifickým potrebám.\cite{rfc5280}
+
+Každý certifikát má jedinečné sériové číslo priradené CA, ktoré zaručuje jeho jednoznačnú identifikáciu. Toto číslo je dôležité nielen pre správu certifikátov, ale aj pre systémy revokácie.\cite{x509} 
+
+Podpis certifikátu je kľúčovým prvkom, ktorý zaisťuje jeho dôveryhodnosť. Tento podpis generuje certifikačná autorita pomocou svojho privátneho kľúča. Algoritmy použité na tento účel sú asymetrické, čiže, že verejný kľúč CA môže byť použitý na overenie, či bol certifikát skutočne podpísaný CA.\cite{x509}  
+
+\begin{figure}[H]
+\begin{lstlisting}
+Version  ::=  INTEGER  {  v1(0), v2(1), v3(2)  }
+CertificateSerialNumber  ::=  INTEGER
+Validity ::= SEQUENCE {
+    notBefore      Time,
+    notAfter       Time 
+}
+Time ::= CHOICE {
+    utcTime        UTCTime,
+    generalTime    GeneralizedTime
+}
+UniqueIdentifier  ::=  BIT STRING
+SubjectPublicKeyInfo  ::=  SEQUENCE  {
+    algorithm            AlgorithmIdentifier,
+    subjectPublicKey     BIT STRING
+}
+Extensions  ::=  SEQUENCE SIZE (1..MAX) OF Extension
+Extension  ::=  SEQUENCE  {
+    extnID      OBJECT IDENTIFIER,
+    critical    BOOLEAN DEFAULT FALSE,
+    extnValue   OCTET STRING
+}
+\end{lstlisting}
+\caption{Štruktúra atribútov TBSCertificate}
+\end{figure}
+
+Atribút issuer obsahuje informácie o certifikačnej autorite, ktorá certifikát vydala. Toto pole je dôležité pri overovaní dôveryhodnosti certifikátu, pretože klienti musia dôverovať certifikačnej autorite, ktorá certifikát vydala.\cite{x509}  
+
+Časové obdobie, počas ktorého je certifikát platný obsahuje dve hodnoty: notBefore a notAfter, ktoré určujú začiatok a koniec platnosti certifikátu. Certifikáty s neplatnými alebo exspirovanými časovými pečiatkami môžu byť  zneužité, preto je dôležité, aby bol certifikát platný iba po nevyhnutnú dobu. Krátka doba platnosti znižuje riziko kompromitácie a uľahčuje správu certifikátov.\cite{x509} 
+
+Entita, ktorá je držiteľom certifikátu, môže byť fyzická osoba, organizácia, alebo webová stránka. Tieto informácie slúžia na identifikáciu subjektu, ktorému bol certifikát vystavený.\cite{x509}  
+
+Verejný kľúč subjektu, ktorý je držiteľom certifikátu je spojený s algoritmom použitým na kryptografické operácie. Táto informácia je nevyhnutná pre asymetrické šifrovanie.\cite{x509} 
+
+\newpage
+Druhé povinné pole obsahuje identifikáčné údaje a parametre kryptografického algoritmu, ktorý CA použila na podpis tohto certifikátu. Identifikátor algoritmu sa musí zhodovať s tým, ktorý je zadaný v atribúte signature v poli tbsCertificate.\cite{x509} 
+
+\begin{figure}[H]
+\begin{lstlisting}
+AlgorithmIdentifier  ::=  SEQUENCE  {
+    algorithm    OBJECT IDENTIFIER,
+    parameters   ANY DEFINED BY algorithm OPTIONAL  }
+}
+\end{lstlisting}
+\caption{Štruktúra poľa signatureAlgorithm}
+\end{figure}
+
+Posledné pole obsahuje digitálny podpis CA, ktorý je vypočítaný zo zakódovanej hodnoty prvého poľa. Týmto podpisom CA potvrdzuje, že verejný kľúč naozaj patrí danému subjektu.\cite{x509} 
+
+Takto vydané certifikáty sa ďalej používajú v TLS a SSL protokoloch na prezentačnej vrstve OSI modelu na zabezpečenie komunikácie medzi klientom a serverom. V rámci TLS/SSL handshake procesu server pošle klientovi svoj certifikát na overenie svojej totožnosti. Certifikát zaslaný serverom si klient môže overiť dvomi najčastejšími spôsobmi, a to pomocou CRL alebo cez OCSP protokol.\cite{certs2}
+
+\subsection{CRL}
+Ako už z jeho mena vyplýva, CRL je list revokovaných certifikátov. Tento spôsob overenia platnosti certifikátov je definovaný priamo v X.509 v2 štandarde a vydáva ho buď CA, alebo entita poverená danou CA na tento účel. Každý CRL má určitý rozsah, čiže súbor certifikátov, ktoré môžu byť uvedené na danom CRL. Rozsahom môžu byť  napríklad všetky certifikáty vydané danou CA, alebo aj niečo špecifickejšie, ako napríklad "všetky certifikáty vydané zamestnancom spoločnosti X nachádzajúcim sa v meste Y". CRL má tiež presne definovanú syntax a kóduje sa pomocou ASN.1 DER.\cite{rfc5280}
+
+\begin{figure}[H]
+\begin{lstlisting}
+CertificateList  ::=  SEQUENCE  {
+    tbsCertList          TBSCertList,
+    signatureAlgorithm   AlgorithmIdentifier,
+    signatureValue       BIT STRING
+}
+\end{lstlisting}
+\caption{Štruktúra CRL}
+\end{figure}
+
+\newpage
+Prvé pole obsahuje verziu, identifikátor algoritmu použitého na podpis, názov entity, ktorá CRL vydala, čas vydania tejto verzie, čas vydania ďalšej verzie, revokované certifikáty a prípadné nepovinné rozšírenia. Môže sa stať aj, že nie sú žiadne revokované certifikáty, v takom prípade je ich zoznam opomenutý, preto má označenie OPTIONAL.\cite{rfc5280}
+
+\begin{figure}[H]
+\begin{lstlisting}
+TBSCertList  ::=  SEQUENCE  {
+    version                 Version OPTIONAL,
+    signature               AlgorithmIdentifier,
+    issuer                  Name,
+    thisUpdate              Time,
+    nextUpdate              Time OPTIONAL,
+    revokedCertificates     SEQUENCE OF SEQUENCE  {
+        userCertificate         CertificateSerialNumber,
+        revocationDate          Time,
+        crlEntryExtensions      Extensions OPTIONAL
+    }  OPTIONAL,
+    crlExtensions           [0]  EXPLICIT Extensions OPTIONAL
+}
+\end{lstlisting}
+\caption{Štruktúra poľa tbsCertList}
+\end{figure}
+
+Druhé a tretie pole sú rovnaké ako pri certifikátoch, teda obsahujú identifikátor algortimu použitého na podpis a vypočítanú hodnotu nad zakódovaným prvým poľom.\cite{rfc5280}
+
+\begin{figure}[H]
+\includegraphics[width=1\textwidth]{crl.png}
+\caption{CRL komunikácia}
+\end{figure}
+
+Ak sa klient rozhodne certifikát servera overiť touto metódou, zašle CRL Request na CRL repozitár, ktorý mu v odpovedi pošle CRL. Klient si potom overí, či certifikát, ktorý mu server poslal nie je v tomto zozname. Výhodou tohto systému je jeho jednoduchosť. Zložitosť implementácie takéhoto procesu je minimálna a prevádzkové náklady sú nízke. Vznikajú tu však aj problémy. CA pravidelne aktualizujú tieto listy, no medzi aktualizáciami môže uplynúť určitý čas. Počas tohto obdobia môžu byť niektoré certifikáty revokované, ale ešte neboli pridané do CRL. Zároveň klient pre účely jedného bezpečného spojenia nepotrebuje celý zoznam revokovaných certifikátov, potrebuje overiť plantosť len jedného. S rastúcou veľkosťou CRL prichádzajú problémy s výkonom a efektivitou.\cite{rfc5280, certs2}
+
+
+\subsection{OCSP}
+Ďalším bežne používaným spôsobom overenia platnosti certifikátov je OCSP protokol. Tento protokol bol navrhnutý ako alternatíva k CRL, aby odstránil niektoré obmedzenia spojené s overovaním platnosti certifikátov pomocou CRL, ako je napríklad veľkosť zoznamov a oneskorenie pri ich aktualizácii. OCSP poskytuje dynamickejší a rýchlejší mechanizmus, pretože umožňuje klientovi získať informácie o stave konkrétneho certifikátu v reálnom čase priamo od OCSP respondéra, namiesto sťahovania celého zoznamu odvolaných certifikátov.\cite{certs2}
+Je to súhrn pravidiel o tom, ako majú vyzerať dáta, ktoré si musí vymeniť klient s OCSP respondérom na to, aby zistil stav jedného alebo viacerých certifikátov. Skladá sa z dvoch hlavných častí.\cite{certs2, rfc6960}
+
 \begin{itemize}
-    \item \textbf{Zariadenie A:}
-        \begin{itemize}
-            \item Generuje náhodnú hodnotu \( r_A \) a výpočet \( m_A \).
-            \item Spočíta \( s_A = r_A + m_A \mod q \), kde \( q \) je veľkosť skupiny eliptickej krivky.
-            \item Vypočíta inverzný prvok \( E_A = (m_A \times PE)^{-1} \), kde \( PE \) je odvodený z hesla pomocou funkcie \( F(p, q, \text{password}) \), ktorá mapuje heslo na bod na eliptickej krivke.
-        \end{itemize}
-    \item \textbf{Zariadenie B:}
-        \begin{itemize}
-            \item Podobne ako A, generuje \( r_B \), \( m_B \), \( s_B \), a \( E_B \).
-        \end{itemize}
+\item OSCP dopyt
+\item OCSP odpoveď
 \end{itemize}
 
-Obidve zariadenia si následne vymenia svoje hodnoty \( s_A, E_A \) a \( s_B, E_B \).
+\subsubsection{OCSP dopyt}
+Táto časť protokolu definuje formát a obsah dát, ktoré klient odosiela OCSP respondéru pri overovaní stavu certifikátu. OCSP dopyt pozostáva z dvoch častí: hlavnej časti (tela dopytu), ktorá obsahuje všetky potrebné informácie o certifikáte, prípadne certifikátoch, ktoré sa majú overiť, a nepovinného digitálneho podpisu. \cite{rfc6960}
 
-\subsubsection{Krok 2: Výpočet spoločného tajomstva}
 
-Po výmene parametrov obe zariadenia vypočítajú spoločné tajomstvo \( SS \):
+\begin{figure}[H]
+\begin{lstlisting}
+OCSPRequest     ::=     SEQUENCE {
+    tbsRequest                  TBSRequest,
+    optionalSignature   [0]     EXPLICIT Signature OPTIONAL
+}
+\end{lstlisting}
+\caption{Štruktúra OCSP dopytu}
+\end{figure}
+
+Prvé pole dopytu sa týka základných údajov o verzii OCSP protokolu, ktorú klient používa, a ďalších voliteľných informácií, ako napríklad meno žiadateľa, ktoré môže byť potrebné v závislosti od konfigurácie OCSP respondéra. Pole obsahuje aj identifikátory certifikátov, ktoré sa majú overiť, a ďalšie voliteľné rozšírenia, ktoré môžu rozšíriť funkcionalitu dopytu. V prípade, že rozšírenia v dopyte nie sú podporované OCSP respondérom, ten ich môže ignorovať. Je dôležité poznamenať, že jeden OCSP dopyt môže zahŕňať viacero certifikátov, čím sa optimalizuje komunikácia medzi klientom a respondérom. Jednotlivé komponenty tela OCSP dopytu sú definované cez ASN.1.\cite{rfc6960}
+
+\begin{figure}[H]
+\begin{lstlisting}
+TBSRequest      ::=     SEQUENCE {
+    version             [0]  EXPLICIT Version DEFAULT v1,
+    requestorName       [1]  EXPLICIT GeneralName OPTIONAL,
+    requestList              SEQUENCE OF Request,
+    requestExtensions   [2]  EXPLICIT Extensions OPTIONAL
+}   
+\end{lstlisting}
+\caption{Štruktúra poľa TBSRequest}
+\end{figure}
+
+Prvý atribút určuje verziu OCSP protokolu, ktorú klient používa. V súčasnosti sa používa verzia 1 (v1), ktorá je prednastavená ako základná verzia protokolu. V budúcnosti môžu byť pridané ďalšie verzie s vylepšeniami.\cite{rfc6960}
+
+\begin{figure}[H]
+\begin{lstlisting}
+    Version         ::=    INTEGER  { v1(0) }
+\end{lstlisting}
+\caption{Štruktúra atribútu  version}
+\end{figure}
+
+Druhý, voliteľný atribút umožňuje klientovi zahrnúť meno alebo identifikátor, ktorým sa klient identifikuje voči OCSP respondéru. \cite{rfc6960}
+
+Tretí atribút je nevyhnutnou časťou dopytu, ktorá obsahuje zoznam certifikátov, ktoré klient chce overiť. Skladá sa zo sekvencie Requestov, ktoré sa zasa skladajú z CertID objektu a nepovinných rozšírení.\cite{rfc6960}
+
+\begin{figure}[H]
+\begin{lstlisting}
+    Request         ::=    SEQUENCE {
+       reqCert                 CertID,
+       singleRequestExtensions [0] EXPLICIT Extensions OPTIONAL
+    }
+    CertID          ::=     SEQUENCE {
+       hashAlgorithm       AlgorithmIdentifier,
+       issuerNameHash      OCTET STRING, 
+       issuerKeyHash       OCTET STRING, 
+       serialNumber        CertificateSerialNumber
+    }
+\end{lstlisting}
+\caption{Štruktúra atribútu requestList}
+\end{figure}
+
+Atribút CertID sa skladá z:
 
 \begin{itemize}
-    \item \textbf{Zariadenie A:} 
-    \[
-    ss = r_A \times (E_B + (s_B \times PE))
-    \]
-    \item \textbf{Zariadenie B:} 
-    \[
-    ss = r_B \times (E_A + (s_A \times PE))
-    \]
+\item \textbf{hashAlgorithm}: Tento údaj špecifikuje kryptografický algoritmus, ktorý sa použije na výpočet hashu potrebného na identifikáciu certifikátu. 
+
+\item \textbf{issuerNameHash}: Hash mena vydavateľa certifikátu. Tento hash je vypočítaný na základe plného DN vydavateľa, ktoré je použité na jednoznačnú identifikáciu CA.
+
+\item \textbf{issuerKeyHash}: Hash verejného kľúča vydavateľa, čo je ďalší údaj, ktorý pomáha jednoznačne identifikovať vydavateľa certifikátu.
+
+\item \textbf{serialNumber}: Sériové číslo certifikátu, ktoré jednoznačne identifikuje konkrétny certifikát vydaný danou certifikačnou autoritou.
 \end{itemize}
 
-Týmto spôsobom obe zariadenia získajú rovnakú hodnotu \( ss \) bez toho, aby museli priamo preniesť svoje heslá alebo iné citlivé informácie.
+Posledný atribút poľa TBSRequest je voliteľný a umožňuje zahrnúť rozšírenia špecifické pre OCSP dopyt. Tieto rozšírenia môžu poskytovať dodatočné informácie alebo požiadavky, ktoré respondér môže, ale nemusí spracovať.\cite{rfc6960}
 
-\subsubsection{Krok 3: Generovanie kľúčov}
-Zdieľané tajomstvo \( ss \) sa použije na odvodenie kľúčov:
+Keď respondér obdrží dopyt, vyhodnotí, či dopyt má správnu štruktúru, ďalej vyhodnotí, či je nakonfigurovaný tak, aby mohol poskytnúť požadovanú službu a nakoniec vyhodnotí, či dopyt obsahuje potrebné povinné údaje. Potom dopyt spracuje a odošle klientovi odpoveď.\cite{rfc6960}
+
+\subsubsection{OCSP odpoveď}
+OCSP odpovede sa skladajú z typu odpovede a samotného obsahu odpovede.\cite{rfc6960} Môžu mať rôzne typy, ale je definovaný jeden základný, ktorý musí podporovať každý OCSP respondér aj klient a všetky definitívne odpovede musia byť podpísané. Na podpis odpovede môžu byť použité verejné kľúče jednej z troch entít:
 \begin{itemize}
-    \item \textbf{Kľúčové komponenty:} \( KCK \) a \( MK \) sú generované pomocou Key Derivation Function \( \text{KDF-n}(ss) \).
+\item CA, ktorá daný certifikát vydala
+\item Dôveryhodný respondér, ktorému klient verí
+\item Autorizovaný respondér, ktorého poverila daná CA
 \end{itemize}
 
-\subsubsection{Krok 4: Potvrdenie autentifikácie}
+\begin{figure}[H]
+\begin{lstlisting}
+OCSPResponse ::= SEQUENCE {
+    responseStatus         OCSPResponseStatus,
+    responseBytes          [0] EXPLICIT ResponseBytes OPTIONAL
+}
+\end{lstlisting}
+\caption{Štruktúra OCSP odpovede}
+\end{figure}
 
-Každé zariadenie vyšle druhému autentifikačné potvrdenie (\( \text{confirm}_A \) a \( \text{confirm}_B \)), ktoré obsahuje:
-\[
-\text{confirm} = H(kck + s_A + s_B + E_A + E_B + \text{device})
-\]
+Atribút responseStatus určuje stav odpovede a môže mať jednu z preddefinovaných hodnôt. Tieto hodnoty informujú, či bola odpoveď úspešne vytvorená alebo či došlo k chybe.\cite{rfc6960}
 
-Tieto potvrdenia zabezpečujú, že komunikácia medzi zariadeniami bola úspešne autentifikovaná a že obe strany majú rovnaké kľúče.
+\begin{figure}[H]
+\begin{lstlisting}
+OCSPResponseStatus ::= ENUMERATED {
+    successful         (0),  
+    malformedRequest   (1), 
+    internalError      (2),  
+    tryLater           (3), 
+                    -- (4) is not used
+    sigRequired        (5),  
+    unauthorized       (6)  
+   }
+\end{lstlisting}
+\caption{Štruktúra atribútu responseStatus}
+\end{figure}
 
-\subsubsection{Hlavné výhody SAE Handshake}
-\begin{itemize}
-    \item \textbf{Ochrana hesla:} Heslo nie je nikdy prenášané v akejkoľvek podobe, čo eliminuje možnosť jeho zachytenia.
-    \item \textbf{Odolnosť voči offline útokom:} Použitie eliptických kriviek a SAE zabezpečuje, že útočník nemôže vykonať offline útok na zachytené údaje.
-\end{itemize}
+Druhý atribút responseBytes obsahuje konkrétne údaje týkajúce sa odpovede, ak bola úspešne vytvorená (ak bol stav responseStatus 0). Toto pole je voliteľné, čo znamená, že sa použije len v prípade úspešnej odpovede. Ak odpoveď nie je úspešná, toto pole môže byť prázdne.\cite{rfc6960}
+
+\begin{figure}[H]
+\begin{lstlisting}
+ResponseBytes ::=       SEQUENCE {
+    responseType   OBJECT IDENTIFIER,
+    response       OCTET STRING
+}
+\end{lstlisting}
+\caption{Štruktúra atribútu responseBytes}
+\end{figure}
+
+Prvý atribút v responseType je identifikátor objektu, ktorý označuje typ odpovede. Pre základnú OCSP odpoveď, ktorú musí každý OCSP respondér podporovať, je hodnota tohoto atribútu id-pkix-ocsp-basic. Tento identifikátor určuje, že odpoveď je štandardného typu.\cite{rfc6960}
+
+\begin{figure}[H]
+\begin{lstlisting}
+BasicOCSPResponse       ::= SEQUENCE {
+    tbsResponseData      ResponseData,
+    signatureAlgorithm   AlgorithmIdentifier,
+    signature            BIT STRING,
+    certs            [0] EXPLICIT SEQUENCE OF Certificate OPTIONAL
+}
+\end{lstlisting}
+\caption{Štruktúra atribútu response}
+\end{figure}
+
+Atribút response v poli responseBytes obsahuje údaje odpovede. Pri základnej odpovedi BasicOCSPResponse sú definované štyri hlavné atribúty: údaje odpovede, použitý algoritmus na podpisovanie, samotný podpis a prípadne zoznam certifikátov použitých na overenie podpisu.\cite{rfc6960}
+
+\begin{figure}[H]
+\begin{lstlisting}
+ResponseData ::= SEQUENCE {
+    version              [0] EXPLICIT Version DEFAULT v1,
+    responderID              ResponderID,
+    producedAt               GeneralizedTime,
+    responses                SEQUENCE OF SingleResponse,
+    responseExtensions   [1] EXPLICIT Extensions OPTIONAL
+}
+\end{lstlisting}
+\caption{Štruktúra atribútov ResponseData a ResponderID}
+\end{figure}
+
+Atribút tbsResponseData v BasicOCSPResponse obsahuje údaje o odpovedi, ktoré sa podpisujú. Tieto údaje obsahujú verziu  OCSP odpovede, identifikátor respondéra, ktorý vytvoril odpoveď,  čas, kedy bola odpoveď vytvorená, zoznam jednotlivých odpovedí týkajúcich sa certifikátov, ktoré boli predmetom dopytu a prípadné rozšírenia. Aj tieto majú presne definovanú štruktúru.\cite{rfc6960}
 
 
-\subsection{Techniky lámania hesiel}
-Proces lámania hesiel je založený na pokusoch o nájdenie správnej kombinácie znakov, ktorá zodpovedá zachyteným autentifikačným údajom. Úspešnosť útoku závisí od použitej techniky, výpočtového výkonu a zložitosti samotného hesla. Medzi najčastejšie používané techniky lámania hesiel patria:
+Atribút ResponderID identifikuje OCSP respondéra, ktorý vytvára odpoveď. Sú dva spôsoby, ako môže byť respondér identifikovaný, a to buď pomocou mena alebo hashu jeho verejného kľúča.\cite{rfc6960}
 
-\begin{itemize}
-\item Slovníkový útok
-\item Brute force útok
-\item Hybridný útok
-\item Rainbow tabuľky
-\end{itemize}
+Atribút SingleResponse je odpoveď na jeden certifikát. Obsahuje identifikátor certifikátu, ktorého stav sa overuje, aktuálny stav certifikátu, časovú pečiatku, ktorá indikuje, kedy bol stav certifikátu naposledy overený, prípadnú časovú pečiatku ďalšej očakávanej aktualizácie stavu certifikátu a voliteľné rozšírenia.\cite{rfc6960}
 
-\textbf{Slovníkový útok} je jednou z najznámejších a najpoužívanejších metód lámania hesiel. Pri tomto útoku sa využíva preddefinovaný zoznam (slovník) bežne používaných hesiel, ktorý útočník postupne porovnáva so zachytenými údajmi z handshake. Slovníkové útoky sú účinné najmä proti slabým heslám, ktoré sú jednoduché, krátke alebo bežne používané (napr. "12345678", "password"). Úspešnosť tejto metódy závisí od kvality a veľkosti použitého slovníka. Táto metóda však zlyháva, ak je heslo dostatočne dlhé, komplexné alebo nie je bežne používané.
+\begin{figure}[H]
+\begin{lstlisting}
+ResponderID ::= CHOICE {
+    byName               [1] Name,
+    byKey                [2] KeyHash
+}
+KeyHash ::= OCTET STRING 
+SingleResponse ::= SEQUENCE {
+    certID                       CertID,
+    certStatus                   CertStatus,
+    thisUpdate                   GeneralizedTime,
+    nextUpdate         [0]       EXPLICIT GeneralizedTime OPTIONAL,
+    singleExtensions   [1]       EXPLICIT Extensions OPTIONAL
+}
+CertStatus ::= CHOICE {
+    good        [0]     IMPLICIT NULL,
+    revoked     [1]     IMPLICIT RevokedInfo,
+    unknown     [2]     IMPLICIT UnknownInfo
+}
+RevokedInfo ::= SEQUENCE {
+    revocationTime              GeneralizedTime,
+    revocationReason    [0]     EXPLICIT CRLReason OPTIONAL
+}
+\end{lstlisting}
+\caption{Štruktúra atribútov ResponseData a ResponderID}
+\end{figure}
 
-\textbf{Brute force útok}, alebo útok hrubou silou, je technika, pri ktorej útočník postupne skúša všetky možné kombinácie znakov, kým nenájde správne heslo. Táto metóda garantuje prelomenie hesla, pokiaľ útočník disponuje dostatočným výpočtovým výkonom a časom. Brute force útok je však výrazne náročný pri komplexných a dlhých heslách. Napríklad, ak je heslo dlhé 8 znakov a obsahuje malé a veľké písmená, čísla a špeciálne znaky, počet možných kombinácií sa pohybuje v miliardách. Úspešnosť brute force útoku je preto závislá od zložitosti hesla a výpočtovej sily dostupného hardvéru.
+Stav certifikátu môže byť v poriadku, odvolaný alebo neznámy. Ak je certifikát odvolaný, atribút RevokedInfo obsahuje informácie o čase a dôvode revokácie. Takáto odpoveď indikuje, že daný certifikát má byť odmietnutý. Neznáma odpoveď znamená, že respondér nevie o danom certifikáte, čiže buď nepozná CA, ktorá vydala daný certifikát, alebo jednoducho danú CA neobsluhuje. Stav v poriadku znamená, že certifikát s daným identifikátorom a periódou platnosti nebol revokovaný. Nepotvrdzuje to však, že certifikát bol vôbec niekedy vydaný, alebo že čas, kedy bola odpoveď vygenerovaná je v rámci intervalu platnosti certifikátu. Na posúdenie týchto vlastností môžu však byť použité nepovinné rozšírenia.\cite{rfc6960}
 
-\textbf{Rainbow tabuľky} sú predgenerované tabuľky hashov, ktoré umožňujú útočníkom rýchlo overiť zhodu medzi hashmi a potenciálnymi heslami. Táto metóda je efektívna najmä v prípadoch, keď útočník má prístup k veľkému množstvu dát a času na ich predgenerovanie. Pri WPA2 sa však rainbow tabulky stávajú menej praktickými, pretože handshake obsahuje unikátne náhodné hodnoty (nonce), ktoré bránia opakovanej použiteľnosti predgenerovaných hashov. 
+\subsection{Nedostatky OCSP protokolu}
+Protokol OCSP bol navrhnutý ako rýchlejšia a efektívnejšia alternatíva ku CRL. Napriek svojim výhodám však obsahuje určité slabiny a neefektívne miesta, ktoré môžu negatívne ovplyvniť jeho použitie v praxi. Táto podkapitola sa zameriava na hlavné výzvy OCSP protokolu, vrátane výkonnostných a bezpečnostných problémov a problémov s podporou.
 
+\subsubsection{Problémy s výkonom}
+Výkonnosť je jedným z kľúčových aspektov, ktoré môžu ovplyvniť použiteľnosť a spoľahlivosť OCSP protokolu. Hoci je OCSP navrhnutý tak, aby bol rýchlejší a efektívnejší ako CRL, jeho implementácia a architektúra môžu viesť k viacerým výkonnostným problémom, najmä v prostrediach s vysokou záťažou.
 
-\textbf{Hybridný útok} kombinuje prvky slovníkového a brute force útoku. Namiesto generovania všetkých možných kombinácií znakov útočník použije základný slovník hesiel a aplikuje naň pravidlá, ktoré pridávajú, modifikujú alebo kombinujú znaky. Napríklad heslo password môže byť testované aj ako Password123 alebo p@ssw0rd. Hybridné útoky sú účinné, ak používatelia vytvárajú heslá založené na známych vzoroch s malými úpravami.
+\subsubsubsection{1. Latencia spôsobená dodatočnými sieťovými požiadavkami}
+Jedným z hlavných výkonnostných problémov OCSP protokolu je potreba vytvorenia nového sieťového spojenia pre každú požiadavku klienta. Pri každom pokuse o overenie certifikátu klient posiela požiadavku na OCSP respondér a čaká na odpoveď. Táto dodatočná komunikácia predlžuje čas potrebný na dokončenie procesov, ako je TLS handshake a načítanie webovej stránky. V situáciach, kedy klient alebo respondér nepodporujú overenie viacerých certifikátov v jednom OCSP dopyte môže tento problém byť ešte výraznejší. Latencia sa taktiež môže zvýšiť, ak je OCSP respondér geograficky vzdialený od klienta alebo ak je spojenie medzi nimi pomalé. 
 
-Okrem vyššie spomenutých techník útočníci používajú na získanie hesiel aj ďalšie spôsoby, ako phishing alebo sociálne inžinierstvo. Vzhľadom na to, že tieto metódy sú postavené na podvodoch či manipulácii, a nie na technikách lámania hesiel, sú mimo zámeru tejto práce.
+\subsubsubsection{2. Škálovateľnosť OCSP respondérov}
+OCSP respondéry musia byť schopné zvládnuť veľké množstvo požiadaviek v reálnom čase, čo môže predstavovať značný výkonnostný problém. V prostrediach s vysokou záťažou, ako sú veľké webové platformy alebo systémy s miliónmi používateľov, sa OCSP respondéry stávajú úzkym miestom. Ak nie sú dostatočne dimenzované alebo optimalizované, môžu sa stať neodpovedajúcimi alebo reagovať pomaly, čo ovplyvňuje nielen klientov, ale aj celkovú dôveryhodnosť systému.
 
-\subsection{Voľne dostupné nástroje na lámanie hesiel}
-Vďaka širokej dostupnosti open-source nástrojov sú techniky lámania hesiel voľne dostupné každému, kto má počítač. Medzi najznámejšie bežne používané nástroje patria John the Ripper, Hashcat a Aircrack-ng, ktoré poskytujú efektívne možnosti pre analýzu hesiel a testovanie bezpečnosti sietí.
+Navyše, nároky na hardvér a infraštruktúru OCSP respondérov sú značne väčšie ako pri CRL. Prevádzkovatelia musia investovať do výkonných serverov a optimalizácií, aby zvládli rastúce množstvo požiadaviek. To zvyšuje náklady na údržbu a prevádzku systému, pričom problém môže byť ešte výraznejší počas špičkovej prevádzky alebo pri útokoch typu DoS.
 
-\textbf{John the Ripper} je jeden z najpopulárnejších nástrojov na prelomenie hesiel, ktorý sa používa na testovanie ich odolnosti. Tento nástroj dokáže pracovať s rôznymi typmi hashov a šifrovaní, vrátane hesiel operačných systémov, súborových systémov a ďalších. Podporuje slovníkové útoky, brute force útoky aj hybridné útoky. Je vysoko konfigurovateľný, čo umožňuje používateľovi definovať pravidlá, ktoré prispôsobia generovanie hesiel na základe špecifických potrieb. Vďaka jeho efektivite a možnosti paralelného spracovania je vhodný na použitie na bežnom hardvéri aj v profesionálnych prostrediach. John the Ripper je dostupný ako open-source a je aktívne udržiavaný komunitou, čo zaručuje pravidelné aktualizácie a rozšírenia.
+V prípade organizácií s globálnou pôsobnosťou je nevyhnutné zabezpečiť dostupnosť OCSP respondérov vo viacerých regiónoch, aby sa minimalizovala latencia a zlepšila spoľahlivosť. Prevádzka OCSP infraštruktúry na globálnej úrovni však prináša značné náklady, vrátane investícií do hardvéru, sieťových zdrojov a správy serverov. Okrem toho môže byť výkonnosť OCSP respondérov nekonzistentná medzi regiónmi, čo vedie k rôznym úrovniam kvality služby pre používateľov z rôznych častí sveta.
 
-
-\textbf{Hashcat} je ďalší výkonný nástroj na prelomenie hesiel, ktorý sa špecializuje na rýchlu analýzu hashov. Na rozdiel od Johna the Rippera je Hashcat optimalizovaný na využitie grafických kariet, čo dramaticky zvyšuje jeho výpočtový výkon. Hashcat podporuje tisíce algoritmov hashovania vrátane MD5, SHA-1, SHA-256, bcrypt, a WPA2 handshake. Podobne ako John the Ripper, aj Hashcat umožňuje vykonávať slovníkové útoky, brute force útoky a hybridné útoky. Hashcat je často využívaný bezpečnostnými špecialistami na analýzu hesiel vo veľkých dátových súboroch a jeho podpora hardvérovej akcelerácie ho robí jedným z najrýchlejších nástrojov v tejto oblasti.
-
-
-\textbf{Aircrack-ng} je balík nástrojov špeciálne navrhnutý na testovanie bezpečnosti bezdrôtových sietí. Aircrack-ng umožňuje zachytávať dátový prenos v sieti, analyzovať pakety a vykonávať útoky na heslá WiFi sietí chránených WEP, WPA alebo WPA2. 
-
-Najdôležitejšou funkciou Aircrack-ng je schopnosť zachytiť WPA/WPA2 handshake, čo je kľúčový krok pri lámaní hesiel zabezpečených WiFi sietí. Po zachytení handshakeu je možné použiť slovníkový útok na prelomenie hesla. Okrem toho Aircrack-ng obsahuje nástroje na vynútenie deautentifikácie klientov zo siete, čo umožňuje simulovať nové pripojenie a získať handshake rýchlejšie. Tento nástroj sa stal štandardom pri testovaní bezpečnosti WiFi sietí a je široko používaný komunitou etických hackerov aj profesionálnych testerov bezpečnosti.
-
-
-\section{Praktická časť}
-V tejto kapitole sa budeme venovať lámaniu hesiel od WiFi sietí zabezpečených pomocou WPA/WPA2 protokolu. Prejdeme si hardvérové aj softvérové nástroje potrebné na vykonanie útoku na sieť, postup monitorovania sieťovej prevádzky, postup, stavbu a limitácie experimentu, automatizáciu a uvedieme výsledky.
+\subsubsubsection{3. Rýchlosť aktualizovania stavov certifikátov}
+Ďalším problémom, ktorý môže ovpyvniť výkon OCSP respondérov je rýchlosť aktualizácie stavov certifikátov. OCSP respondéry musia pravidelne synchronizovať svoje databázy s aktuálnymi údajmi o stave certifikátov, ktoré vydala CA. Aktualizácie môžu byť výpočtovo náročné najmä v prostrediach s veľkým objemom certifikátov alebo ak sa aktualizácie vykonávajú počas špičkového času prevádzky. Výsledkom môžu byť dočasné výpadky, oneskorenia alebo znížený výkon respondérov, čo priamo ovplyvňuje schopnosť klientov overiť stav certifikátov v reálnom čase.
 
 
-\subsection{Potrebné nástroje}
-Ako sme už spomenuli v predošlej kapitole, na rozlúsknutie hesla od WiFi siete zabezpečenej cez WPA/WPA2 je potrebné najprv zachytiť handshake. Z toho vyplývajú dve základné požiadavky:
+\subsubsection{Problémy s bezpečnosťou}
+OCSP protokol bol navrhnutý s cieľom poskytnúť dynamické a spoľahlivé overovanie platnosti certifikátov. Napriek tomu obsahuje niekoľko bezpečnostných slabín, ktoré môžu ohroziť dôveryhodnosť a integritu procesu overovania. Tieto problémy vyplývajú najmä z charakteru jeho implementácie, závislosti na sieťovej komunikácii a niektorých dizajnových rozhodnutí.
+
+\subsubsubsection{1. Závislosť na dostupnosti OCSP respondérov}
+Jednou z hlavných bezpečnostných slabín OCSP protokolu je jeho závislosť na dostupnosti OCSP respondérov. Ak respondér nie je dostupný, klient nie je schopný overiť stav certifikátu. To vedie k situáciám, kedy mnoho klientov a webových prehliadačov používa tzv. "soft fail"\ mechanizmus. Tento prístup znamená, že ak OCSP odpoveď nie je dostupná, klient predpokladá, že certifikát je platný. Soft fail je problematický, pretože umožňuje útočníkovi narušiť spojenie medzi klientom a OCSP respondérom a zabrániť tak overeniu stavu certifikátu. Týmto spôsobom môže byť certifikát, ktorý bol odvolaný, stále akceptovaný klientom, čo vážne ohrozuje bezpečnosť komunikácie.
+
+\subsubsubsection{2. Odhalenie súkromných informácií klienta}
+OCSP protokol môže neúmyselne ohroziť súkromie používateľov. Pri každom dopyte na OCSP respondér klient odosiela informácie o konkrétnom certifikáte, ktorý chce overiť. Tieto dopyty môžu byť sledované, čo umožňuje OCSP respondéru alebo potenciálnym útočníkom získať informácie o tom, aké webové stránky alebo služby klient používa. Táto vlastnosť môže byť využitá na sledovanie online aktivity používateľov a predstavuje významný problém v kontexte ochrany súkromia. Napríklad, ak sa OCSP respondér nachádza v jurisdikcii, ktorá umožňuje monitorovanie siete, údaje o dopytoch môžu byť ľahko zneužité.
+
+\subsubsubsection{3. Náchylnosť na MITM útoky}
+OCSP protokol je náchylný na útoky typu MITM, ak nie sú implementované dostatočné mechanizmy na ochranu integrity komunikácie medzi klientom a OCSP respondérom. Útočník môže zachytiť a upraviť dopyty alebo odpovede OCSP, čím môže klientovi poskytnúť nesprávne informácie o stave certifikátu. Napríklad útočník môže zachytiť skutočnú odpoveď a poslať falošnú, že odvolaný certifikát je platný, čím umožní použitie neplatného certifikátu na vytvorenie spojenia. 
+
+\subsubsection{Nedostatočná podpora}
+Ďalšou prekážkou pri OCSP komunikácii je neúplná alebo nedostatočná podpora zo strany rôznych komponentov infraštruktúry. Tieto problémy môžu brániť jeho širšej adopcii a ovplyvňovať jeho účinnosť a spoľahlivosť v reálnych aplikáciách.
+
+
+\subsubsubsection{1. Slabá podpora na strane klientov}
+Podpora OCSP protokolu na strane klientov, ako sú webové prehliadače a aplikácie, nie je vždy konzistentná. Niektoré prehliadače, napríklad Google Chrome alebo Mozilla  Firefox v predvolenom nastavení nepoužívajú OCSP protokol na overovanie certifikátov. Namiesto toho sa spoliehajú na alternatívne mechanizmy, ako je CRLset alebo OneCRL.\cite{turin} Táto slabá podpora môže viesť k situáciám, kedy OCSP protokol nie je vôbec využívaný, aj keď by mohol zlepšiť bezpečnosť a efektivitu komunikácie.
+
+\subsubsubsection{2. Nedostatočná podpora pre hromadné overovanie certifikátov}
+Hoci OCSP protokol podporuje overovanie viacerých certifikátov v rámci jedného dopytu, táto funkcionalita nie je univerzálne implementovaná. V mnohých prípadoch musia klienti posielať samostatné požiadavky pre každý certifikát, čo zvyšuje sieťovú záťaž a latenciu. Tento problém je obzvlášť výrazný v prostrediach, kde sa používajú viaceré certifikáty na zabezpečenie jednej komunikácie, napríklad v systémoch využívajúcich certifikáty pre hlavný server a rôzne subdomény. Nedostatok podpory pre hromadné overovanie znamená, že OCSP protokol nemôže plne využiť svoj potenciál na zlepšenie efektivity.
+
+
+\subsubsection{Zhrnutie}
+Aj keď OCSP má potenciál priniesť výhody v oblasti efektivity a rýchlosti, v praxi sa stretáva s viacerými obmedzeniami, ktoré ovplyvňujú jeho výkon, bezpečnosť a podporu. Výkonnostné problémy súvisia najmä s latenciou, vysokými nárokmi na škálovateľnosť OCSP respondérov a závislosťou na aktuálnosti údajov o stave certifikátov. Tieto faktory môžu viesť k spomaleniu komunikácie a zvýšeniu prevádzkových nákladov.
+
+Z bezpečnostného hľadiska je OCSP zraniteľný voči viacerým hrozbám, ako sú útoky typu MITM, odhalenie súkromných informácií používateľov či dôsledky "soft fail" mechanizmu pri výpadku OCSP respondérov. Tieto slabiny môžu výrazne ohroziť dôveryhodnosť protokolu a integritu procesu overovania certifikátov.
+
+Nedostatky v podpore OCSP protokolu ešte viac zhoršujú jeho použiteľnosť. Slabá adopcia zo strany klientov a serverov, problémy s interoperabilitou medzi CA a OCSP respondérmi či obmedzená podpora pre hromadné overovanie certifikátov bránia plnému využitiu potenciálu tohto protokolu. 
+
+
+\subsection{Existujúce riešenia}
+Pre zlepšenie efektivity a širšie prijatie OCSP je potrebné riešenie týchto nedostatkov. Odborná komunita už prišla s rôznymi významnými vylepšeniami, ktoré zlepšujú OCSP v týchto oblastiach. V tejto kapitole prejdeme hlavné existujúce vylepšenia pre OCSP.
+
+
+\subsubsection{OCSP Stapling}
+OCSP stapling je jedným z najvýznamnejších vylepšení OCSP protokolu, ktoré rieši viaceré jeho výkonové a bezpečnostné nedostatky. Táto metóda umožňuje serveru zahrnúť OCSP odpoveď priamo do TLS handshake, čím eliminuje potrebu klienta samostatne kontaktovať OCSP respondér. Zavedenie OCSP Staplingu prináša niekoľko výhod, ktoré zvyšujú efektivitu, spoľahlivosť a bezpečnosť procesu overovania platnosti certifikátov.
+
+\subsubsubsection{Princíp fungovania OCSP staplingu}
+V tradičnom OCSP modeli klient posiela dopyt na OCSP respondér, aby získal informácie o stave konkrétneho certifikátu. Pri OCSP staplingu však server sám periodicky kontaktuje OCSP respondér, získava aktuálnu odpoveď a túto odpoveď následne "pripne"\ (angl. "staple") k svojmu certifikátu počas TLS handshake komunikácie s klientom. Klient tak dostane OCSP odpoveď priamo od servera a nemusí samostatne komunikovať s OCSP respondérom. 
+
+Klient si stav certifikátu stále môže overiť aj sám cez OCSP respondéra. To je užitočné pre prípady, keď server z akéhokoľvek dôvodu zlyhá v pripojení OCSP odpovede do TLS handshake. V takýchto prípadoch sa systém vracia k obyčajnému OCSP modelu.
+
+\begin{figure}[H]
+\centering
+\includegraphics[height=0.3\textheight]{images/stapling.png}
+\caption{Schéma OCSP stapling komunikácie.}
+\end{figure}
+
+\subsubsubsection{Výhody a  nevýhody OCSP staplingu}
+OCSP Stapling prináša niekoľko kľúčových výhod:
 
 \begin{enumerate}
-\item Útočník musí byť schopný zachytávať sieťovú prevádzku
-\item Útočník musí byť v dosahu cieľovej WiFI siete
+\item \textbf{Zníženie latencie} \\
+Eliminuje dodatočné sieťové spojenie medzi klientom a OCSP respondérom, čím skracuje čas potrebný na dokončenie TLS handshake. To zlepšuje užívateľskú skúsenosť, najmä pri webových aplikáciách citlivých na výkon.
+
+\item \textbf{Zníženie záťaže OCSP respondérov} \\
+Vďaka tomu, že server sám pravidelne kontroluje svoj certifikát, jeho klienti to už nemusia robiť každý zvlášť. OCSP stapling teda znižuje počet dopytov smerujúcich na OCSP respondérov a ich celkovú sieťovú a výpočtovú záťaž. Toto riešenie je výhodné najmä pre veľké systémy s vysokým počtom klientov, kde môže základný OCSP model predstavovať úzke miesto.
+
+\item \textbf{Zlepšenie ochrany súkromia} \\
+Keďže klient nekomunikuje priamo s OCSP respondérom, eliminuje sa možnosť sledovania aktivity používateľa na základe OCSP dopytov. Vďaka tomu OCSP stapling výrazne  napomáha k súkromiu koncového užívateľa.
+
 \end{enumerate}
 
-Schopnosť zachytávať sieťovú prevádzku, tzv. monitorovací režim, nie je bežnou vlastnosťou WiFi kariet zabudovaných v notebookoch alebo stolných počítačoch. Tento režim vyžaduje špeciálny hardvér – externý WiFi adaptér s vnútorným čipom uspôsobeným na túto úlohu. Pre účely experimentu bol použitý externý WiFi adaptér Alfa AWUS036NHA s čipom Atheros AR9271.
-
-Okrem hardvéru sú potrebné aj softvérové nástroje, ktoré umožňujú ovládať špecifické funkcie WiFi adaptéra. Softvér zohráva kľúčovú úlohu pri zachytávaní dátovej prevádzky, analyzovaní získaných údajov a následnom vykonávaní útoku. Pre účely experimentu bola použitá špecializovaná linuxová distribúcia Kali Linux, ktorá je určená pre penetračné testovanie a bezpečnostné analýzy. Táto distribúcia obsahuje širokú škálu predinštalovaných nástrojov, potrebných na analýzu a testovanie bezpečnosti WiFi sietí, na experiment boli použité nástroje z balíka Aircrack-ng.
-
-
-\subsection{Postup monitorovania sieťovej prevádzky}
-Monitorovanie sieťovej prevádzky je kľúčovým krokom pri analýze bezpečnosti WiFi sietí. Tento proces zahŕňa zachytávanie dát prenášaných medzi zariadeniami v sieti, čo umožňuje identifikovať potenciálne zraniteľnosti, ako aj zachytiť handshake potrebný na prelomenie hesla. Nasledujúci postup opisuje kroky, ktoré boli vykonané počas experimentu.
-
-\subsubsection{Príprava na monitorovací režim} Pred prechodom WiFi adaptéra do monitorovacieho režimu je potrebné vypnúť všetky procesy, ktoré by mohli rušiť experiment alebo blokovať používanie adaptéra v tomto režime. Na tento účel bol použitý príkaz:
-
-\begin{verbatim} airmon-ng check kill \end{verbatim}
-
-Tento príkaz identifikuje a ukončí procesy, ktoré by mohli rušiť prácu nástrojov ako Airmon-ng alebo Airodump-ng. Typicky ide o služby spravujúce bezdrôtové pripojenie, napríklad NetworkManager. Po ukončení týchto procesov je adaptér pripravený na prechod do monitorovacieho režimu.
-
-\subsubsection{Prechod do monitorovacieho režimu} 
-Následovný krok je prechod WiFi adaptéra do tzv. monitorovacieho režimu, ktorý umožňuje zachytávanie všetkej sieťovej prevádzky v dosahu adaptéra, vrátane paketov, ktoré nie sú priamo adresované zariadeniu útočníka. Na tento účel bol použitý nástroj Airmon-ng, ktorý je súčasťou balíka Aircrack-ng.
-
-\begin{verbatim} airmon-ng start wlan1 \end{verbatim}
-
-Týmto príkazom bol WiFi adaptér prepnutý do monitorovacieho režimu, pričom \texttt{wlan[číslo]} predstavuje názov sieťového rozhrania. V prípade úspešného prechodu sa v systéme vytvorí nové rozhranie, zvyčajne označené ako \texttt{wlan[číslo]mon}.
-
-\subsubsection{Identifikácia cieľovej siete} 
-Po aktivovaní monitorovacieho režimu je potrebné identifikovať cieľovú WiFi sieť. Na tento účel bol použitý nástroj Airodump-ng, ktorý poskytuje prehľad všetkých sietí v dosahu adaptéra.
-
-\begin{verbatim} airodump-ng wlan1mon \end{verbatim}
-
-Tento príkaz zobrazí zoznam sietí vrátane SSID (názvu siete), MAC adresy prístupového bodu (BSSID), použitých bezpečnostných protokolov a kanálu siete. Po identifikovaní cieľovej siete bola zvolená konkrétna sieť na ďalšiu analýzu. Samozrejme pre účely tohto experimentu som pracoval so svojou domácou sieťou, inak by to bolo nelegálne.
-
-\subsubsection{Zachytávanie dátovej prevádzky} 
-Na zachytávanie paketov v cieľovej sieti opäť slúži nástroj Airodump-ng. Tento nástroj umožňuje filtrovanie paketov na základe BSSID cieľovej siete a kanála, na ktorom sieť operuje.
-
-\begin{verbatim} airodump-ng -c [kanál] --bssid [BSSID] -w [súbor] wlan1mon \end{verbatim}
-
-Uvedený príkaz berie tieto argumenty: 
-
-\begin{itemize} 
-\item \texttt{-c [kanál]} – špecifikuje kanál cieľovej siete, napríklad 3 
-\item \texttt{--bssid [BSSID]} – MAC adresa prístupového bodu. 
-\item \texttt{-w [súbor]} – názov súboru, do ktorého sa budú ukladať zachytené pakety. 
-\end{itemize}
-
-Tento krok umožňuje priebežné ukladanie sieťovej prevádzky na analýzu a zároveň zachytenie handshakeu potrebného pre ďalšie kroky. Príkaz má kontinuálny výstup do konzoly, ktorý blokuje zadávanie ďalších príkazov používateľom a ukončuje sa stlačením kombinácie klávesov \texttt{Ctrl + C} (táto kombinácia odošle procesu signál \texttt{SIGINT}, čím sa proces preruší). Po detekovaní WPA/WPA2 handshakeu v dátovej prevádzke sa táto udalosť zobrazí priamo vo výstupe príkazového riadku.
-
-Je potrebné spomenúť, že počas experimentu nebola využitá funkcia na injektovanie paketov do siete, keďže nebolo potrebné odosielať deautentifikačné pakety. Vzhľadom na to, že experiment prebiehal na mojej domácej sieti, jednoducho som zariadenie manuálne odpojil a následne znovu pripojil, vďaka čomu prebehol potrebný handshake.
-
-\subsection{Stavba experimentu}
-Experiment bol navrhnutý tak, aby simuloval realistické scenáre prelomenia hesiel WiFi sietí a zároveň poskytol merateľné údaje o efektivite slovníkových a brute-force útokov. Testované boli štyri rôzne druhy hesiel, pričom pre každý druh boli vytvorené tri rôzne inštancie. Týmto spôsobom bolo možné analyzovať, ako rôzne typy a variácie hesiel ovplyvňujú čas potrebný na ich prelomenie a úspešnosť zvolených metód útoku.
-
-Typy hesiel použité v experimente:
-\begin{enumerate} 
-\item Náhodné heslo (8 miest) – Heslo generované náhodne, obsahujúce malé a veľké písmená a čísla. Tento typ hesla je zameraný na vyzdvihnutie brute-force útoku.
-\item Slovníkové heslo (8 miest) – Heslo vybrané zo známeho slovníka \texttt{rockyou.txt}, ktorý obsahuje veľkú databázu bežne používaných hesiel. Toto heslo je zamerané na vyzdvihnutie slovníkového útoku. 
-\item Náhodné heslo (9 miest) – Rovnaký princíp ako pri 8-miestnom náhodnom hesle, avšak s vyšším počtom znakov, čo zvyšuje zložitosť útoku. 
-\item Slovníkové heslo (9 miest) – Rovnaký princíp ako pri 8-miestnom slovníkovom hesle, avšak s vyšším počtom znakov, čo zvyšuje zložitosť útoku.
- \end{enumerate}
-
-Každé z  dvanástich testovaných hesiel bolo podrobené obom typom útokov, slovníkovému aj brute-force. Pre každý typ útoku bol zaznamenaný čas potrebný na prelomenie hesla, pričom v prípade neúspešného pokusu bol výsledok označený ako \texttt{NaN}.
-
-
-\subsection{Limitácie experimentu}
-Dĺžky hesiel testovaných v tomto experimente boli podmienené obmedzeniami môjho routera, ktorý podporuje minimálne 8-miestne heslá. Aby som pokryl viac rôznych dĺžiek hesiel a otestoval ich vplyv na čas potrebný na prelomenie, musel som testovať heslá s dĺžkou 8 a 9 znakov.
-
-Tento prístup však prináša problém pri brute-force útokoch. Počet všetkých možných permutácií hesiel je exponenciálne závislý od dĺžky hesla a veľkosti množiny povolených znakov. Pre heslá obsahujúce malé a veľké písmená, číslice a špeciálne znaky je veľkosť množiny povolených znakov 94. Na základe výpočtov:
-
-\begin{itemize} 
-\item Pre 8-miestne heslo je možné vytvoriť $94^8 = 6,095,689,385,410,816$ rôznych kombinácií.
- \item Pre 9-miestne heslo je možné vytvoriť $94^9 = 572,994,802,228,616,704$ rôznych kombinácií. 
-\end{itemize}
-
-Počet možných kombinácií je tak obrovský, že na mojom hardvéri by úplné vyčerpanie všetkých možností pomocou brute-force útoku trvalo nereálne dlhý čas. Pri mojej rýchlosti spracovania 10 000 hesiel za sekundu by pre 9-miestne heslo, ak by skutočná kombinácia bola posledná v množine, útok trval približne 1,8 milióna rokov. Navyše, vytvorenie a uloženie slovníka s takýmto množstvom hesiel by ďaleko presahovalo kapacitu môjho disku.
-
-Na vyriešenie tejto výzvy som namiesto čistého brute-force útoku použil slovníkový útok, ktorý sa k brute-force útoku len približuje. Optimalizácie vykonané na zníženie počtu kombinácií boli nasledovné:
-
-\begin{itemize} 
-\item Obmedzenie množiny znakov: Množinu možných znakov som zúžil na malé a veľké písmená a číslice, čím som znížil veľkosť množiny z pôvodných 94 znakov na 62 znakov (26 malých písmen + 26 veľkých písmen + 10 číslic). Táto redukcia dramaticky znížila počet možných permutácií. 
-\item Generovanie permutácií znakov hesla: Vzhľadom na to, že som poznal testované heslá, použil som príkaz \texttt{crunch} na generovanie všetkých možných permutácií znakov konkrétneho hesla. Napríklad, pre heslo \texttt{mtpqb7Dv} som vytvoril slovník obsahujúci všetky možné permutácie jeho znakov. 
-
-\begin{figure}[H] 
-    \centering
-    \includegraphics[width=0.8\textwidth]{img/crunch.png}
-    \caption{Vytvorenie slovníka pre simuláciu brute-force útoku.}
-    \label{fig:crunch}
-\end{figure}
-
-\item Zavedenie opakovania znakov: Pri 9-miestnych heslách som zaviedol mierne opakovanie znakov, aby som znížil počet permutácií. Ak by heslo obsahovalo výlučne unikátne znaky, množstvo kombinácií by bolo stále príliš vysoké.
-\item Oddelenie procesov: Generovanie slovníkov som oddelil od samotného procesu prelomenia hesla. Týmto spôsobom čas potrebný na vytvorenie permutácií neovplyvnil čas potrebný na samotné prelomenie hesla. 
-\end{itemize}
-
-Týmito opatreniami som zabezpečil, že experiment sa uskutočnil v časovo zvládnuteľných rámcoch, pričom bol zameraný na získanie praktických poznatkov o efektivite brute-force a slovníkových útokov. Hoci experiment zjednodušoval niektoré aspekty reálnych podmienok, poskytol cenné údaje pre základné pochopenie problematiky prelomenia hesiel.
-
-
-\subsection{Príprava experimentu}
-Každé z heisel použitých v experimente si vyžadovalo vykonanie presne definovaných krokov, aby bolo možné získať potrebné dáta na testovanie efektivity útokov. Príprava pre každé heslo zahŕňala následovné činnosti:
-
-\begin{enumerate} 
-\item Zmena hesla WiFi siete: Pre každé z hesiel som musel manuálne zmeniť heslo na svojom WiFi routeri. Toto zabezpečilo, že testované heslo bolo aktuálne použité na zabezpečenie siete.
-
-\item Začatie zachytávania dátovej prevádzky: Pomocou nástroja \texttt{Airodump-ng} som spustil proces zachytávania dátovej prevádzky na príslušnej WiFi sieti. Tento krok bol potrebný na prípravu na zachytenie WPA2 handshake.
-
-\item Odpojenie a znovupripojenie zariadenia: Po začatí zachytávania dát som svoje zariadenie (stolný počítač) odpojil od WiFi siete a následne ho znovu pripojil. Tento krok bol nevyhnutný na generovanie WPA2 handshake, ktorý je kľúčový pre testovanie útokov.
-
-\item Zachytenie handshake: Po opätovnom pripojení zariadenia som zachytil WPA2 handshake pomocou nástroja \texttt{Airodump-ng}. Zachytené dáta som uložil do súboru s príponou \texttt{.pcap}, ktorý slúži ako vstupný súbor pre ďalšie kroky analýzy a testovania.
-
-\item Príprava "brute force" slovníkov: Pre náhodne generované heslá som vytvoril špecifické slovníky na vykonanie brute-force simulácie, tak ako je to opísané v predošlej podkapitole.
-\end{enumerate}
-
-Tieto kroky som vykonal pre každé z dvanástich testovaných hesiel, pričom všetky získané \texttt{.pcap} súbory a generované slovníky boli organizované a pripravené na nasledujúcu fázu experimentu, ktorá zahŕňala samotné lámanie.
-
-\subsection{Vykonanie experimentu}
-Na automatizáciu prelomenia hesiel som vytvoril Bash skript, ktorého zdrojový kód je uvedený na priloženom obrázku nižšie. Skript zjednodušuje proces útoku na heslo pomocou nástroja \texttt{aircrack-ng}, pričom vypisuje čas potrebný na prelomenie hesla aj výstup príkazu o úspešnosti prelomenia hesla.
-
-\begin{figure}[H] 
-    \centering
-    \includegraphics[width=0.8\textwidth]{img/skript.png}
-    \caption{Zdrojový kód skriptu.}
-    \label{fig:skript}
-\end{figure}
-
-\subsubsection{Popis a použitie skriptu} 
-Skript prijíma dva vstupné parametre. Prvým je slovník hesiel, respektíve cesta k súboru obsahujúcemu zoznam hesiel na vykonanie útoku. Druhým je súbor vo formáte .pcap, ktorý obsahuje zachytené dáta z WPA/WPA2 handshakeom. 
-
-
-\subsubsection{Výstup skriptu} 
-Výstup skriptu poskytuje prehľad o priebehu útoku a jeho výsledkoch. Zobrazuje kľúčové informácie, ako počet testovaných kombinácií, rýchlosť spracovania, celkový čas hľadania, odhadovaný zostávajúci čas a konečný výsledok. Okrem toho obsahuje aj technické detaily o generovaných kľúčoch a parametroch spojených s WPA2 handshake. Na obrázku nižšie je uvedený ukážkový výstup pre jedno z testovaných hesiel.
-
-\begin{figure}[H] 
-    \centering
-    \includegraphics[width=0.8\textwidth]{img/vystup_skriptu.png}
-    \caption{Výstup skriptu.}
-    \label{fig:vystup_skriptu}
-\end{figure}
-
-\subsubsection{Praktické využitie v experimente} 
-Tento skript som použil pre každé testované heslo v rámci experimentu. Pre slovníkové heslá som použil predom pripravený slovník \texttt{rockyou.txt} a pre náhodné heslá som použil vlastné generované slovníky s permutáciami znakov hesla. Výsledné časy prelomenia hesla, prípadne informácia o neúspechu (\texttt{NaN}), boli následne zaznamenané do excelovej tabuľky. Automatizácia pomocou skriptu výrazne zjednodušila proces a umožnila zamerať sa na analýzu výsledkov.
-
-\subsubsection{Testované heslá} 
-Nižšie je uvedená tabuľka so zoznamom testovaných hesiel spolu s ich typom (dĺžka a druh hesla):
-
-\begin{longtable}{|c|c|}
-\hline
-\textbf{Heslo} & \textbf{Typ hesla} \\ \hline
-mtpqb7Dv & 8-miestne náhodné \\ \hline
-H7Dk2PqX & 8-miestne náhodné \\ \hline
-P3xL1aN2 & 8-miestne náhodné \\ \hline
-williams & 8-miestne slovníkové \\ \hline
-grabass1 & 8-miestne slovníkové \\ \hline
-FIANCE22 & 8-miestne slovníkové \\ \hline
-mtpvb7Dvm & 9-miestne náhodné \\ \hline
-W4Xn7Xk7B & 9-miestne náhodné \\ \hline
-P8Rm2L8Z & 9-miestne náhodné \\ \hline
-capricorn & 9-miestne slovníkové \\ \hline
-grabapunk & 9-miestne slovníkové \\ \hline
-kaitlynn4 & 9-miestne slovníkové \\ \hline
-\caption{Zoznam testovaných hesiel a ich typov.} % Popis tabuľky
-\end{longtable}
-
-\subsection{Výsledky experimentu}
-Nižšie uvedená tabuľka obsahuje výsledky experimentu, kde pre každé heslo je čas potrebný na prelomenie pomocou brute-force a slovníkového útoku zaznamenaný v sekundách. Hodnoty - označujú, že útok bol neúspešný, čiže nenašiel správne heslo. Stĺpec \# Možností zaznamenáva koľko rôznych možností bolo vyskúšaných, kým sa našlo správne heslo.
-
-\begin{longtable}{|c|c|c|c|c|}
-\hline
-\textbf{Heslo} & \multicolumn{2}{|c|}{\textbf{Brute-force}} & \multicolumn{2}{|c|}{\textbf{Slovníkový}} \\ \hline
-& \textbf{Čas (s)} & \textbf{\# Možností} & \textbf{Čas (s)} & \textbf{\# Možností} \\ \hline
-mtpqb7Dv & 1130 & 11,862,552 & - & 14,344,392 \\ \hline
-williams & 155 & 1,665,864& 0.1 & 798 \\ \hline
-mtpvb7Dvm & 2483 & 26,014,504 & - & 14,344,392 \\ \hline
-capricorn & 1861 & 19,527,168 & 0.1 & 786 \\ \hline
-H7Dk2PqX & 875 & 9,209,584 & - & 14,344,392  \\ \hline
-grabass1 & 79 & 900,880 & 739 & 7,772,495 \\ \hline
-W4Xn7Xk7B & 3642 & 38,144,952 & - & 14,344,392 \\ \hline
-grabapunk & 9295 & 97,196,856 & 740 & 7,799,457 \\ \hline
-P3xL1aN2 & 1254 & 13,086,228 & - & 14,344,392 \\ \hline
-FIANCE22 & 276 & 2,970,896 & 1054 & 11,080,387 \\ \hline
-P8Rm2L8Z & 1360 & 14,275,112 & - & 14,344,392 \\ \hline
-kaitlynn4 & 9247 & 96,704,920 & 633 & 6,598,420 \\ \hline
-\caption{Časy prelomenia hesiel a počet vyskúšaných možností.}
-\end{longtable}
-
-
-\section{Záver}
-V tejto kapitole zhodnotíme výsledky získané počas experimentu a poskytneme odporúčania pre zvýšenie bezpečnosti hesiel WiFi sietí na základe zistených informácií.
-
-\subsection{Zhodnotenie výsledkov}
-Výsledky experimentu ukazujú rôzne úrovne efektivity brute-force a slovníkových útokov pri prelomení hesiel rôznej dĺžky a zložitosti. Na základe zozbieraných údajov je možné identifikovať niekoľko dôležitých poznatkov.
-
-\subsubsection{Brute-force útoky}
-Počet vyskúšaných možností mal zásadný vplyv na čas potrebný na prelomenie hesiel touto metódou. S narastajúcim počtom možností, ktoré boli testované sa predlžoval čas trvania testu, pričom najkratší test bol vykonaný na hesle „grabass1“, kde brute-force útok prešiel 900,880 možností a trval iba 79 sekúnd. Na druhú stranu najdlhší test bol brute-force útok na heslo „grabapunk“, kde bolo testovaných 97,196,856 možností a proces trval až 9,295 sekúnd, čo predstavuje 2 hodiny, 34 minút a 55 sekúnd.
-
-Obrovský rozdiel medzi týmito dvoma testami vyzdvihuje význam zložitosti hesla a veľkosti vyhľadávacieho priestoru na čas potrebný na prelomenie hesla. Testy ukazujú, že efektívnosť útoku je úzko spätá s kombináciou dĺžky a zložitosti hesla. 
-
-\subsubsubsection{Grafické zobrazenie}
-Na grafe na obrázku 5 je možné vidieť vzťah medzi počtom vyskúšaných možností na osi x a časom testu v sekundách na osi y pre brute-force testy. Je vidieť významnú koreláciu medzi rastom dĺžky vykonania testu a rastom počtu vyskúšaných možností.
-
-\begin{figure}[H] 
-    \centering
-    \includegraphics[width=0.8\textwidth]{img/brute_casy.png}
-    \caption{Graf časov a vyskúšaných možností pre brute-force útoky.}
-    \label{fig:brute_casy}
-\end{figure}
-
-Na presnejšiu analýzu tohto vzťahu treba ešte odizolovať jednu premennú, a to vyhľadávací priestor. Keďže rôzne heslá v mojich testoch mali rôzne dĺžky a rôzny stupeň opakovania znakov, počty všetkých ich permútácií sa tiež líšia. To docielime tak, že vybereme heslá, ktoré majú rovnaký počet možných permutácií, konkrétne tieto tri: 
+Okrem významných, vyššie spomenutých výhod prináša OCSP stapling so sebou aj nové 
+obmedzenia a výzvy.
 
 \begin{enumerate}
-    \item capricorn
-    \item mtpvb7Dvm
-    \item W4Xn7Xk7B
+\item \textbf{Presun OCSP komunikácie z klienta na server} \\
+V praxi sa môžu architektúry serverov rôznych webových stránok líšiť v mnohých aspektoch, keďže každý je uspôsobný na mieru pre svoj používateľský scenár. 
+Vzhľadom na to, že OCSP stapling pridáva logiku navyše pre tieto servery, aj ich 
+schopnosť na adaptáciu tejto novej logiky môže byť odlišná.
+
+\item \textbf{Riziko neaktuálnych OCSP odpovedí} \\
+Tie servery, ktoré stapling podporujú, zároveň na seba preberajú aj riziko neaktuálnych OCSP odpovedí, ktoré pred tým niesli  OCSP respondéry.
+Vzhľadom na to, že OCSP odpovede priložené serverom majú obmedzenú dobu platnosti, ak server nezíska novú OCSP odpoveď pred vypršaním tej aktuálnej, môže poskytnúť klientovi zastaranú odpoveď. To môže viesť k problémom s dôveryhodnosťou alebo zneužitím.
+
+\item \textbf{Obmedzená podpora na strane klientov} \\
+Podobne ako webové servery, aj ich klienti môžu mať problém so spracovaním OCSP odpovede priloženej k TLS handshake. Tento nedostatok môže obmedziť praktické výhody OCSP staplingu, najmä pri širokej škále zariadení a softvérov.
+
 \end{enumerate}
 
-Všetky tri heslá majú 9 znakov, z toho dva znaky obsahujú dva krát, čiže počet všetkých ich permutácií je $7^9 = 40,353,607$. Na následujúcom grafe je znázornený čas brute-force testov pre tieto heslá.
+Aj napriek významným vylepšeniam, ktoré OCSP Stapling prináša oproti základnému OCSP modelu je táto metóda stále málo používaná. Zulfiqar et al. vo svojom výskume z roku 2021, zameranom na prijatie bezpečnostných mechanizmov u X.509 certifikátov ukázali, že v roku 2020 iba 29.67~\% z 50 000 najpoužívanejších webových stránok podporovalo OCSP stapling \cite{stapling_adoption}. Takáto nízka miera adopcie naznačuje, že ekosystém certifikátov a súvisiace infraštruktúry ešte nie sú dostatočne pripravené na plnú implementáciu OCSP Staplingu. Na podporu širšieho prijatia tejto technológie budú potrebné ďalšie vylepšenia, ako napríklad lepšia podpora na strane serverov a klientov a efektívnejšia implementácia protokolu.
 
-\begin{figure}[H] 
-    \centering
-    \includegraphics[width=0.8\textwidth]{img/vyber_cas.png}
-    \caption{Graf časov pre vybrané heslá.}
-    \label{fig:vyber_cas}
+
+\subsubsection{OCSP Must-Staple}
+Ďalším vylepšením OCSP protokolu je OCSP Must-Staple, ktoré zvyšuje jeho bezpečnosť a spoľahlivosť tým, že priamo vyžaduje priloženie OCSP odpovede k  certifikátu počas TLS handshake. Táto funkcionalita je implementovaná ako rozšírenie v certifikáte a zaväzuje server k poskytovaniu aktuálnej OCSP odpovede. V prípade, že server OCSP odpoveď nepriloží, klient automaticky odmietne nadviazať spojenie.
+
+
+\subsubsubsection{Princíp fungovania OCSP Must-Staple}
+\begin{figure}[H]
+\centering
+\includegraphics[height=0.3\textheight]{images/must_staple.png}
+\caption{Schéma OCSP Must-Staple komunikácie.}
 \end{figure}
 
-Na treťom grafe je zobrazený počet vyskúšaných možností brute-force testov pre tieto heslá.  
+OCSP Must-Staple je realizovaný pomocou špeciálneho rozšírenia X.509 certifikátu s názvom TLS Feature Extension. Toto rozšírenie obsahuje špecifikáciu, že server musí poskytovať OCSP odpoveď ako súčasť TLS handshake. Klient, ktorý prijme certifikát s týmto rozšírením, overí prítomnosť OCSP odpovede. Ak odpoveď chýba, spojenie je zamietnuté ako neplatné. Mechanizmus teda funguje ako striktné vynucovanie OCSP Staplingu, čím eliminuje riziko nastatia "soft fail"\ scenárov.
 
-\begin{figure}[H] 
-    \centering
-    \includegraphics[width=0.8\textwidth]{img/vyber_moznosti.png}
-    \caption{Graf vyskúšaných možností pre vybrané heslá.}
-    \label{fig:vyber_moznosti}
+\subsubsubsection{Výhody a nevýhody OCSP Must-Staple}
+Vzhľadom na to, že tento model vychádza z OCSP staplingu, prináša so sebou všetky jeho výhody. Okrem nich však Must-Staple poskytuje aj jedno významné bezpečnostné vylepšenie. Základný OCSP model aj OCSP Stapling umožňujú "soft fail", pri ktorom prehliadač povolí spojenie, aj keď nie je možné overiť stav certifikátu, napríklad pri výpadku OCSP respondéra. OCSP Must-Staple tento problém rieši tým, že prítomnosť OCSP odpovede je povinná. Ak server nepriloží aktuálnu OCSP odpoveď, spojenie je automaticky odmietnuté, čím sa eliminuje riziko takýchto scenárov.
+
+Tak ako pri OCSP Staplingu, aj Must-Staple si vyžaduje dôslednú implementáciu na strane serverov aj klientov, no jeho podpora je stále obmedzená. Staršie webové servery a prehliadače často nepoznajú OCSP Must-Staple alebo ho nepodporujú, čo obmedzuje jeho praktické využitie. Friess et. al. vo svojom výskume z roku 2023 zistili, že až 89.5~\% z 530 000 klientov jednoducho odignorovalo Must-Staple rozšírenie certifikátov pri načítavaní webovej stránky.\cite{security_pki}
+
+Aj napriek početným vylepšeniam oproti základnému OCSP modelu je aktuálna adopcia tejto metódy minimálna. Hlavnými prekážkami jej širšieho rozšírenia sú technické obmedzenia na strane serverov a klientov, ako aj náročnosť na správu aktuálnych OCSP odpovedí. Pre dosiahnutie plného potenciálu OCSP Must-Staple je preto nevyhnutná lepšia podpora v infraštruktúre a zvýšená adopcia zo strany vývojárov webových aplikácií a certifikačných autorít.
+
+
+\subsubsection{OCSP Multi-Stapling}
+Podobne ako Must-Staple, aj OCSP Multi-Stapling je rozšírenie OCSP Staplingu. Toto rozšírenie umožňuje serveru priložiť viacero OCSP odpovedí v rámci jedného TLS handshake. To je užitočné najmä v situáciách, keď je potrebné overiť celý certifikátový reťazec, nielen koncový certifikát.
+
+V praxi sú certifikáty totiž často podpísané certifikátovými reťazcami a nie priamo CA. Certifikáty v tomto reťazci sú hierarchicky usporiadané a každý certifikát je podpísaný nadriadeným certifikátom až po koreňový certifikát, ktorý je dôveryhodný a patrí CA. Ak klient overuje platnosť koncového certifikátu, často potrebuje overiť aj ostatné certifikáty v takomto reťazci. V základnom OCSP Stapling modeli toto nie je domyslené, a napriek tomu, že server pošle OCSP odpoveď pre svoj certifikát, klient si v takýchto prípadoch musí sám overiť platnosť ostatných certifikátov v reťazci.
+
+OCSP Multi-Stapling tento problém rieši tým, že server pripraví a priloží OCSP odpovede pre viacero certifikátov v reťazci v rámci jednej komunikácie s klientom.
+
+
+\subsubsubsection{Princíp fungovania OCSP Multi-Staplingu}
+\begin{enumerate}
+\item \textbf{Získanie OCSP odpovedí} \\
+Server periodicky získava OCSP odpovede pre všetky certifikáty v certifikátovom reťazci od príslušných OCSP respondérov.
+
+\item\textbf{ Priloženie OCSP odpovedí}\\
+Počas TLS handshake server priloží OCSP odpovede nielen pre svoj koncový certifikát, ale aj pre všetky ostatné certifikáty v reťazci.
+
+\item \textbf{Overenie klientom}\\
+Klient prijme OCSP odpovede v rámci TLS komunikácie a vie si overiť platnosť koncového certifikátu spolu s celým reťazcom.
+\end{enumerate}
+
+Týmto spôsobom klient získa všetky potrebné informácie na overenie platnosti certifikátov naraz, bez potreby dodatočnej komunikácie s OCSP respondérmi.
+
+\subsubsubsection{Výhody a nevýhody OCSP Multi-Stapling}
+Aj táto metóda so sebou prináša všetky výhody OCSP Staplingu. Okrem toho však má klient okamžite prístup k OCSP odpovediam pre všetky certifikáty v reťazci, čo skracuje čas potrebný na ich overenie. Tento prístup je efektívny najmä v systémoch, kde je certifikátový reťazec zložený z viacerých  certifikátov.
+
+Nevýhodami tohto prístupu sú zväčšenie veľkosti TLS handshake a náročnejšia implementácia na strane servera, keďže server musí periodicky získavať a aktualizovať OCSP odpovede pre všetky certifikáty v reťazci. Okrem toho tu tiež platí závislosť na podpore zo strany serverov a klientov a prenesenie rizika neaktuálnych OCSP odpovedí na server.
+
+\subsubsection{Compressed Certificate Status Protocol}
+Ďalším existujúcim vylepšením je CCSP, ktoré sa zameriava na zníženie dátovej náročnosti a zrýchlenie procesu overovania platnosti certifikátov. Cieľom CCSP je komprimovať OCSP odpovede, aby sa zmenšila veľkosť prenášaných dát a zároveň sa zachovala bezpečnosť a integrita procesu.
+
+CCSP prináša novú abstrakciu, tzv. "podpísané kolekcie"\, v ktorých sú informácie o stave viacerých certifikátov uchované v jednej odpovedi, čím sa znižuje réžia. Okrem toho sú tieto kolekcie následne komprimované podľa priestoru a času.
+
+\subsubsubsection{Princíp fungovania CCSP}
+
+\begin{enumerate} 
+\item \textbf{Podpísané kolekcie} \\
+Podpísané kolekcie sú reprezentované bitovou mapou, v ktorej každý bit reprezentuje jeden certifikát a jeho hodnota predstavuje informáciu o jeho platnosti. Kolekcia sa následne podpíše a vydá.
+
+
+\item \textbf{Optimalizácia podľa priestoru} \\
+Keďže väčšina certifikátov ktorejkoľvek CA nie je revokovaná \textbf{zdroj od autorov}, veľká časť takejto bitmapy má rovnaké hodnoty. To vytvára priestor pre kompresiu samotnej bitmapy. Na tento účel autori implementovali podporu pre algoritmy DEFLATE a Golomb.
+
+\item \textbf{Optimalizácia podľa času} \\
+Každá kolekcia sa podpisuje a vydáva periodicky, interval medzi jednotlivými vydaniami je v rozmedzí sekúnd až minút. Keďže rozdiely mezdi jednotlivými verziami sú v tak malom čase minimálne, ak vôbec nejaké, autori zaviedli systém pre optimalizáciu podľa času. Namiesto vydávania novej podpísanej kolekcie v každej iterácii cyklu,  sa väčšinu času vydávajú iba jej zmeny oproti poslednej verzii. Celá nová podpísaná kolekcia sa vydáva v intervaloch niekoľkých hodín.
+
+\item \textbf{Podpora pre Stapling} \\
+Pre ešte väčšie zlepšenie autori zahrnuli do návrhu mechanizmus pre pripnutie podpísaných kolekcií alebo ich posledných zmien rovno ku certifikátu počas TLS handshake, čím využívajú aj výhody, ktoré prináša OCSP Stapling.
+\end{enumerate}
+
+\subsubsubsection{Výhody a nevýhody CCSP}
+CCSP prináša vylepšenia najmä v oblasti zníženia množstva dát prenášaných cez sieť. Keďže výrazne redukuje veľkosť OCSP odpovedí, znižuje sieťovú záťaž a zlepšuje výkon v prostrediach s obmedzenou šírkou pásma. Menšia veľkosť odpovedí taktiež skracuje čas potrebný na ich prenos a spracovanie, čo zrýchľuje TLS handshake a overenie stavu certifikátu. To má značný prínos pre zariadenia s nízkymi výpočtovými a sieťovými zdrojmi, ako sú smartfóny a IoT zariadenia.
+
+Nevýhodou tohto prístupu je opäť to, že vyžaduje úpravy na strane OCSP respondérov a serverov na generovanie a správu komprimovaných odpovedí, čo vedie ku problémom s podporou. Okrem toho komprimácia nemusí byť vhodná pre všetky prípady implementácie, nakoľko môže v niektorých prípadoch odstrániť informácie, ktoré by mohli byť užitočné pre pokročilé overovanie certifikátov. 
+
+\subsubsection{Tiny OCSP}
+Tiny OCSP je vylepšenie zamerané na minimalizáciu veľkosti OCSP dopytov a odpovedí, čo je kritické pre zariadenia v IoT prostredí s obmedzenými výpočtovými zdrojmi a sieťovými kapacitami. Cieľom Tiny OCSP je zachovať funkcionalitu klasického OCSP pri výraznom znížení dátovej záťaže a spotreby energie, ktoré sú kritickými faktormi v aplikáciách pre nízkonákladové a batériovo napájané zariadenia.
+
+\subsubsubsection{Hlavné optimalizácie}
+Tiny OCSP prináša niekoľko kľúčových zmien, ktoré umožňujú minimalizovať dátové požiadavky:
+
+\begin{itemize}
+\item \textbf{CBOR namiesto ASN.1}\\
+Tiny OCSP používa na kódovanie dopytov a odpovedí CBOR, ktoré je oveľa kompaktnejšie a efektívnejšie pre IoT zariadenia ako ASN.1 DER kódovanie.
+
+\item \textbf{Využitie AKID rozšírenia pre X.509 certifikáty}\\
+Vo východiskovej definícii OCSP je identifikácia relevantnej CA v dopytoch vyriešená pomocou identifikátoru hash funkcie a hashu identifikátoru CA. Autori TinyOCSP ukázali, že v najlepšom prípade táto informácia zaberá až 53 bajtov, pričom pri zložiteších hash funkciach to môže byť ešte viac. Riešením v TinyOCSP je využitie rozšírenia Authority Key Identifier z X.509 certifikátov, ktoré slúži na rovnaký účel a má podľa RFC 5280 §4.2.1.1 odporúčanú dĺžku iba 8 bajtov.
+
+\item \textbf{Odstránenie redundantných dát z odpovedí}\\
+Tiny OCSP v odpovedi neposiela znovu certifikát, ktorý sa overuje. Namiesto toho podpisuje a posiela konkatenáciu dopytu a odpovede, čím autentizuje odpoveď bez opakovania týchto dát. V rámci optimalizácie sú z odpovedí ešte odstránené polia  obsahujúce informácie, ktoré sú strane posielajúcej dopyt už známe a redundantné časové údaje. Príkladom sú polia ako \texttt{responderID} a niektoré časové značky, napríklad \texttt{producedAt}. Týmto prístupom sa minimalizuje veľkosť OCSP odpovede bez straty funkčnosti, pretože redundantné informácie nie sú pre príjemcu prínosné a iba zbytočne zvyšujú dátový objem.
+
+\end{itemize}
+
+\subsubsubsection{Štruktúra Tiny OCSP správ}
+Dopyt obsahuje tri hlavné atribúty, a to sú verzia, sekvencia certifikátov na overenie a nepovinná jednorázová náhodná hodnota. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[height=0.25\textheight]{images/tiny_request.png}
+\caption{Štruktúra Tiny OCSP dopytu zakódovaná pomocou CBOR.}
 \end{figure}
 
-Ako môžeme vidieť, nárast času potrebného na nájdenie týchto hesiel je rovnaký ako nárast vyskúšaných možností. Kombináciou analýzy času a počtu vyskúšaných možností sme nadobudli obraz o efektívnosti brute-force útokov. Pri heslách s rôznymi dĺžkami a zložitosťou, ako aj pri heslách s rovnakými dĺžkami a zložitosťou, je najdôležitejším faktorom pre tento typ útoku počet vyskúšaných možností. Z toho vyplýva, že efektivita brute-force útokov je predvídateľná podľa celkového počtu všetkých možností hesla.
+Atribút verzia má veľkosť jedného bajtu a slúži klientovi na to, keď chce od respondéra vyžiadať, aby ku odpovedi priložil svoj vlastný certifikát. Hoci autori nešpecifikovali aké konkrétne hodnoty môže nadobúdať, upresnili, že východiskový stav je ten, kedy sa certifikát respondéra nevyžaduje.
 
+Certifikáty, ktoré klient chce overiť sú definované ako pár AKID a sériového čísla 
+čísla certifikátu a dokopy majú dvanásť bajtov pre jeden certifikát.
 
+Jednorázová náhodná hodnota \texttt{nonce} je jedinou nepovinnou súčasťou dopytu.  Slúži ako ochrana pred útokmi opätovného prehratia, pri ktorých by útočník mohol zachytiť platnú OCSP odpoveď a neskôr ju neoprávnene znovu použiť. Vďaka jedinečnej hodnote \texttt{nonce} môže klient overiť, že odpoveď od OCSP respondéra zodpovedá konkrétnemu dopytu a nie je zneužitá.
 
-
-\subsubsection{Slovníkové útoky}
-Ako je z tabuľky výsledkov už na prvý pohľad zjavné, slovníkové útoky sú neúspešné, ak sa heslo, ktoré sa snažíme prelomiť v slovníku nenachádza. Na druhú stranu, ak sa heslo v slovníku nachádza, čas potrebný na jeho prelomenie je výrazne kratší v porovnaní s brute-force útokmi. Napríklad heslo „capricorn“ bolo prelomené za 0,1 sekundy s použitím slovníka obsahujúceho toto heslo, pričom brute-force útok na to isté heslo trval až 1,861 sekundy a prešiel vyše 19 miliónov možností. Podobne, heslo „grabapunk“ bolo v slovníkovom útoku prelomené za 740 sekúnd po vyskúšaní 7,799,457 možností, čo je výrazne kratší čas oproti 9,295 sekundám pri brute-force útoku, ktorý musel prejsť 97,196,856 možností. 
-
-
-\subsubsubsection{Grafické zobrazenie}
-Na tomto grafe je zobrazený vzťah času potrebného na nájdenie hesla a počtu vyskúšaných možností pre slovníkové útoky. 
-
-\begin{figure}[H] 
-    \centering
-    \includegraphics[width=0.8\textwidth]{img/slov_casy.png}
-    \caption{Graf časov a vyskúšaných možností pre slovníkové útoky.}
-    \label{fig:slov_casy}
+\begin{figure}[H]
+\centering
+\includegraphics[height=0.25\textheight]{images/tiny_response.png}
+\caption{Štruktúra Tiny OCSP odpovede zakódovaná pomocou CBOR.}
 \end{figure}
 
-Tu sa dá vidieť rovnaká závislosť ako pri brute-force útokoch. Čím viac možností sa výskúša, tým dlhšie to trvá. 
+Odpoveď v Tiny OCSP obsahuje tri hlavné atribúty, medzi ktoré patria podpis, sekvencia odpovedí na certifikáty z dopytu, a nepovinný zoznam certifikátov samotného respondéra.
 
-\subsubsection{Porovnanie použitých metód}
-Obidva vyskúšané druhy útokov majú rovnakú závislosť medzi časovou náročnosťou a vyhľadávacím priestorom. Slovníkové útoky problém enormného vyhľadávacieho priestoru pri neznámom hesle riešia tým, že sa zameriavajú na známe najčastejšie používané heslá, čím výrazne znižujú časové nároky na nájdenie hesla, ale za cenu možného neúspechu.
+Podpis slúži na autentizáciu správy takisto ako pri bežnom OCSP. Počíta sa nad konkatenáciou celého dopytu a sekvenciou stavov certifikátov v odpovedi a pre jeden certifikát má veľkosť 67 bajtov.
 
-Brute-force útoky zase skúšajú všetky možnosti, čím maximalizujú teoretickú pravdepodobnosť nájdenia hesla, ale za cenu časovej zložistosti. Treba  podotknúť, že na to aby som vôbec mohol porovnávať brute-force útok a slovníkový útok, som musel robiť optimalizácie spomenuté v podkapitole 3.4, v rámci ktorých som z brute force útokov urobil vlastne tiež slovníkové útoky, tým že som výrazne okresal vyhľadávací priestor na základe poznanej dĺžky a znakov hesla. Keby som nepoznal dĺžku a znaky hesla, počet všetkých možností pre brute force útok by bol tak enormne veľký, že by bolo nemožné ich v reálnom čase všetky vyskúšať. Z toho vyplýva, že brute-force útok na neznáme heslo je rovnako neefektívny ako slovníkový útok na heslo, ktoré sa v slovníku nenachádza.
+Atribút \texttt{authenticated} obsahuje časovú pečiatku a pole stavov, ktoré mapuje stavy jednotlivých certifikátov v takom poradí v akom boli v dopyte.
+Časová pečiatka pečiatka udáva čas, kedy respondér naposledy aktualizoval informácie o danom certifikáte a je zakódovaná v POSIX štandarde, vďaka čomu má veľkosť iba štyri bajty. Celý tento atribút má tak pre jeden certifikát veľkosť päť bajtov.
 
-Obidve metódy majú svoje silné a slabé stránky, ktoré predurčujú ich ideálne využitie. Brute-force útoky vynikajú svojou univerzálnosťou a schopnosťou prelomiť akékoľvek heslo za predpokladu dostatočného času a výpočtového výkonu. Ich hlavnou slabinou je však ich extrémna časová náročnosť, ktorá pri väčšom vyhľadávacom priestore môže dosiahnuť nerealizovateľné hodnoty. Preto ideálnym prípadom pre použitie brute-force útoku v praxi je, keď sú dostupné dostatočné informácie o hesle (napríklad počet znakov alebo množina znakov, z ktorých sa skladá), vďaka ktorým je vyhľadávací priestor okresaný, tak ako tomu bolo aj v mojom experimente.
-
-Naopak, slovníkové útoky sú mimoriadne efektívne pri prelomení bežných, často používaných hesiel, ale sú úplne závislé od kvality a rozsahu použitého slovníka. Ich hlavnou slabinou je teda obmedzená použiteľnosť pri unikátnych a silných heslách, ktoré nie sú v slovníku zahrnuté.
-
-Pre prelomenie väčšej sady hesiel by zase mohol byť optimálny prítup kombincia oboch týchto metód. Slovníkový útok môže slúžiť ako prvá fáza na rýchle prelomenie slabých hesiel, pričom brute-force útok by mohol byť aplikovaný až na heslá, ktoré neboli nájdené slovníkom.
+Posledným atribútom je zoznam certifikátov respondéra, ktorý nie je povinný, respondér ho uvádza iba na vyžiadanie od klienta.
 
 
-\subsection{Odporúčania pre zvýšenie bezpečnosti}
-Na základe výsledkov získaných počas experimentu je možné poskytnúť niekoľko konkrétnych odporúčaní pre zvýšenie bezpečnosti WiFi sietí. Tieto odporúčania sa týkajú predovšetkým výberu silných hesiel a implementácie modernejších bezpečnostných štandardov.
+\subsubsubsection{Porovnanie s bežným OCSP}
+Keďže základný OCSP model obsahuje rôzne nepovinné rozšírenia, ktoré môžu pridať ďalšie bajty, veľkosti dopytov a odpovedí sú závislé na konkrétnych konfiguráciach. Všetky však musia obsahovať povinné polia definované v štandarde pre OCSP, z čoho vyplýva, že dopyty aj odpovede rastú lineárne s počtom certifikátov, ktoré obsahujú.
 
-\subsubsection{Používanie silných náhodných hesiel}
+\begin{figure}[H]
+\centering
+\includegraphics[height=0.25\textheight]{images/comparison.png}
+\caption{Porovnanie veľkostí správ v OCSP a TinyOCSP.}
+\end{figure}
 
-Jedným z najdôležitejších opatrení na zvýšenie bezpečnosti WiFi siete je používanie dostatočne dlhých, komplexných a náhodne generovaných hesiel. Výsledky experimentu jasne ukázali, že heslá s väčším počtom znakov a vyššou zložitosťou vyžadujú dlhší čas na prelomenie. Napríklad náhodné 9-znakové heslá ako „W4Xn7Xk7B“ mali oveľa väčší počet možných kombinácií v porovnaní s jednoduchšími slovníkovými heslami, čo spôsobilo, že brute-force útok trval výrazne dlhšie. Navyše, heslá, ktoré sa nenachádzali v slovníku, boli proti slovníkovým útokom úplne odolné.
+Autori pre účely porovnania zobrali konfiguráciu bežného OCSP, ktorá bola optimalizovná tak, aby správy mali čo najmenšiu veľkosť. Túto konfiguráciu následne porovnali s TinyOCSP modelom pre ilustráciu úšetrených dát.
 
-Pre praktické účely sa odporúča vytvárať heslá ako náhodné kombinácie znakov. Takéto heslá by mali obsahovať veľké a malé písmená, čísla a špeciálne znaky a ich dĺžka by mala byť aspoň 9 znakov, aby sa zabezpečil dostatočne veľký vyhľadávací priestor. 
+V bežnom OCSP modeli sa v odpovediach opätovne posielajú celé identifikátory všetkých certifikátov, ktoré boli súčasťou dopytu. Táto redundancia vedie k výraznému zväčšeniu správ, pri overovaní väčšieho počtu certifikátov.
 
-\subsubsection{Unikátnosť hesiel}
-Okrem vytvorenia silného hesla je dôležité nepoužívať heslo od WiFi aj pre kontá na rôzne stránky a služby. Všeobecne platí, že heslá treba pravidelne kontrolovať, či náhodou neboli kompromitované pri úniku dát. Aj keď je heslo silné, v prípade jeho kompromitácie môže útočník získať pomerne ľahko neutorizovaný prístup pomocou prelomenia hesla útokom za použitia slovníka s uniknutými heslami. Pravidelná aktualizácia hesiel tiež znižuje riziko takýchto útokov.
+Naopak, Tiny OCSP eliminuje túto redundanciu tým, že pre každý dodatočne overovaný certifikát pridá do odpovede iba jeden bajt navyše, a síce stav certifikátu. Vďaka tomuto prístupu je rast veľkosti odpovedí v Tiny OCSP minimálny, čo prináša významné úspory dátovej prevádzky. Ako ilustruje graf vyššie, rozdiel medzi bežným OCSP a Tiny OCSP sa pri väčšom počte certifikátov stáva čoraz výraznejším. 
 
-\subsubsection{Prechod na WPA3 protokol}
-Aj keď WPA2 bol dlhodobo považovaný za bezpečný štandard, uskutočnenie experimentu ukazuje, že je zraniteľný voči útokom založeným na zachytení handshakeu. Prechod na moderný WPA3 protokol prináša významné bezpečnostné výhody.
+Tiny OCSP predstavuje efektívnu optimalizáciu klasického OCSP protokolu, ktorá sa zameriava na minimalizáciu veľkosti prenášaných správ a zlepšenie výkonu v prostredí s obmedzenými zdrojmi. Vďaka využitiu kompaktného CBOR kódovania, efektívnemu AKID rozšíreniu a odstráneniu redundantných dát z odpovedí dokáže Tiny OCSP výrazne znížiť dátovú náročnosť komunikácie. Tieto optimalizácie umožňujú, aby veľkosť odpovedí rástla takmer konštantne aj pri zvyšujúcom sa počte certifikátov, čím Tiny OCSP prekonáva tradičný OCSP model. Vďaka týmto vlastnostiam je Tiny OCSP ideálnym riešením pre IoT zariadenia a iné aplikácie, kde je kľúčové šetriť dátovú prevádzku a energetické zdroje.
 
-Jednou z hlavných výhod  WPA3 je použitie protokolu SAE, ktorý eliminuje možnosť útoku na heslo pomocou handshakeu. V protokole SAE sa heslá neodosielajú priamo ani sa z nich neodvodzujú hodnoty, ktoré by útočník mohol použiť na offline analýzu. Okrem toho WPA3 zavádza ochranu proti brute-force útokom tým, že obmedzuje počet pokusov o prihlásenie.
 
+\subsubsection{Zhrnutie}
+Táto kapitola sa zaoberala rôznymi metódami, ktoré zlepšujú efektivitu a bezpečnosť OCSP protokolu. Medzi najvýznamnejšie patrí OCSP Stapling, ktorý rieši hlavné nevýhody tradičného OCSP, ako sú vysoká latencia a záťaž OCSP respondérov, tým, že umožňuje serveru poskytovať OCSP odpovede priamo počas TLS handshake. Rozšírenia ako OCSP Must-Staple a OCSP Multi-Stapling ďalej rozvíjajú tento koncept a poskytujú pridanú hodnotu v oblasti spoľahlivosti a schopnosti overovať celé certifikátové reťazce.
+
+Metódy ako TinyOCSP a CCSP sa odlišujú tým, že upravujú samotný protokol, čím minimalizujú dátovú náročnosť a veľkosť OCSP správ. Tieto prístupy sú obzvlášť užitočné pre IoT zariadenia a prostredia s obmedzenými zdrojmi, pretože výrazne šetria dátovú prevádzku. Na rozdiel od Staplingu a jeho rozšírení, ktoré pracujú so súčasnou infraštruktúrou, tieto riešenia si vyžadujú zásahy do protokolu, čo ich implementáciu robí náročnejšou.
+
+
+
+\subsection{Manažérsky pohľad na problematiku}
+Z manažérskeho hľadiska má efektívne overovanie platnosti digitálnych certifikátov kľúčový význam pre bezpečnosť, spoľahlivosť a dôveryhodnosť informačných systémov organizácie. V modernom IT ekosystéme, kde digitálne certifikáty hrajú kľúčovú úlohu pri zabezpečení komunikácie, môže neefektívny alebo nespoľahlivý systém overovania platnosti certifikátov predstavovať významné riziko. Táto kapitola analyzuje širšie súvislosti a význam projektu z pohľadu manažmentu a organizácií, ktoré OCSP protokol využívajú.
+
+\subsubsection{Dôsledky zlyhania certifikačných služieb}
+Zlyhanie alebo oneskorenie OCSP overovania môže mať závažné dôsledky pre organizácie a ich používateľov. Ak klienti nedokážu overiť platnosť certifikátov, môžu byť vystavení riziku útokov. To môže mať za následok únik citlivých informácií, finančné straty a oslabenie dôvery zákazníkov v služby organizácie. Nedostupnosť OCSP služieb môže viesť k neovereniu platnosti certifikátu, čo má za následok zníženie bezpečnosti spojenia a riziko akceptácie odvolaného certifikátu. V kritických odvetviach, ako je finančný sektor či zdravotníctvo, môžu byť tieto dôsledky ešte závažnejšie, vrátane právnych postihov a sankcií.
+
+\subsubsection{Prevádzkové náklady}
+Prevádzka OCSP respondérov je náročná na zdroje, pretože vyžaduje rýchle spracovanie veľkého množstva požiadaviek v reálnom čase. Neefektívne overovanie certifikátov zvyšuje nároky na infraštruktúru, čo vedie k vyšším prevádzkovým nákladom. Zlepšením efektivity OCSP, napríklad prostredníctvom optimalizácie veľkosti správ alebo zavedením cacheovacích mechanizmov, je možné tieto náklady výrazne znížiť a umožniť efektívnejšie využitie zdrojov.
+
+\subsubsection{Regulačné a právne požiadavky}
+V mnohých odvetviach existujú prísne regulačné a právne požiadavky týkajúce sa bezpečnosti a ochrany údajov. Napríklad finančné inštitúcie, zdravotníctvo alebo vládne systémy často podliehajú reguláciám, ktoré vyžadujú, aby bolo možné certifikáty okamžite overiť. Nesplnenie týchto požiadaviek môže mať právne dôsledky alebo viesť k pokutám a strate licencie. Zlepšením OCSP je možné splniť tieto požiadavky efektívnejšie a zabezpečiť vyššiu úroveň súladu so zákonmi a reguláciami.
+
+\subsubsection{Zhrnutie}
+Investícia do zlepšenia OCSP protokolu prináša strategické výhody. Zníženie nákladov, zlepšenie bezpečnosti, splnenie regulačných požiadaviek a zvýšenie dôveryhodnosti služieb predstavujú významné prínosy, ktoré môžu podporiť dlhodobý úspech organizácie v digitálnom prostredí. To môže viesť k získaniu konkurenčnej výhody na trhu, zvýšeniu trhového podielu a posilneniu značky organizácie.
+
+
+\subsection{Prenos OCSP komunikácie}
+V rámci analýzy je ešte potrebné spomenúť protokol HTTP, ktorý slúži na transtport OCSP komunikácie. HTTP je protokol aplikačnej vrstvy, ktorý sa používa na prenos dát medzi klientom a serverom. V prípade OCSP je jeho úlohou sprostredkovať dopyty od klienta, napríklad webového prehliadača, smerom k OCSP respondéru a spätné odpovede od respondéra ku klientovi. HTTP je dôležitou súčasťou OCSP komunikácie a jeho vlastnosti významne ovplyvňujú výkon a efektivitu celého systému.
+
+\subsubsection{Základné vlastnosti}
+HTTP funguje na princípe požiadavka-odpoveď, čo znamená, že klient pošle požiadavku na server a následne čaká na odpoveď. Tento model je pomerne jednoduchý a vychádza z neho aj model pre OCSP. HTTP má pre splnenie rôznych požiadaviek klientov implementované rôzne metódy, z hľadiska OCSP sú relevantné metódy GET a POST.
+
+\subsubsubsection{GET}
+Táto metóda sa používa prevažne na načítanie obsahu stránok. Jej hlavička obsahuje identifikátor metódy, URL, prípadné nepovinné parametre a verziu HTTP protokolu. Get metóda spravidla nemá telo.
+
+\begin{figure}[H]
+\begin{lstlisting}
+GET <URL>["?"<Parametre>] HTTP/Verzia
+\end{lstlisting}
+\caption{Základná štruktúra GET metódy}
+\end{figure}
+
+V rámci OCSP komunikácie sa táto metóda používa pri jednoduchých dopytoch, kde sa všetky potrebné informácie po zahashovaní zmestia do poľa pre URL. Problémom tu však je limit pre počet charakterov v URL, ktorý je 2048 znakov. Preto ak klient potrebuje overiť viac certifikátov naraz, požíva sa nasledovná metóda.
+
+\subsubsubsection{POST}
+Táto metóda slúži v kontexte HTTP komunikácie pre poslanie dát od klienta na server, napríkad pri vyplnení formulára na stránke alebo pri vytvorení konta. Jej hlavička vyzerá podobne ako pri GET, s tým rozdielom, že na začiatku je samozrejme odlišný identifikátor metódy. Na rozdiel od GET, metóda POST má spravidla telo.
+
+\begin{figure}[H]
+\begin{lstlisting}
+POST  <URL>["?"<Parametre>] HTTP/Verzia
+<Telo>
+\end{lstlisting}
+\caption{Základná štruktúra POST metódy}
+\end{figure}
+
+OCSP túto metódu využíva vtedy, keď sa požiadavka klienta nezmestí do URL poľa v metóde GET. V takom prípade sa požiadavka ukladá do tela POST metódy a OCSP  respondér na druhom konci ju spracováva rovnako ako tie ktoré mu prišli cez GET.
+
+\subsubsection{HTTP cacheovanie}
+Okrem vyššie uvedených častí, HTTP metódy môžu obsahovať aj nepovinné hlavičky, ktoré slúžia na upresnenie informácií pre rôzne účely. Jednou z týchto hlavičiek je \texttt{Cache-Control}, ktorá umožňuje nastavenie pravidiel pre cacheovanie HTTP komunikácie.
+
+Cacheovanie spočíva v ukladaní odpovedí na často opakované požiadavky a je jednou z najväčších výhod HTTP protokolu. Keď klient pošle požiadavku, HTTP cache, napríklad v prehliadači, najskôr overí, či už má odpoveď uloženú a či je táto odpoveď stále platná. Ak je odpoveď dostupná a platná, cache okamžite vráti uložené dáta, čím sa eliminuje potreba komunikácie so vzdialeným serverom.
+Tento proces znižuje počet priamych komunikácií medzi klientom a serverom, čím znižuje latenciu, šetrí šírku pásma siete a znižuje záťaž na pôvodný server. V kontexte OCSP komunikácie je cacheovanie kľúčové, pretože tie isté OCSP odpovede sú často požadované viac krát.
+
+\subsubsubsection{Statický a dynamický obsah}
+Z hľadiska cacheovania poznáme dva druhy obsahu, statický a dynamický. Statický obsah predstavuje dáta, ktoré sa v čase menia len zriedkavo alebo vôbec. Typicky ide o súbory, akými sú obrázky, CSS a JavaScript súbory, či rôzne dokumenty, na ktoré sa bežne používajú GET požiadavky. Tieto súbory sa pri dodržaní vhodne zvolených hlavičiek na strane servera dajú efektívne cacheovať na dlhšie obdobie. Klient, prípadne sprostredkujúca cache, napríklad CDN, si tak dokáže ukladať a opakovane používať nezmenené verzie týchto súborov bez nutnosti opätovného kontaktu so serverom.
+
+Dynamický obsah, naopak, predstavuje dáta, ktoré sa môžu pri každej požiadavke meniť. Typickým príkladom sú odpovede z API služieb, výsledky vyhľadávania či personalizovaný obsah generovaný na strane servera, na ktoré sa zvyčajne používajú POST požiadavky. Keďže sa tieto dáta môžu meniť aj pri dvoch po sebe nasledujúcich požiadavkách, cacheovanie dynamického obsahu býva limitované a riadené dodatočnými mechanizmami, alebo úplne vypnuté.
+
+V kontexte OCSP komunikácie slúžia aj GET aj POST metódy taký istý obsah. Aj keď nie je úplne statický, vzhľadom na dobu platnosti odpovede pre certifikát, stále sa dá správnym prístupom efektívne cacheovať. Tento nedostatok vychádza z toho, že POST požiadavky sú všeobecne zaužívané na iný druh použitia než na čo ich využíva OCSP. Práve tento nedostatok skúsime vylepšiť v tejto práci.
+
+V kontexte OCSP komunikácie slúžia metódy GET aj POST na získavanie toho istého typu obsahu. Hoci tento obsah vzhľadom na obmedzenú dobu platnosti odpovede pre certifikát nie je úplne statický, stále je možné ho pri správnom prístupe efektívne cacheovať. Problém spočíva v tom, že POST požiadavky sú všeobecne zaužívané pre dynamické operácie, kde sa odpovede spravidla necacheujú, čo nezohľadňuje špecifiká OCSP protokolu. V tejto práci sa zameriame na zlepšenie tohto nedostatku návrhom efektívneho mechanizmu cacheovania POST požiadaviek.
+
+
+\subsection{Zhodnotenie analýzy}
+Analýza problematiky objasnila teoretické oblasti potrebné pre pochopenie tejto práce, uviedla súčasný stav v oblasti OCSP protokolu so zameraním na jeho slabé stránky a následne určila náš ciel pre riešenie problému zlepšenia efektivity OCSP protokolu.
+
+
+
+\section{Špecifikácia požiadaviek}
+V tejto kapitole uvedieme funkčné a nefunkčné požiadavky pre naše riešenie.
+
+\subsection{Nie-funkčné požiadavky}
+Riešenie bude implementované ako počítačová aplikácia, naprogramovaná v jazyku C++, ktorý je dobrou voľbou na takýto projekt, lebo poskytuje vysoký výkon, efektívne spracovanie pamäte a umožňuje priamu prácu s nízkoúrovňovými sieťovými protokolmi, ako je HTTP.
+Používateľské rozhranie bude textové v príkazovom riadku.
+
+\subsection{Funkčné požiadavky}
+
+\begin{itemize}
+\item \textbf{Prijímanie a spracovanie  GET a POST požiadaviek} \\
+Aplikácia  musí byť schopná prijať a spracovať požiadavky na OCSP respondéra, ktoré musíia byť validované na správnosť formátu a obsahu podľa štandardov OCSP. 
+
+\item \textbf{Komunikácia s OCSP respondérom} \\
+Ak požiadavka nemá zodpovedajúcu cacheovanú odpoveď, systém musí kontaktovať OCSP respondér, získať aktuálnu odpoveď a uložiť ju do cache.
+
+\item \textbf{Cacheovanie odpovedí} \\
+Aplikácia musí byť schopná uložiť odpovede na GET aj POST požiadavky do cache tak, aby boli opätovne použiteľné pre rovnakú požiadavku, pokiaľ tá neprekročila dobu platnosti definovanú v OCSP odpovediach.
+
+\item \textbf{Vypršanie platnosti cacheovaných odpovedí} \\
+Cacheované odpovede musia byť automaticky označené ako neplatné po prekročení ich definovanej doby platnosti.
+
+\item \textbf{Škálovateľnosť cache} \\
+Cache musí byť schopná spravovať odpovede pre minimálne 100 000 jedinečných požiadaviek.
+
+\item \textbf{Logovanie stavov aplikácie} \\
+Systém musí zaznamenávať všetky podstatné procedúry spolu s časovými pečiatkami ich uskutočnenia do logovacieho súboru.
+
+\item \textbf{Štatistiky} \\
+Systém musí vytvárať a uchovávať relevantné informácie o svojom výkone, napríklad koľko požiadaviek bolo spracovaných od spustenia, koľko z toho bolo načítaných z cache a tak ďalej.
+
+\item \textbf{Konfigurácia systému} \\
+Aplikácia musí umožňovať konfiguráciu maximálnej veľkosti cache, doby platnosti odpovedí a ďalších podstatných súčastí prostredníctvom konfiguračného súboru alebo príkazového riadku.
+
+\item \textbf{Práca s chybovými stavmi} \\
+Ak v hociktorom bode procesu aplikácia nie je schopná plniť svoj účel, musí používateľovi poskytnúť deskriptívne informácie o tom, prečo nie je možné pokračovať a nesmie spadnúť s chybou.
+\end{itemize}
+
+\section{Návrh riešenia}
+Táto kapitola obsahuje návrh aplikácie, vrátane príkladu konfiguračného súboru, príkladu štatistiky aplikácie, modulu pre HTTP komunikáciu a podrobného návrhu pre cache.
+
+
+\section{Implementácia}
+
+
+\subsection{Zmeny oproti návrhu}
+
+
+\subsection{Opis tried}
+
+
+\section{Overenie riešenia}
+
+
+\subsection{Splnenie špecifikovaných požiadaviek}
+
+
+
+\subsection{Testovanie}
+
+
+\subsection{Zhodnotenie overovania riešenia}
+
+
+
+\section{Zhodnotenie}
+
+
+
+\newpage\null\thispagestyle{empty}\newpage
 
 \makeatletter
 \addtocontents{toc}{\def\string\@dotsep{100}}
@@ -684,10 +1107,114 @@ Jednou z hlavných výhod  WPA3 je použitie protokolu SAE, ktorý eliminuje mo�
 \bibliography{mybib}
 %\setcounter{page}{46}
 
-\addtocontents{toc}{\def\string\@dotsep{4.5}}  % 4.5 might be a different 
+\newpage\null\thispagestyle{empty}\newpage
+\newpage
+\pagestyle{fancy}
+\setcounter{page}{1}
+\renewcommand{\thepage}{A-\arabic{page}}
+\fancyhf{}
+\fancyfoot[C]{\thepage} 
+\thispagestyle{plain}
+\makeatletter
+\addtocontents{toc}{\def\string\@dotsep{4.5}}  % 4.5 might be a different value in your class
+\makeatother
+\phantomsection
+\addcontentsline{toc}{section}{Príloha A: Plán práce}
+
+\section*{Príloha A: Plán práce} 
+V tejto prílohe sú v tabuľkách uvedené plány práce rozdelené na zimný a letný semester a je pri nich uvedené ako sa ich darilo plniť.
+
+\subsection*{Zimný semester}
+
+\begin{table}[H]
+\begin{center}
+\renewcommand\thetable{A.1}
+\caption{Plán na zimný semester pre bakalársku prácu}
+\begin{tabular}{ |c|C{10cm}| } 
+ \hline
+\textbf{Týždeň} & \textbf{Plán} 
+ \\ \hline
+1-4  & Analýza problematiky OCSP protokolu 
+\\ \hline
+5-7  & Analýza existujúcich vylepšení OCSP protokolu
+\\ \hline
+8-10  &  Návrh vlastného vylepšenia.
+\\ \hline
+11-12  & Dokončenie dokumentu.
+\\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+Tu bude uvedené ako sa darilo plniť plán na zimný semester
+
+\subsection*{Letný semester}
+
+\begin{table}[H]
+\begin{center}
+\renewcommand\thetable{A.2}
+\caption{Plán na letný semester pre bakalársku prácu}
+\begin{tabular}{ |c|C{10cm}| } 
+ \hline
+\textbf{Týždeň} & \textbf{Plán} 
+ \\ \hline
+x-x  & xxxxx
+\\ \hline
+x-x  & xxxxx
+\\ \hline
+x-x  & xxxxx
+\\ \hline
+x-x  & xxxxx
+\\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+Tu bude uvedené ako sa darilo plniť plán na letný semester
+
+\newpage
+\pagestyle{fancy}
+\setcounter{page}{1}
+\renewcommand{\thepage}{B-\arabic{page}} 
+\thispagestyle{plain}
+\makeatletter
+\addtocontents{toc}{\def\string\@dotsep{4.5}}  % 4.5 might be a different value in your class
+\makeatother
+\phantomsection
+\addcontentsline{toc}{section}{Príloha B: Technická dokumentácia}
+
+\section*{Príloha B: Technická dokumentácia}
 
 
+
+\section*{Príloha C: Používateľská príručka}
+
+
+
+\subsection{Pred spustením}
+
+
+
+\section*{Príloha D: Obsah elektronického média}
+
+\bigskip
+\bigskip
+
+Adresáre:
+\begin{itemize}
+\item
+...
+\end{itemize}
+
+Súbory:
+\begin{itemize}
+\item 
+...
+\end{itemize}
+ 
 \end{document}
+
+
 
 
 
