@@ -874,9 +874,11 @@ Pre ešte väčšie zlepšenie autori zahrnuli do návrhu mechanizmus pre pripnu
 \end{enumerate}
 
 \subsubsubsection{Výhody a nevýhody CCSP}
-CCSP prináša vylepšenia najmä v oblasti zníženia množstva dát prenášaných cez sieť. Keďže výrazne redukuje veľkosť OCSP odpovedí, znižuje sieťovú záťaž a zlepšuje výkon v prostrediach s obmedzenou šírkou pásma. Menšia veľkosť odpovedí taktiež skracuje čas potrebný na ich prenos a spracovanie, čo zrýchľuje TLS handshake a overenie stavu certifikátu. To má značný prínos pre zariadenia s nízkymi výpočtovými a sieťovými zdrojmi, ako sú smartfóny a IoT zariadenia.
+Hlavnou výhodou tohoto riešenia je použitie komprimovaných podpísaných kolekcií, ktoré významne redukujú objem prenášaných dát. Autori vo svojom článku ukázali, že     ich riešenie spotrebuje vyše stonásobne menej úložiska v porovnaní s tradičnými CRL a znižuje počet podpisov o viac než milión-násobok oproti klasickému OCSP Staplingu. 
 
-Nevýhodou tohto prístupu je opäť to, že vyžaduje úpravy na strane OCSP respondérov a serverov na generovanie a správu komprimovaných odpovedí, čo vedie ku problémom s podporou. Okrem toho komprimácia nemusí byť vhodná pre všetky prípady implementácie, nakoľko môže v niektorých prípadoch odstrániť informácie, ktoré by mohli byť užitočné pre pokročilé overovanie certifikátov. 
+Ďalšou výhodou tohto riešenia je vopred zabudovaný mechanizmus pre pripnutie podpísaných sád a ich zmien do TLS handshake, čím využíva aj výhody OCSP Staplingu, najmä ochrana súkromia používateľa.
+
+Nevýhodou tohto prístupu je opäť to, že vyžaduje úpravy na strane OCSP respondérov a serverov na generovanie a správu komprimovaných odpovedí ako aj na strane klientov na spracovávanie podpísaných kolekcií v odpovediach. Momentálne nie sú verejné žiadne štatistiky o miere adopcie tohto vylepšenia.
 
 \subsubsection{Tiny OCSP}
 Tiny OCSP je vylepšenie zamerané na minimalizáciu veľkosti OCSP dopytov a odpovedí, čo je kritické pre zariadenia v IoT prostredí s obmedzenými výpočtovými zdrojmi a sieťovými kapacitami. Cieľom Tiny OCSP je zachovať funkcionalitu klasického OCSP pri výraznom znížení dátovej záťaže a spotreby energie, ktoré sú kritickými faktormi v aplikáciách pre nízkonákladové a batériovo napájané zariadenia.
@@ -1041,26 +1043,157 @@ Ak požiadavka nemá zodpovedajúcu cacheovanú odpoveď, systém musí kontakto
 Aplikácia musí byť schopná uložiť odpovede na GET aj POST požiadavky do cache tak, aby boli opätovne použiteľné pre rovnakú požiadavku, pokiaľ tá neprekročila dobu platnosti definovanú v OCSP odpovediach.
 
 \item \textbf{Vypršanie platnosti cacheovaných odpovedí} \\
-Cacheované odpovede musia byť automaticky označené ako neplatné po prekročení ich definovanej doby platnosti.
+Cacheované odpovede musia byť automaticky odstránené po prekročení ich definovanej doby platnosti.
 
 \item \textbf{Škálovateľnosť cache} \\
-Cache musí byť schopná spravovať odpovede pre minimálne 100 000 jedinečných požiadaviek.
+Cache musí byť schopná spravovať odpovede pre minimálne 10 000 jedinečných požiadaviek.
 
 \item \textbf{Logovanie stavov aplikácie} \\
 Systém musí zaznamenávať všetky podstatné procedúry spolu s časovými pečiatkami ich uskutočnenia do logovacieho súboru.
 
-\item \textbf{Štatistiky} \\
-Systém musí vytvárať a uchovávať relevantné informácie o svojom výkone, napríklad koľko požiadaviek bolo spracovaných od spustenia, koľko z toho bolo načítaných z cache a tak ďalej.
-
 \item \textbf{Konfigurácia systému} \\
-Aplikácia musí umožňovať konfiguráciu maximálnej veľkosti cache, doby platnosti odpovedí a ďalších podstatných súčastí prostredníctvom konfiguračného súboru alebo príkazového riadku.
+Aplikácia musí umožňovať konfiguráciu maximálnej veľkosti cache, doby platnosti odpovedí a ďalších podstatných súčastí prostredníctvom konfiguračného súboru.
 
 \item \textbf{Práca s chybovými stavmi} \\
 Ak v hociktorom bode procesu aplikácia nie je schopná plniť svoj účel, musí používateľovi poskytnúť deskriptívne informácie o tom, prečo nie je možné pokračovať a nesmie spadnúť s chybou.
 \end{itemize}
 
 \section{Návrh riešenia}
-Táto kapitola obsahuje návrh aplikácie, vrátane príkladu konfiguračného súboru, príkladu štatistiky aplikácie, modulu pre HTTP komunikáciu a podrobného návrhu pre cache.
+Táto kapitola obsahuje návrh aplikácie, vrátane podrobného návrhu pre aplikáciu a príkladu konfiguračného súboru.
+
+\subsection{Návrh HTTP servera}
+HTTP server bude prijímať GET a POST požiadavky od klientov. Tieto požiadavky budú obsahovať OCSP dopyty na overenie stavu certifikátov. Server bude spracovávať prichádzajúce dopyty, vyhľadávať odpovede v cache a v prípade potreby kontaktovať OCSP respondér. Následne server vráti odpoveď klientovi.
+
+\subsubsection{Spracovanie a validácia OCSP dopytov}
+\begin{enumerate}
+\item \textbf{Prijatie HTTP požiadavky} \\
+HTTP server príjme GET alebo POST požiadavku obsahujúcu OCSP dopyt.  
+
+\item \textbf{Extrahovanie OCSP dopytu} \\
+Zo samotnej HTTP požiadavky sa extrahuje OCSP dopyt, ktorý obsahuje identifikátory certifikátov určených na overenie. 
+
+\item \textbf{Validácia formátu dopytu} \\ 
+Dopyt sa skontroluje, či má správny formát podľa ASN.1 DER kódovania a zodpovedá OCSP špecifikácii. Ak niečo nesedí, server odošle klientovi informáciu o chybnom dopyte a proces tu končí.
+
+\item \textbf{Kontrola v cache} \\ 
+Extrahované certifikáty sa vyhľadajú v cache:  
+	
+	\begin{itemize}
+	\item Ak je odpoveď v cache a je stále platná, vráti sa klientovi.  
+	\item Ak odpoveď nie je dostupná alebo je exspirovaná, pokračuje sa ďalšími krokmi.  
+	\end{itemize}  
+
+\item \textbf{Tvorba OCSP dopytu na respondér} \\ 
+V prípade, že dopyt nie je v cache, server vytvorí novú OCSP požiadavku adresovanú OCSP respondérovi a odošle ju na spracovanie.  
+
+\item \textbf{Prijatie a validácia OCSP odpovede} \\ 
+Server príjme odpoveď od OCSP respondéra a overí, či je podpis odpovede platný a či odpoveď má správny formát.  
+
+\item \textbf{Uloženie odpovede do cache} \\ 
+Platná odpoveď sa uloží do cache s príslušným časom exspirácie.  
+
+\item \textbf{Odoslanie odpovede klientovi} \\ 
+OCSP odpoveď je vrátená klientovi v rámci HTTP odpovede.  
+\end{enumerate}
+
+
+\subsection{Návrh cache}
+Cache mechanizmus je navrhnutý ako súčasť HTTP servera, ktorá bude spracovávať OCSP požiadavky. Hlavným cieľom cache je znížiť záťaž OCSP respondérov tým, že okrem uchovávania odpovedí na GET požiadavky bude uchovávať aj odpovede na POST požiadavky. Týmto spôsobom sa eliminuje potreba opakovaného dopytovania respondéra pri každej požiadavke na overenie sady viacerých certifikátov, čím sa zlepší výkon systému poskytovania informácií o revokácií certifikátov.
+
+\subsubsection{Architektúra cache}
+Cache bude implementovaná ako pamäťová štruktúra priamo na strane HTTP servera a bude mať dve úrovne. Prvá úroveň bude slúžiť na uchovávanie odpovedí pre jednotlivé certifikáty z GET požiadaviek a druhá úroveň bude slúžiť na uchovávanie odpovedí pre sady certifikátov z POST požiadaviek. Obe úrovne budú reprezentované hashmapou.
+
+V prvej úrovni bude kľúčom identifikátor certifikátu, v druhej to bude hash zo zreťazených a zoradených identifikátorov certifikátov v danej sade. Hodnotou v oboch úrovniach budú objekty, ktoré budú obsahovať odpoveď pre dané certifikáty, čas jej exspirácie a metadáta pre účely správy - čas posledného prístupu a počet prístupov.
+
+\subsubsection{Proces vyhľadávania v cache pre jednotlivé certifikáty}
+\begin{enumerate}
+\item Z prichádzajúcej požiadavky sa extrahuje identifikátor certifikátu.
+\item Vykoná sa vyhľadanie identifikátoru v cache pre jednotlivé certifikáty:
+    \begin{itemize}
+    \item Ak existuje záznam a jeho exspiračný čas neuplynul, vráti sa OCSP odpoveď.
+    \item Ak sa odpoveď nenájde alebo exspirovala, požiadavka sa odošle na OCSP respondér. Odpoveď sa po obdržaní vráti klientovi a uloží do cache.
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Proces vyhľadávania v cache pre sady certifikátov}
+\begin{enumerate}
+\item Extrahujú sa identifikátory certifikátov z prichádzajúcej OCSP požiadavky napr.: \{C3, C1, C2\}.
+\item Identifikátory sa číselne zoradia: \{C1, C2, C3\}.
+\item Zoradené identifikátory sa zreťazia a vypočíta sa ich hash.
+\item Tento hash sa vyhľadá v cache pre sady certifikátov:
+    \begin{itemize}
+    \item Ak existuje záznam s týmto hashom a jeho exspiračný čas neuplynul, vráti sa OCSP odpoveď.
+    \item Ak sa odpoveď nenájde alebo exspirovala, požiadavka sa odošle na OCSP respondér. Odpoveď sa po obdržaní vráti klientovi a uloží do cache.
+    \end{itemize}
+\end{enumerate}
+
+Tento proces zabezpečuje rýchlu odozvu pre opakované požiadavky a znižuje záťaž na OCSP respondér pomocou ukladania odpovedí.
+
+\subsubsection{Manažment uchovávaných odpovedí}
+Manažment cache bude zahŕňať pravidelnú kontrolu platnosti uložených odpovedí. Systém bude periodicky prechádzať cache a odstraňovať záznamy, ktorých doba platnosti uplynula. Okrem toho, ak počet uložených odpovedí dosiahne maximálnu kapacitu cache, automaticky sa odstránia najstaršie a najmenej často používané odpovede. Tento prístup zabezpečí, že cache zostane efektívna a nedôjde k jej preťaženiu.  
+
+\subsection{Mechanizmus pre logovanie udalostí}
+Mechanizmus pre logovanie udalostí bude navrhnutý tak, aby poskytoval prehľad o fungovaní aplikácie a slúžil na diagnostiku chýb. Logovanie bude obsahovať nasledovné prvky:
+
+\begin{itemize}
+    \item \textbf{Typy udalostí:}  
+    Logovať sa budú dôležité udalosti vrátane:
+    \begin{itemize}
+        \item Prijatia HTTP požiadavky (GET/POST)
+        \item Hitov a missov v cache
+        \item Poslania požiadavky na OCSP respondér a prijatia odpovede
+        \item Chýb pri validácii OCSP dopytov alebo odpovedí
+        \item Údržby cache
+    \end{itemize}
+
+    \item \textbf{Formát logov:}  
+    Každý záznam v logu bude obsahovať:
+    \begin{itemize}
+        \item Dátum a čas udalosti,
+        \item Typ udalosti,
+        \item Popis udalosti (napr. ID certifikátu alebo sady certifikátov),
+        \item Úroveň závažnosti.
+    \end{itemize}
+\end{itemize}
+
+Logy budú zapisované do súboru, ktorého miesto uloženia bude konfigurovateľné. Takto navrhnutý systém logovania zabezpečí transparentnosť fungovania aplikácie a umožní efektívne riešenie problémov a optimalizáciu výkonu.
+
+
+
+\subsection{Príklad konfigurácie}
+Nižšie je uvedený príklad konfiguračného súboru, ktorý definuje pravidlá pre cacheovanie OCSP odpovedí a cestu pre ukladanie logovacích súborov.
+\begin{verbatim}
+{
+  "cache1": {
+    "enabled": true,
+    "ttl": 3600,
+    "max_entries": 5000
+  },
+  "cache2": {
+    "enabled": true,
+    "ttl": 3600,
+    "max_entries": 5000
+  },
+  log: {
+    "path": ./logs/
+  }
+}
+\end{verbatim}
+
+\textbf{Popis konfiguračných parametrov:}
+\begin{itemize}
+\item \textbf{cache1, cache2}: Prvá a druhá úroveň cache.
+
+\item \textbf{enabled}: Povolenie alebo zakázanie cache mechanizmu.
+
+\item \textbf{ttl}: Doba, po ktorú je OCSP odpoveď platná v sekundách. Po uplynutí tejto doby bude odpoveď automaticky odstránená.
+
+\item \textbf{max\_entries}: Maximálny počet odpovedí uložených v cache. Po prekročení tejto hodnoty budú najstaršie záznamy odstránené.
+
+\item \textbf{log}: Parametre pre logovanie, obsahujú cestu pre ukladanie logov.
+\end{itemize}
+
+
 
 
 \section{Implementácia}
