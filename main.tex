@@ -33,11 +33,11 @@
 % -------------------
 % --- Definicia zakladnych pojmov
 % -------------------
-\def\mfrok{máj 2025}
-\def\mferok{2025, May}
+\def\mfrok{január 2025}
+\def\mferok{2025, January}
 \def\mfnazov{Zvýšenie efektivity OCSP komunikácie}
 \def\mfenazov{Increasing the efficiency of OCSP communication}
-\def\mftyp{Bakalárska práca}
+\def\mftyp{Priebežná správa o riešení BP1}
 \def\mfautor{Peter Brenkus}
 \def\mfveduci{Ing. Norbert Varga}
 \def\mfeveduci{Ing. Norbert Varga}
@@ -114,16 +114,10 @@ Vedúci práce: & \mfveduci \\
 
 \newpage\null\thispagestyle{empty}\newpage
 
+\begin{figure}
+\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{./images/zadanie.png}
+\end{figure}
 
-
-%\newpage 
-%\pagestyle{empty}
-%\fancyhf{}
-%\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{zadanie.jpg}
-% XXXXXXXXX\includepdf{./images/zadanie.pdf} tuto dat zadanie z ais
-%\begin{figure}
-%\includegraphics[scale=0.8]{zadanie.jpg}
-%\end{figure}
 
 \newpage\null\thispagestyle{empty}\newpage
 
@@ -145,7 +139,7 @@ Vedúci práce: & \mfveduci \\
 \bigskip
 \bigskip
 \noindent
-V Bratislave, X.X.2025
+V Bratislave, 3.1.2025
 
 {\raggedleft Peter Brenkus\quad \par}
 \bigskip
@@ -704,49 +698,36 @@ Protokol OCSP bol navrhnutý ako rýchlejšia a efektívnejšia alternatíva ku 
 \subsubsection{Problémy s výkonom}
 Výkonnosť je jedným z kľúčových aspektov, ktoré môžu ovplyvniť použiteľnosť a spoľahlivosť OCSP protokolu. Hoci je OCSP navrhnutý tak, aby bol rýchlejší a efektívnejší ako CRL, jeho implementácia a architektúra môžu viesť k viacerým výkonnostným problémom, najmä v prostrediach s vysokou záťažou.
 
-\subsubsubsection{1. Latencia spôsobená dodatočnými sieťovými požiadavkami}
-Jedným z hlavných výkonnostných problémov OCSP protokolu je potreba vytvorenia nového sieťového spojenia pre každú požiadavku klienta. Pri každom pokuse o overenie certifikátu klient posiela požiadavku na OCSP respondér a čaká na odpoveď. Táto dodatočná komunikácia predlžuje čas potrebný na dokončenie procesov, ako je TLS handshake a načítanie webovej stránky. V situáciach, kedy klient alebo respondér nepodporujú overenie viacerých certifikátov v jednom OCSP dopyte môže tento problém byť ešte výraznejší. Latencia sa taktiež môže zvýšiť, ak je OCSP respondér geograficky vzdialený od klienta alebo ak je spojenie medzi nimi pomalé. 
+\subsubsubsection{Latencia spôsobená dodatočnými sieťovými požiadavkami}
+Jedným z hlavných výkonnostných problémov OCSP protokolu je potreba vytvorenia nového sieťového spojenia pre každú požiadavku klienta. Pri každom pokuse o overenie certifikátu klient posiela požiadavku na OCSP respondér a čaká na odpoveď. Táto dodatočná komunikácia predlžuje čas potrebný na dokončenie procesov, ako je TLS handshake a načítanie webovej stránky. Latencia sa taktiež môže zvýšiť, ak je OCSP respondér geograficky vzdialený od klienta alebo ak je spojenie medzi nimi pomalé. Atutxa et al. vo svojej práci z roku 2023 ukázali, že v IIoT prostredí, kde sa využíva DTLS protokol na zabezpečenie spojenia, overenie certifikátu cez OCSP zaberá viac ako 50\% celkového času handshake.\cite{atutxa}
 
-\subsubsubsection{2. Škálovateľnosť OCSP respondérov}
-OCSP respondéry musia byť schopné zvládnuť veľké množstvo požiadaviek v reálnom čase, čo môže predstavovať značný výkonnostný problém. V prostrediach s vysokou záťažou, ako sú veľké webové platformy alebo systémy s miliónmi používateľov, sa OCSP respondéry stávajú úzkym miestom. Ak nie sú dostatočne dimenzované alebo optimalizované, môžu sa stať neodpovedajúcimi alebo reagovať pomaly, čo ovplyvňuje nielen klientov, ale aj celkovú dôveryhodnosť systému.
-
-Navyše, nároky na hardvér a infraštruktúru OCSP respondérov sú značne väčšie ako pri CRL. Prevádzkovatelia musia investovať do výkonných serverov a optimalizácií, aby zvládli rastúce množstvo požiadaviek. To zvyšuje náklady na údržbu a prevádzku systému, pričom problém môže byť ešte výraznejší počas špičkovej prevádzky alebo pri útokoch typu DoS.
-
-V prípade organizácií s globálnou pôsobnosťou je nevyhnutné zabezpečiť dostupnosť OCSP respondérov vo viacerých regiónoch, aby sa minimalizovala latencia a zlepšila spoľahlivosť. Prevádzka OCSP infraštruktúry na globálnej úrovni však prináša značné náklady, vrátane investícií do hardvéru, sieťových zdrojov a správy serverov. Okrem toho môže byť výkonnosť OCSP respondérov nekonzistentná medzi regiónmi, čo vedie k rôznym úrovniam kvality služby pre používateľov z rôznych častí sveta.
-
-\subsubsubsection{3. Rýchlosť aktualizovania stavov certifikátov}
-Ďalším problémom, ktorý môže ovpyvniť výkon OCSP respondérov je rýchlosť aktualizácie stavov certifikátov. OCSP respondéry musia pravidelne synchronizovať svoje databázy s aktuálnymi údajmi o stave certifikátov, ktoré vydala CA. Aktualizácie môžu byť výpočtovo náročné najmä v prostrediach s veľkým objemom certifikátov alebo ak sa aktualizácie vykonávajú počas špičkového času prevádzky. Výsledkom môžu byť dočasné výpadky, oneskorenia alebo znížený výkon respondérov, čo priamo ovplyvňuje schopnosť klientov overiť stav certifikátov v reálnom čase.
-
+\subsubsubsection{Škálovateľnosť OCSP respondérov}
+OCSP respondéry musia byť schopné zvládnuť veľké množstvo požiadaviek v reálnom čase, čo môže predstavovať značný výkonnostný problém. V prostrediach s vysokou záťažou, ako sú veľké webové platformy alebo systémy s miliónmi používateľov, sa OCSP respondéry stávajú úzkym miestom. Ak nie sú dostatočne dimenzované alebo optimalizované, môžu sa stať neodpovedajúcimi alebo reagovať pomaly, čo ovplyvňuje nielen klientov, ale aj celkovú dôveryhodnosť systému.\cite{wazan, smith}
 
 \subsubsection{Problémy s bezpečnosťou}
 OCSP protokol bol navrhnutý s cieľom poskytnúť dynamické a spoľahlivé overovanie platnosti certifikátov. Napriek tomu obsahuje niekoľko bezpečnostných slabín, ktoré môžu ohroziť dôveryhodnosť a integritu procesu overovania. Tieto problémy vyplývajú najmä z charakteru jeho implementácie, závislosti na sieťovej komunikácii a niektorých dizajnových rozhodnutí.
 
-\subsubsubsection{1. Závislosť na dostupnosti OCSP respondérov}
-Jednou z hlavných bezpečnostných slabín OCSP protokolu je jeho závislosť na dostupnosti OCSP respondérov. Ak respondér nie je dostupný, klient nie je schopný overiť stav certifikátu. To vedie k situáciám, kedy mnoho klientov a webových prehliadačov používa tzv. "soft fail"\ mechanizmus. Tento prístup znamená, že ak OCSP odpoveď nie je dostupná, klient predpokladá, že certifikát je platný. Soft fail je problematický, pretože umožňuje útočníkovi narušiť spojenie medzi klientom a OCSP respondérom a zabrániť tak overeniu stavu certifikátu. Týmto spôsobom môže byť certifikát, ktorý bol odvolaný, stále akceptovaný klientom, čo vážne ohrozuje bezpečnosť komunikácie.
+\subsubsubsection{Závislosť na dostupnosti OCSP respondérov}
+Jednou z hlavných bezpečnostných slabín OCSP protokolu je jeho závislosť na dostupnosti OCSP respondérov. Ak respondér nie je dostupný, klient nie je schopný overiť stav certifikátu. To vedie k situáciám, kedy mnoho klientov a webových prehliadačov používa tzv. "soft fail"\ mechanizmus. Tento prístup znamená, že ak OCSP odpoveď nie je dostupná, klient predpokladá, že certifikát je platný. Soft fail je problematický, pretože umožňuje útočníkovi narušiť spojenie medzi klientom a OCSP respondérom a zabrániť tak overeniu stavu certifikátu. Týmto spôsobom môže byť certifikát, ktorý bol odvolaný, stále akceptovaný klientom, čo vážne ohrozuje bezpečnosť komunikácie.\cite{security_pki}
 
-\subsubsubsection{2. Odhalenie súkromných informácií klienta}
-OCSP protokol môže neúmyselne ohroziť súkromie používateľov. Pri každom dopyte na OCSP respondér klient odosiela informácie o konkrétnom certifikáte, ktorý chce overiť. Tieto dopyty môžu byť sledované, čo umožňuje OCSP respondéru alebo potenciálnym útočníkom získať informácie o tom, aké webové stránky alebo služby klient používa. Táto vlastnosť môže byť využitá na sledovanie online aktivity používateľov a predstavuje významný problém v kontexte ochrany súkromia. Napríklad, ak sa OCSP respondér nachádza v jurisdikcii, ktorá umožňuje monitorovanie siete, údaje o dopytoch môžu byť ľahko zneužité.
+\subsubsubsection{Odhalenie súkromných informácií klienta}
+OCSP protokol môže neúmyselne ohroziť súkromie používateľov. Pri každom dopyte na OCSP respondér klient odosiela informácie o konkrétnom certifikáte, ktorý chce overiť. Tieto dopyty môžu byť sledované, čo umožňuje OCSP respondéru alebo potenciálnym útočníkom získať informácie o tom, aké webové stránky alebo služby klient používa. Táto vlastnosť môže byť využitá na sledovanie online aktivity používateľov a predstavuje významný problém v kontexte ochrany súkromia. Napríklad, ak sa OCSP respondér nachádza v jurisdikcii, ktorá umožňuje monitorovanie siete, údaje o dopytoch môžu byť ľahko zneužité.\cite{turin2}
 
-\subsubsubsection{3. Náchylnosť na MITM útoky}
-OCSP protokol je náchylný na útoky typu MITM, ak nie sú implementované dostatočné mechanizmy na ochranu integrity komunikácie medzi klientom a OCSP respondérom. Útočník môže zachytiť a upraviť dopyty alebo odpovede OCSP, čím môže klientovi poskytnúť nesprávne informácie o stave certifikátu. Napríklad útočník môže zachytiť skutočnú odpoveď a poslať falošnú, že odvolaný certifikát je platný, čím umožní použitie neplatného certifikátu na vytvorenie spojenia. 
+\subsubsubsection{Náchylnosť na MITM útoky}
+OCSP protokol je náchylný na útoky typu MITM, ak nie sú implementované dostatočné mechanizmy na ochranu integrity komunikácie medzi klientom a OCSP respondérom. Útočník môže zachytiť a upraviť dopyty alebo odpovede OCSP, čím môže klientovi poskytnúť nesprávne informácie o stave certifikátu. Napríklad útočník môže zachytiť skutočnú odpoveď a poslať falošnú, že odvolaný certifikát je platný, čím umožní použitie neplatného certifikátu na vytvorenie spojenia.\cite{eddie}
 
 \subsubsection{Nedostatočná podpora}
 Ďalšou prekážkou pri OCSP komunikácii je neúplná alebo nedostatočná podpora zo strany rôznych komponentov infraštruktúry. Tieto problémy môžu brániť jeho širšej adopcii a ovplyvňovať jeho účinnosť a spoľahlivosť v reálnych aplikáciách.
 
 
-\subsubsubsection{1. Slabá podpora na strane klientov}
+\subsubsubsection{Slabá podpora na strane klientov}
 Podpora OCSP protokolu na strane klientov, ako sú webové prehliadače a aplikácie, nie je vždy konzistentná. Niektoré prehliadače, napríklad Google Chrome alebo Mozilla  Firefox v predvolenom nastavení nepoužívajú OCSP protokol na overovanie certifikátov. Namiesto toho sa spoliehajú na alternatívne mechanizmy, ako je CRLset alebo OneCRL.\cite{turin} Táto slabá podpora môže viesť k situáciám, kedy OCSP protokol nie je vôbec využívaný, aj keď by mohol zlepšiť bezpečnosť a efektivitu komunikácie.
-
-\subsubsubsection{2. Nedostatočná podpora pre hromadné overovanie certifikátov}
-Hoci OCSP protokol podporuje overovanie viacerých certifikátov v rámci jedného dopytu, táto funkcionalita nie je univerzálne implementovaná. V mnohých prípadoch musia klienti posielať samostatné požiadavky pre každý certifikát, čo zvyšuje sieťovú záťaž a latenciu. Tento problém je obzvlášť výrazný v prostrediach, kde sa používajú viaceré certifikáty na zabezpečenie jednej komunikácie, napríklad v systémoch využívajúcich certifikáty pre hlavný server a rôzne subdomény. Nedostatok podpory pre hromadné overovanie znamená, že OCSP protokol nemôže plne využiť svoj potenciál na zlepšenie efektivity.
 
 
 \subsubsection{Zhrnutie}
-Aj keď OCSP má potenciál priniesť výhody v oblasti efektivity a rýchlosti, v praxi sa stretáva s viacerými obmedzeniami, ktoré ovplyvňujú jeho výkon, bezpečnosť a podporu. Výkonnostné problémy súvisia najmä s latenciou, vysokými nárokmi na škálovateľnosť OCSP respondérov a závislosťou na aktuálnosti údajov o stave certifikátov. Tieto faktory môžu viesť k spomaleniu komunikácie a zvýšeniu prevádzkových nákladov.
+Aj keď OCSP má potenciál priniesť výhody v oblasti efektivity a rýchlosti, v praxi sa stretáva s viacerými obmedzeniami, ktoré ovplyvňujú jeho výkon, bezpečnosť a podporu. Výkonnostné problémy súvisia najmä s latenciou a vysokými nárokmi na škálovateľnosť OCSP respondérov. Tieto faktory môžu viesť k spomaleniu komunikácie a zvýšeniu prevádzkových nákladov.
 
-Z bezpečnostného hľadiska je OCSP zraniteľný voči viacerým hrozbám, ako sú útoky typu MITM, odhalenie súkromných informácií používateľov či dôsledky "soft fail" mechanizmu pri výpadku OCSP respondérov. Tieto slabiny môžu výrazne ohroziť dôveryhodnosť protokolu a integritu procesu overovania certifikátov.
-
-Nedostatky v podpore OCSP protokolu ešte viac zhoršujú jeho použiteľnosť. Slabá adopcia zo strany klientov a serverov, problémy s interoperabilitou medzi CA a OCSP respondérmi či obmedzená podpora pre hromadné overovanie certifikátov bránia plnému využitiu potenciálu tohto protokolu. 
+Z bezpečnostného hľadiska je OCSP zraniteľný voči viacerým hrozbám, ako sú útoky typu MITM, odhalenie súkromných informácií používateľov či dôsledky "soft fail" mechanizmu pri výpadku OCSP respondérov. Tieto slabiny môžu výrazne ohroziť dôveryhodnosť protokolu a integritu procesu overovania certifikátov. Nedostatočná podpora na strane klientov, najmä v niektorých webových prehliadačoch, ešte viac obmedzuje efektívne využitie tohto protokolu v praxi.
 
 
 \subsection{Existujúce riešenia}
@@ -854,29 +835,29 @@ Nevýhodami tohto prístupu sú zväčšenie veľkosti TLS handshake a náročne
 \subsubsection{Compressed Certificate Status Protocol}
 Ďalším existujúcim vylepšením je CCSP, ktoré sa zameriava na zníženie dátovej náročnosti a zrýchlenie procesu overovania platnosti certifikátov. Cieľom CCSP je komprimovať OCSP odpovede, aby sa zmenšila veľkosť prenášaných dát a zároveň sa zachovala bezpečnosť a integrita procesu.
 
-CCSP prináša novú abstrakciu, tzv. "podpísané kolekcie"\, v ktorých sú informácie o stave viacerých certifikátov uchované v jednej odpovedi, čím sa znižuje réžia. Okrem toho sú tieto kolekcie následne komprimované podľa priestoru a času.
+CCSP prináša novú abstrakciu, tzv. "podpísané kolekcie"\, v ktorých sú informácie o stave viacerých certifikátov uchované v jednej odpovedi, čím sa znižuje réžia. Okrem toho sú tieto kolekcie následne komprimované podľa priestoru a času.\cite{ccsp}
 
 \subsubsubsection{Princíp fungovania CCSP}
 
 \begin{enumerate} 
 \item \textbf{Podpísané kolekcie} \\
-Podpísané kolekcie sú reprezentované bitovou mapou, v ktorej každý bit reprezentuje jeden certifikát a jeho hodnota predstavuje informáciu o jeho platnosti. Kolekcia sa následne podpíše a vydá.
+Podpísané kolekcie sú reprezentované bitovou mapou, v ktorej každý bit reprezentuje jeden certifikát a jeho hodnota predstavuje informáciu o jeho platnosti. Kolekcia sa následne podpíše a vydá.\cite{ccsp}
 
 
 \item \textbf{Optimalizácia podľa priestoru} \\
-Keďže väčšina certifikátov ktorejkoľvek CA nie je revokovaná \textbf{zdroj od autorov}, veľká časť takejto bitmapy má rovnaké hodnoty. To vytvára priestor pre kompresiu samotnej bitmapy. Na tento účel autori implementovali podporu pre algoritmy DEFLATE a Golomb.
+Keďže väčšina certifikátov ktorejkoľvek CA nie je revokovaná,\cite{ccsp} veľká časť takejto bitmapy má rovnaké hodnoty. To vytvára priestor pre kompresiu samotnej bitmapy. Na tento účel autori implementovali podporu pre algoritmy DEFLATE a Golomb.\cite{ccsp}
 
 \item \textbf{Optimalizácia podľa času} \\
-Každá kolekcia sa podpisuje a vydáva periodicky, interval medzi jednotlivými vydaniami je v rozmedzí sekúnd až minút. Keďže rozdiely mezdi jednotlivými verziami sú v tak malom čase minimálne, ak vôbec nejaké, autori zaviedli systém pre optimalizáciu podľa času. Namiesto vydávania novej podpísanej kolekcie v každej iterácii cyklu,  sa väčšinu času vydávajú iba jej zmeny oproti poslednej verzii. Celá nová podpísaná kolekcia sa vydáva v intervaloch niekoľkých hodín.
+Každá kolekcia sa podpisuje a vydáva periodicky, interval medzi jednotlivými vydaniami je v rozmedzí sekúnd až minút. Keďže rozdiely mezdi jednotlivými verziami sú v tak malom čase minimálne, ak vôbec nejaké, autori zaviedli systém pre optimalizáciu podľa času. Namiesto vydávania novej podpísanej kolekcie v každej iterácii cyklu,  sa väčšinu času vydávajú iba jej zmeny oproti poslednej verzii. Celá nová podpísaná kolekcia sa vydáva v intervaloch niekoľkých hodín.\cite{ccsp}
 
 \item \textbf{Podpora pre Stapling} \\
-Pre ešte väčšie zlepšenie autori zahrnuli do návrhu mechanizmus pre pripnutie podpísaných kolekcií alebo ich posledných zmien rovno ku certifikátu počas TLS handshake, čím využívajú aj výhody, ktoré prináša OCSP Stapling.
+Pre ešte väčšie zlepšenie autori zahrnuli do návrhu mechanizmus pre pripnutie podpísaných kolekcií alebo ich posledných zmien rovno ku certifikátu počas TLS handshake, čím využívajú aj výhody, ktoré prináša OCSP Stapling.\cite{ccsp}
 \end{enumerate}
 
 \subsubsubsection{Výhody a nevýhody CCSP}
-Hlavnou výhodou tohoto riešenia je použitie komprimovaných podpísaných kolekcií, ktoré významne redukujú objem prenášaných dát. Autori vo svojom článku ukázali, že     ich riešenie spotrebuje vyše stonásobne menej úložiska v porovnaní s tradičnými CRL a znižuje počet podpisov o viac než milión-násobok oproti klasickému OCSP Staplingu. 
+Hlavnou výhodou tohoto riešenia je použitie komprimovaných podpísaných kolekcií, ktoré významne redukujú objem prenášaných dát. Autori vo svojom článku ukázali, že     ich riešenie spotrebuje vyše stonásobne menej úložiska v porovnaní s tradičnými CRL a znižuje počet podpisov o viac než milión-násobok oproti klasickému OCSP Staplingu. \cite{ccsp}
 
-Ďalšou výhodou tohto riešenia je vopred zabudovaný mechanizmus pre pripnutie podpísaných sád a ich zmien do TLS handshake, čím využíva aj výhody OCSP Staplingu, najmä ochrana súkromia používateľa.
+Ďalšou výhodou tohto riešenia je vopred zabudovaný mechanizmus pre pripnutie podpísaných sád a ich zmien do TLS handshake, čím využíva aj výhody OCSP Staplingu, najmä ochrana súkromia používateľa.\cite{ccsp}
 
 Nevýhodou tohto prístupu je opäť to, že vyžaduje úpravy na strane OCSP respondérov a serverov na generovanie a správu komprimovaných odpovedí ako aj na strane klientov na spracovávanie podpísaných kolekcií v odpovediach. Momentálne nie sú verejné žiadne štatistiky o miere adopcie tohto vylepšenia.
 
@@ -1193,7 +1174,7 @@ Nižšie je uvedený príklad konfiguračného súboru, ktorý definuje pravidl�
 \item \textbf{log}: Parametre pre logovanie, obsahujú cestu pre ukladanie logov.
 \end{itemize}
 
-
+Konfiguračný súbor poskytuje flexibilitu pri nastavovaní správania cache a logovania, čím umožňuje prispôsobenie aplikácie rôznym požiadavkám na výkon a údržbu. 
 
 
 \section{Implementácia}
