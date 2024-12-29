@@ -190,11 +190,10 @@ Vedúci bakalárskej práce: & \mfveduci \\
 
 Cieľom tejto práce je zlepšenie efektivity OCSP protokolu, ktorý sa používa na zistenie neplatného stavu digitálnych certifikátov v reálnom čase. 
 
-Práca obsahuje analýzu problematiky, ktorej súčasťou je podrobný opis jeho architektúry, nedostatkov a ich existujúcich riešení ako OCSP Stapling, OCSP Must-Staple, OCSP Multi-Staple a Tiny OCSP. Na základe tejto analýzy boli sformulované požiadavky a následne návrh riešenia. 
+Práca obsahuje analýzu problematiky, ktorej súčasťou je podrobný opis jeho architektúry, nedostatkov a ich existujúcich riešení ako OCSP Stapling, OCSP Must-Staple, OCSP Multi-Staple, CCSP a Tiny OCSP. Okrem toho analýza ešte rozoberá aj relevantné časti HTTP protokolu a manažérsky pohľad na problematiku. Na základe tejto analýzy boli sformulované požiadavky a následne návrh riešenia. 
 
 Súčasťou práce je návrh vlastného riešenia, ktoré implementuje HTTP server na cacheovanie POST požiadaviek pre účely OCSP, čím znižuje záťaž OCSP respondérov a zlepšuje efektivitu celého systému.
 
-Čo ešte ďalšie sa robilo...
 
 \newpage\null\thispagestyle{empty}\newpage
 
@@ -228,12 +227,10 @@ Supervisor: & \mfeveduci \\
 
 The aim of this thesis is to improve the efficiency of the OCSP protocol, which is used for real-time validation of the revocation status of digital certificates.
 
-The thesis includes an analysis of the problem, comprising of a detailed description of the protocol’s architecture, its shortcomings, and existing solutions such as OCSP Stapling, OCSP Must-Staple, OCSP Multi-Stapling, and Tiny OCSP. Based on this analysis, requirements were formulated, followed by the proposal of a solution.
+The thesis includes an analysis of the problem, comprising of a detailed description of the protocol’s architecture, its shortcomings, and existing solutions such as OCSP Stapling, OCSP Must-Staple, OCSP Multi-Stapling, CCSP and Tiny OCSP. The analysis also includes the description of relevant parts of the HTTP protocol and a managerial perspective on the issue. Based on this analysis, requirements were formulated, followed by the proposal of a solution.
 
 The thesis also presents the design of a custom solution that implements an HTTP server for caching POST requests for OCSP purposes, thereby reducing the load on OCSP responders and improving the overall efficiency of the system.
 
-
-What else was done... 
  
 \newpage\null\thispagestyle{empty}\newpage
 
@@ -337,12 +334,8 @@ Vyvinutý ako alternatíva ku CRL, OCSP poskytuje rýchlejší a efektívnejší
 
 OCSP hrá dôležitú úlohu v bezpečnostných mechanizmoch na internete. Z pohľadu efektivity a rýchlosti komunikácie však stále existuje priestor na jeho zlepšenie. Cieľom tejto práce je analyzovať súčasný stav protokolu OCSP, identifikovať jeho nedostatky a navrhnúť efektívnejšie poskytnutie služby overenia platnosti digitálnych certifikátov.
 
-Kapitola 2 obsahuje analýzu problematiky. Konkrétne úvod do oblasti PKI, digitálnych certifikátov, kontroly ich revokácie a komplexnú analýzu protokolu OCSP. 
-Kapitola 3 obsahuje špecifikáciu požiadaviek a prípady použitia. 
-Kapitola 4 obsahuje návrh riešenia, s prihliadnutím na ...
-Kapitola 5 popisuje implementáciu navrhnutého riešenia.
-V kapitole 6 je popísané testovanie implementovaného nástroja a obsahuje aj zhodnotenie toho, ako sa podarilo splniť špecifikované požiadavky. 
-Kapitola 7 obsahuje zhodnotenie celej práce.
+Kapitola 2 obsahuje analýzu problematiky. Konkrétne úvod do oblasti PKI, digitálnych certifikátov, kontroly ich revokácie a komplexnú analýzu protokolu OCSP. Kapitola 3 obsahuje špecifikáciu funkčných a nie-funkčných požiadaviek. 
+Kapitola 4 obsahuje návrh riešenia.
 
 \newpage
 \section{Analýza problematiky}
@@ -705,7 +698,7 @@ Jedným z hlavných výkonnostných problémov OCSP protokolu je potreba vytvore
 OCSP respondéry musia byť schopné zvládnuť veľké množstvo požiadaviek v reálnom čase, čo môže predstavovať značný výkonnostný problém. V prostrediach s vysokou záťažou, ako sú veľké webové platformy alebo systémy s miliónmi používateľov, sa OCSP respondéry stávajú úzkym miestom. Ak nie sú dostatočne dimenzované alebo optimalizované, môžu sa stať neodpovedajúcimi alebo reagovať pomaly, čo ovplyvňuje nielen klientov, ale aj celkovú dôveryhodnosť systému.\cite{wazan, smith}
 
 \subsubsection{Problémy s bezpečnosťou}
-OCSP protokol bol navrhnutý s cieľom poskytnúť dynamické a spoľahlivé overovanie platnosti certifikátov. Napriek tomu obsahuje niekoľko bezpečnostných slabín, ktoré môžu ohroziť dôveryhodnosť a integritu procesu overovania. Tieto problémy vyplývajú najmä z charakteru jeho implementácie, závislosti na sieťovej komunikácii a niektorých dizajnových rozhodnutí.
+OCSP protokol bol navrhnutý s cieľom poskytnúť dynamické a spoľahlivé overovanie platnosti certifikátov. Napriek tomu obsahuje niekoľko bezpečnostných slabín, ktoré môžu ohroziť dôveryhodnosť a integritu procesu overovania.
 
 \subsubsubsection{Závislosť na dostupnosti OCSP respondérov}
 Jednou z hlavných bezpečnostných slabín OCSP protokolu je jeho závislosť na dostupnosti OCSP respondérov. Ak respondér nie je dostupný, klient nie je schopný overiť stav certifikátu. To vedie k situáciám, kedy mnoho klientov a webových prehliadačov používa tzv. "soft fail"\ mechanizmus. Tento prístup znamená, že ak OCSP odpoveď nie je dostupná, klient predpokladá, že certifikát je platný. Soft fail je problematický, pretože umožňuje útočníkovi narušiť spojenie medzi klientom a OCSP respondérom a zabrániť tak overeniu stavu certifikátu. Týmto spôsobom môže byť certifikát, ktorý bol odvolaný, stále akceptovaný klientom, čo vážne ohrozuje bezpečnosť komunikácie.\cite{security_pki}
@@ -714,7 +707,7 @@ Jednou z hlavných bezpečnostných slabín OCSP protokolu je jeho závislosť n
 OCSP protokol môže neúmyselne ohroziť súkromie používateľov. Pri každom dopyte na OCSP respondér klient odosiela informácie o konkrétnom certifikáte, ktorý chce overiť. Tieto dopyty môžu byť sledované, čo umožňuje OCSP respondéru alebo potenciálnym útočníkom získať informácie o tom, aké webové stránky alebo služby klient používa. Táto vlastnosť môže byť využitá na sledovanie online aktivity používateľov a predstavuje významný problém v kontexte ochrany súkromia. Napríklad, ak sa OCSP respondér nachádza v jurisdikcii, ktorá umožňuje monitorovanie siete, údaje o dopytoch môžu byť ľahko zneužité.\cite{turin2}
 
 \subsubsubsection{Náchylnosť na MITM útoky}
-OCSP protokol je náchylný na útoky typu MITM, ak nie sú implementované dostatočné mechanizmy na ochranu integrity komunikácie medzi klientom a OCSP respondérom. Útočník môže zachytiť a upraviť dopyty alebo odpovede OCSP, čím môže klientovi poskytnúť nesprávne informácie o stave certifikátu. Napríklad útočník môže zachytiť skutočnú odpoveď a poslať falošnú, že odvolaný certifikát je platný, čím umožní použitie neplatného certifikátu na vytvorenie spojenia.\cite{eddie}
+OCSP protokol je náchylný na útoky typu MITM, ak nie sú implementované dostatočné mechanizmy na ochranu integrity komunikácie medzi klientom a OCSP respondérom. Útočník môže zachytiť a upraviť dopyty alebo odpovede OCSP, čím môže klientovi poskytnúť nesprávne informácie o stave certifikátu. Napríklad útočník môže zachytiť skutočnú odpoveď a poslať falošnú, že odvolaný certifikát je platný, čím umožní použitie neplatného certifikátu na vytvorenie spojenia.\cite{wazan}
 
 \subsubsection{Nedostatočná podpora}
 Ďalšou prekážkou pri OCSP komunikácii je neúplná alebo nedostatočná podpora zo strany rôznych komponentov infraštruktúry. Tieto problémy môžu brániť jeho širšej adopcii a ovplyvňovať jeho účinnosť a spoľahlivosť v reálnych aplikáciách.
@@ -727,7 +720,7 @@ Podpora OCSP protokolu na strane klientov, ako sú webové prehliadače a aplik�
 \subsubsection{Zhrnutie}
 Aj keď OCSP má potenciál priniesť výhody v oblasti efektivity a rýchlosti, v praxi sa stretáva s viacerými obmedzeniami, ktoré ovplyvňujú jeho výkon, bezpečnosť a podporu. Výkonnostné problémy súvisia najmä s latenciou a vysokými nárokmi na škálovateľnosť OCSP respondérov. Tieto faktory môžu viesť k spomaleniu komunikácie a zvýšeniu prevádzkových nákladov.
 
-Z bezpečnostného hľadiska je OCSP zraniteľný voči viacerým hrozbám, ako sú útoky typu MITM, odhalenie súkromných informácií používateľov či dôsledky "soft fail" mechanizmu pri výpadku OCSP respondérov. Tieto slabiny môžu výrazne ohroziť dôveryhodnosť protokolu a integritu procesu overovania certifikátov. Nedostatočná podpora na strane klientov, najmä v niektorých webových prehliadačoch, ešte viac obmedzuje efektívne využitie tohto protokolu v praxi.
+Z bezpečnostného hľadiska je OCSP zraniteľný voči viacerým hrozbám, ako sú útoky typu MITM, odhalenie súkromných informácií používateľov či dôsledky "soft fail"\ mechanizmu pri výpadku OCSP respondérov. Tieto slabiny môžu výrazne ohroziť dôveryhodnosť protokolu a integritu procesu overovania certifikátov. Nedostatočná podpora na strane klientov, najmä v niektorých webových prehliadačoch, ešte viac obmedzuje efektívne využitie tohto protokolu v praxi.
 
 
 \subsection{Existujúce riešenia}
@@ -735,12 +728,12 @@ Pre zlepšenie efektivity a širšie prijatie OCSP je potrebné riešenie týcht
 
 
 \subsubsection{OCSP Stapling}
-OCSP stapling je jedným z najvýznamnejších vylepšení OCSP protokolu, ktoré rieši viaceré jeho výkonové a bezpečnostné nedostatky. Táto metóda umožňuje serveru zahrnúť OCSP odpoveď priamo do TLS handshake, čím eliminuje potrebu klienta samostatne kontaktovať OCSP respondér. Zavedenie OCSP Staplingu prináša niekoľko výhod, ktoré zvyšujú efektivitu, spoľahlivosť a bezpečnosť procesu overovania platnosti certifikátov.
+OCSP stapling je jedným z najvýznamnejších vylepšení OCSP protokolu, ktoré rieši viaceré jeho výkonové a bezpečnostné nedostatky. Táto metóda umožňuje serveru zahrnúť OCSP odpoveď priamo do TLS handshake, čím eliminuje potrebu klienta samostatne kontaktovať OCSP respondér. Zavedenie OCSP Staplingu prináša niekoľko výhod, ktoré zvyšujú efektivitu, spoľahlivosť a bezpečnosť procesu overovania platnosti certifikátov.\cite{security_pki, survey, turin2, must_staple}
 
 \subsubsubsection{Princíp fungovania OCSP staplingu}
-V tradičnom OCSP modeli klient posiela dopyt na OCSP respondér, aby získal informácie o stave konkrétneho certifikátu. Pri OCSP staplingu však server sám periodicky kontaktuje OCSP respondér, získava aktuálnu odpoveď a túto odpoveď následne "pripne"\ (angl. "staple") k svojmu certifikátu počas TLS handshake komunikácie s klientom. Klient tak dostane OCSP odpoveď priamo od servera a nemusí samostatne komunikovať s OCSP respondérom. 
+V tradičnom OCSP modeli klient posiela dopyt na OCSP respondér, aby získal informácie o stave konkrétneho certifikátu. Pri OCSP staplingu však server sám periodicky kontaktuje OCSP respondér, získava aktuálnu odpoveď a túto odpoveď následne "pripne"\ (angl. "staple") k svojmu certifikátu počas TLS handshake komunikácie s klientom. Klient tak dostane OCSP odpoveď priamo od servera a nemusí samostatne komunikovať s OCSP respondérom.\cite{security_pki, survey}
 
-Klient si stav certifikátu stále môže overiť aj sám cez OCSP respondéra. To je užitočné pre prípady, keď server z akéhokoľvek dôvodu zlyhá v pripojení OCSP odpovede do TLS handshake. V takýchto prípadoch sa systém vracia k obyčajnému OCSP modelu.
+Klient si stav certifikátu stále môže overiť aj sám cez OCSP respondéra. To je užitočné pre prípady, keď server z akéhokoľvek dôvodu zlyhá v pripojení OCSP odpovede do TLS handshake. V takýchto prípadoch sa systém vracia k obyčajnému OCSP modelu.\cite{must_staple}
 
 \begin{figure}[H]
 \centering
@@ -751,22 +744,19 @@ Klient si stav certifikátu stále môže overiť aj sám cez OCSP respondéra. 
 \subsubsubsection{Výhody a  nevýhody OCSP staplingu}
 OCSP Stapling prináša niekoľko kľúčových výhod:
 
-\begin{enumerate}
+\begin{itemize}
 \item \textbf{Zníženie latencie} \\
-Eliminuje dodatočné sieťové spojenie medzi klientom a OCSP respondérom, čím skracuje čas potrebný na dokončenie TLS handshake. To zlepšuje užívateľskú skúsenosť, najmä pri webových aplikáciách citlivých na výkon.
-
-\item \textbf{Zníženie záťaže OCSP respondérov} \\
-Vďaka tomu, že server sám pravidelne kontroluje svoj certifikát, jeho klienti to už nemusia robiť každý zvlášť. OCSP stapling teda znižuje počet dopytov smerujúcich na OCSP respondérov a ich celkovú sieťovú a výpočtovú záťaž. Toto riešenie je výhodné najmä pre veľké systémy s vysokým počtom klientov, kde môže základný OCSP model predstavovať úzke miesto.
+Eliminuje dodatočné sieťové spojenie medzi klientom a OCSP respondérom, čím skracuje čas potrebný na dokončenie TLS handshake. To zlepšuje užívateľskú skúsenosť, najmä pri webových aplikáciách citlivých na výkon.\cite{stapling_adoption}
 
 \item \textbf{Zlepšenie ochrany súkromia} \\
-Keďže klient nekomunikuje priamo s OCSP respondérom, eliminuje sa možnosť sledovania aktivity používateľa na základe OCSP dopytov. Vďaka tomu OCSP stapling výrazne  napomáha k súkromiu koncového užívateľa.
+Keďže klient nekomunikuje priamo s OCSP respondérom, eliminuje sa možnosť sledovania aktivity používateľa na základe OCSP dopytov. Vďaka tomu OCSP stapling výrazne  napomáha k súkromiu koncového užívateľa.\cite{survey, muni}
 
-\end{enumerate}
+\end{itemize}
 
 Okrem významných, vyššie spomenutých výhod prináša OCSP stapling so sebou aj nové 
 obmedzenia a výzvy.
 
-\begin{enumerate}
+\begin{itemize}
 \item \textbf{Presun OCSP komunikácie z klienta na server} \\
 V praxi sa môžu architektúry serverov rôznych webových stránok líšiť v mnohých aspektoch, keďže každý je uspôsobný na mieru pre svoj používateľský scenár. 
 Vzhľadom na to, že OCSP stapling pridáva logiku navyše pre tieto servery, aj ich 
@@ -774,18 +764,15 @@ schopnosť na adaptáciu tejto novej logiky môže byť odlišná.
 
 \item \textbf{Riziko neaktuálnych OCSP odpovedí} \\
 Tie servery, ktoré stapling podporujú, zároveň na seba preberajú aj riziko neaktuálnych OCSP odpovedí, ktoré pred tým niesli  OCSP respondéry.
-Vzhľadom na to, že OCSP odpovede priložené serverom majú obmedzenú dobu platnosti, ak server nezíska novú OCSP odpoveď pred vypršaním tej aktuálnej, môže poskytnúť klientovi zastaranú odpoveď. To môže viesť k problémom s dôveryhodnosťou alebo zneužitím.
+Vzhľadom na to, že OCSP odpovede priložené serverom majú obmedzenú dobu platnosti, ak server nezíska novú OCSP odpoveď pred vypršaním tej aktuálnej, môže poskytnúť klientovi zastaranú odpoveď. To môže viesť k problémom s dôveryhodnosťou alebo zneužitím.\cite{turin}
 
-\item \textbf{Obmedzená podpora na strane klientov} \\
-Podobne ako webové servery, aj ich klienti môžu mať problém so spracovaním OCSP odpovede priloženej k TLS handshake. Tento nedostatok môže obmedziť praktické výhody OCSP staplingu, najmä pri širokej škále zariadení a softvérov.
-
-\end{enumerate}
+\end{itemize}
 
 Aj napriek významným vylepšeniam, ktoré OCSP Stapling prináša oproti základnému OCSP modelu je táto metóda stále málo používaná. Zulfiqar et al. vo svojom výskume z roku 2021, zameranom na prijatie bezpečnostných mechanizmov u X.509 certifikátov ukázali, že v roku 2020 iba 29.67~\% z 50 000 najpoužívanejších webových stránok podporovalo OCSP stapling \cite{stapling_adoption}. Takáto nízka miera adopcie naznačuje, že ekosystém certifikátov a súvisiace infraštruktúry ešte nie sú dostatočne pripravené na plnú implementáciu OCSP Staplingu. Na podporu širšieho prijatia tejto technológie budú potrebné ďalšie vylepšenia, ako napríklad lepšia podpora na strane serverov a klientov a efektívnejšia implementácia protokolu.
 
 
 \subsubsection{OCSP Must-Staple}
-Ďalším vylepšením OCSP protokolu je OCSP Must-Staple, ktoré zvyšuje jeho bezpečnosť a spoľahlivosť tým, že priamo vyžaduje priloženie OCSP odpovede k  certifikátu počas TLS handshake. Táto funkcionalita je implementovaná ako rozšírenie v certifikáte a zaväzuje server k poskytovaniu aktuálnej OCSP odpovede. V prípade, že server OCSP odpoveď nepriloží, klient automaticky odmietne nadviazať spojenie.
+Ďalším vylepšením OCSP protokolu je OCSP Must-Staple, ktoré zvyšuje jeho bezpečnosť a spoľahlivosť tým, že priamo vyžaduje priloženie OCSP odpovede k  certifikátu počas TLS handshake. Táto funkcionalita je implementovaná ako rozšírenie v certifikáte a zaväzuje server k poskytovaniu aktuálnej OCSP odpovede. V prípade, že server OCSP odpoveď nepriloží, klient automaticky odmietne nadviazať spojenie.\cite{turin, turin2}
 
 
 \subsubsubsection{Princíp fungovania OCSP Must-Staple}
@@ -795,24 +782,24 @@ Aj napriek významným vylepšeniam, ktoré OCSP Stapling prináša oproti zákl
 \caption{Schéma OCSP Must-Staple komunikácie.}
 \end{figure}
 
-OCSP Must-Staple je realizovaný pomocou špeciálneho rozšírenia X.509 certifikátu s názvom TLS Feature Extension. Toto rozšírenie obsahuje špecifikáciu, že server musí poskytovať OCSP odpoveď ako súčasť TLS handshake. Klient, ktorý prijme certifikát s týmto rozšírením, overí prítomnosť OCSP odpovede. Ak odpoveď chýba, spojenie je zamietnuté ako neplatné. Mechanizmus teda funguje ako striktné vynucovanie OCSP Staplingu, čím eliminuje riziko nastatia "soft fail"\ scenárov.
+OCSP Must-Staple je realizovaný pomocou špeciálneho rozšírenia X.509 certifikátu s názvom TLS Feature Extension. Toto rozšírenie obsahuje špecifikáciu, že server musí poskytovať OCSP odpoveď ako súčasť TLS handshake. Klient, ktorý prijme certifikát s týmto rozšírením, overí prítomnosť OCSP odpovede. Ak odpoveď chýba, spojenie je zamietnuté ako neplatné. Mechanizmus teda funguje ako striktné vynucovanie OCSP Staplingu, čím eliminuje riziko nastatia "soft fail"\ scenárov.\cite{must_staple, turin2}
 
 \subsubsubsection{Výhody a nevýhody OCSP Must-Staple}
-Vzhľadom na to, že tento model vychádza z OCSP staplingu, prináša so sebou všetky jeho výhody. Okrem nich však Must-Staple poskytuje aj jedno významné bezpečnostné vylepšenie. Základný OCSP model aj OCSP Stapling umožňujú "soft fail", pri ktorom prehliadač povolí spojenie, aj keď nie je možné overiť stav certifikátu, napríklad pri výpadku OCSP respondéra. OCSP Must-Staple tento problém rieši tým, že prítomnosť OCSP odpovede je povinná. Ak server nepriloží aktuálnu OCSP odpoveď, spojenie je automaticky odmietnuté, čím sa eliminuje riziko takýchto scenárov.
+Vzhľadom na to, že tento model vychádza z OCSP staplingu, prináša so sebou všetky jeho výhody. Okrem nich však Must-Staple poskytuje aj jedno významné bezpečnostné vylepšenie. Základný OCSP model aj OCSP Stapling umožňujú "soft fail", pri ktorom prehliadač povolí spojenie, aj keď nie je možné overiť stav certifikátu, napríklad pri výpadku OCSP respondéra. OCSP Must-Staple tento problém rieši tým, že prítomnosť OCSP odpovede je povinná. Ak server nepriloží aktuálnu OCSP odpoveď, spojenie je automaticky odmietnuté, čím sa eliminuje riziko takýchto scenárov.\cite{must_staple}
 
 Tak ako pri OCSP Staplingu, aj Must-Staple si vyžaduje dôslednú implementáciu na strane serverov aj klientov, no jeho podpora je stále obmedzená. Staršie webové servery a prehliadače často nepoznajú OCSP Must-Staple alebo ho nepodporujú, čo obmedzuje jeho praktické využitie. Friess et. al. vo svojom výskume z roku 2023 zistili, že až 89.5~\% z 530 000 klientov jednoducho odignorovalo Must-Staple rozšírenie certifikátov pri načítavaní webovej stránky.\cite{security_pki}
 
-Aj napriek početným vylepšeniam oproti základnému OCSP modelu je aktuálna adopcia tejto metódy minimálna. Hlavnými prekážkami jej širšieho rozšírenia sú technické obmedzenia na strane serverov a klientov, ako aj náročnosť na správu aktuálnych OCSP odpovedí. Pre dosiahnutie plného potenciálu OCSP Must-Staple je preto nevyhnutná lepšia podpora v infraštruktúre a zvýšená adopcia zo strany vývojárov webových aplikácií a certifikačných autorít.
+Aj napriek početným vylepšeniam oproti základnému OCSP modelu je aktuálna adopcia tejto metódy minimálna. Pre dosiahnutie plného potenciálu OCSP Must-Staple je preto nevyhnutná lepšia podpora v infraštruktúre a zvýšená adopcia zo strany správcov webových aplikácií a klientov.
 
 
 \subsubsection{OCSP Multi-Stapling}
-Podobne ako Must-Staple, aj OCSP Multi-Stapling je rozšírenie OCSP Staplingu. Toto rozšírenie umožňuje serveru priložiť viacero OCSP odpovedí v rámci jedného TLS handshake. To je užitočné najmä v situáciách, keď je potrebné overiť celý certifikátový reťazec, nielen koncový certifikát.
+Podobne ako Must-Staple, aj OCSP Multi-Stapling je rozšírenie OCSP Staplingu. Toto rozšírenie umožňuje serveru priložiť viacero OCSP odpovedí v rámci jedného TLS handshake. To je užitočné najmä v situáciách, keď je potrebné overiť celý certifikátový reťazec, nielen koncový certifikát.\cite{turin2}
 
-V praxi sú certifikáty totiž často podpísané certifikátovými reťazcami a nie priamo CA. Certifikáty v tomto reťazci sú hierarchicky usporiadané a každý certifikát je podpísaný nadriadeným certifikátom až po koreňový certifikát, ktorý je dôveryhodný a patrí CA. Ak klient overuje platnosť koncového certifikátu, často potrebuje overiť aj ostatné certifikáty v takomto reťazci. V základnom OCSP Stapling modeli toto nie je domyslené, a napriek tomu, že server pošle OCSP odpoveď pre svoj certifikát, klient si v takýchto prípadoch musí sám overiť platnosť ostatných certifikátov v reťazci.
+V praxi sú certifikáty totiž často podpísané certifikátovými reťazcami. Certifikáty v takomto reťazci sú hierarchicky usporiadané a každý certifikát je podpísaný nadriadeným certifikátom až po koreňový certifikát, ktorý je dôveryhodný a patrí CA. Ak klient overuje platnosť koncového certifikátu, často potrebuje overiť aj ostatné certifikáty v takomto reťazci. V základnom OCSP Stapling modeli toto nie je domyslené, a napriek tomu, že server pošle OCSP odpoveď pre svoj certifikát, klient si v takýchto prípadoch musí sám overiť platnosť ostatných certifikátov v reťazci.\cite{turin2, rfc6961}
 
 OCSP Multi-Stapling tento problém rieši tým, že server pripraví a priloží OCSP odpovede pre viacero certifikátov v reťazci v rámci jednej komunikácie s klientom.
 
-
+\newpage
 \subsubsubsection{Princíp fungovania OCSP Multi-Staplingu}
 \begin{enumerate}
 \item \textbf{Získanie OCSP odpovedí} \\
@@ -830,7 +817,7 @@ Týmto spôsobom klient získa všetky potrebné informácie na overenie platnos
 \subsubsubsection{Výhody a nevýhody OCSP Multi-Stapling}
 Aj táto metóda so sebou prináša všetky výhody OCSP Staplingu. Okrem toho však má klient okamžite prístup k OCSP odpovediam pre všetky certifikáty v reťazci, čo skracuje čas potrebný na ich overenie. Tento prístup je efektívny najmä v systémoch, kde je certifikátový reťazec zložený z viacerých  certifikátov.
 
-Nevýhodami tohto prístupu sú zväčšenie veľkosti TLS handshake a náročnejšia implementácia na strane servera, keďže server musí periodicky získavať a aktualizovať OCSP odpovede pre všetky certifikáty v reťazci. Okrem toho tu tiež platí závislosť na podpore zo strany serverov a klientov a prenesenie rizika neaktuálnych OCSP odpovedí na server.
+Nevýhodou tohto prístupu je zväčšenie veľkosti TLS handshake. Okrem toho tu tiež platí závislosť na podpore zo strany serverov a klientov.\cite{smith}
 
 \subsubsection{Compressed Certificate Status Protocol}
 Ďalším existujúcim vylepšením je CCSP, ktoré sa zameriava na zníženie dátovej náročnosti a zrýchlenie procesu overovania platnosti certifikátov. Cieľom CCSP je komprimovať OCSP odpovede, aby sa zmenšila veľkosť prenášaných dát a zároveň sa zachovala bezpečnosť a integrita procesu.
@@ -859,11 +846,12 @@ Hlavnou výhodou tohoto riešenia je použitie komprimovaných podpísaných kol
 
 Ďalšou výhodou tohto riešenia je vopred zabudovaný mechanizmus pre pripnutie podpísaných sád a ich zmien do TLS handshake, čím využíva aj výhody OCSP Staplingu, najmä ochrana súkromia používateľa.\cite{ccsp}
 
-Nevýhodou tohto prístupu je opäť to, že vyžaduje úpravy na strane OCSP respondérov a serverov na generovanie a správu komprimovaných odpovedí ako aj na strane klientov na spracovávanie podpísaných kolekcií v odpovediach. Momentálne nie sú verejné žiadne štatistiky o miere adopcie tohto vylepšenia.
+Nevýhodou tohto prístupu je opäť to, že vyžaduje úpravy na strane OCSP respondérov a serverov na generovanie a správu komprimovaných odpovedí ako aj na strane klientov na spracovávanie podpísaných kolekcií v odpovediach.
 
 \subsubsection{Tiny OCSP}
-Tiny OCSP je vylepšenie zamerané na minimalizáciu veľkosti OCSP dopytov a odpovedí, čo je kritické pre zariadenia v IoT prostredí s obmedzenými výpočtovými zdrojmi a sieťovými kapacitami. Cieľom Tiny OCSP je zachovať funkcionalitu klasického OCSP pri výraznom znížení dátovej záťaže a spotreby energie, ktoré sú kritickými faktormi v aplikáciách pre nízkonákladové a batériovo napájané zariadenia.
+Tiny OCSP je vylepšenie zamerané na minimalizáciu veľkosti OCSP dopytov a odpovedí, čo je kritické pre zariadenia v IoT prostredí s obmedzenými výpočtovými zdrojmi a sieťovými kapacitami. Cieľom Tiny OCSP je zachovať funkcionalitu klasického OCSP pri výraznom znížení dátovej záťaže a spotreby energie, ktoré sú kritickými faktormi v aplikáciách pre nízkonákladové a batériovo napájané zariadenia.\cite{tiny}
 
+\newpage 
 \subsubsubsection{Hlavné optimalizácie}
 Tiny OCSP prináša niekoľko kľúčových zmien, ktoré umožňujú minimalizovať dátové požiadavky:
 
@@ -872,10 +860,10 @@ Tiny OCSP prináša niekoľko kľúčových zmien, ktoré umožňujú minimalizo
 Tiny OCSP používa na kódovanie dopytov a odpovedí CBOR, ktoré je oveľa kompaktnejšie a efektívnejšie pre IoT zariadenia ako ASN.1 DER kódovanie.
 
 \item \textbf{Využitie AKID rozšírenia pre X.509 certifikáty}\\
-Vo východiskovej definícii OCSP je identifikácia relevantnej CA v dopytoch vyriešená pomocou identifikátoru hash funkcie a hashu identifikátoru CA. Autori TinyOCSP ukázali, že v najlepšom prípade táto informácia zaberá až 53 bajtov, pričom pri zložiteších hash funkciach to môže byť ešte viac. Riešením v TinyOCSP je využitie rozšírenia Authority Key Identifier z X.509 certifikátov, ktoré slúži na rovnaký účel a má podľa RFC 5280 §4.2.1.1 odporúčanú dĺžku iba 8 bajtov.
+Vo východiskovej definícii OCSP je identifikácia relevantnej CA v dopytoch vyriešená pomocou identifikátoru hash funkcie a hashu identifikátoru CA. Autori TinyOCSP ukázali, že v najlepšom prípade táto informácia zaberá až 53 bajtov, pričom pri zložiteších hash funkciach to môže byť ešte viac. Riešením v TinyOCSP je využitie rozšírenia Authority Key Identifier z X.509 certifikátov, ktoré slúži na rovnaký účel a má podľa RFC 5280 §4.2.1.1 odporúčanú dĺžku iba 8 bajtov.\cite{tiny, rfc5280}
 
 \item \textbf{Odstránenie redundantných dát z odpovedí}\\
-Tiny OCSP v odpovedi neposiela znovu certifikát, ktorý sa overuje. Namiesto toho podpisuje a posiela konkatenáciu dopytu a odpovede, čím autentizuje odpoveď bez opakovania týchto dát. V rámci optimalizácie sú z odpovedí ešte odstránené polia  obsahujúce informácie, ktoré sú strane posielajúcej dopyt už známe a redundantné časové údaje. Príkladom sú polia ako \texttt{responderID} a niektoré časové značky, napríklad \texttt{producedAt}. Týmto prístupom sa minimalizuje veľkosť OCSP odpovede bez straty funkčnosti, pretože redundantné informácie nie sú pre príjemcu prínosné a iba zbytočne zvyšujú dátový objem.
+Tiny OCSP v odpovedi neposiela znovu certifikát, ktorý sa overuje. Namiesto toho podpisuje a posiela konkatenáciu dopytu a odpovede, čím autentizuje odpoveď bez opakovania týchto dát. V rámci optimalizácie sú z odpovedí ešte odstránené polia  obsahujúce informácie, ktoré sú strane posielajúcej dopyt už známe a redundantné časové údaje. Príkladom sú polia ako \texttt{responderID} a niektoré časové značky, napríklad \texttt{producedAt}. Týmto prístupom sa minimalizuje veľkosť OCSP odpovede bez straty funkčnosti, pretože redundantné informácie nie sú pre príjemcu prínosné a iba zbytočne zvyšujú dátový objem.\cite{tiny}
 
 \end{itemize}
 
@@ -888,12 +876,12 @@ Dopyt obsahuje tri hlavné atribúty, a to sú verzia, sekvencia certifikátov n
 \caption{Štruktúra Tiny OCSP dopytu zakódovaná pomocou CBOR.}
 \end{figure}
 
-Atribút verzia má veľkosť jedného bajtu a slúži klientovi na to, keď chce od respondéra vyžiadať, aby ku odpovedi priložil svoj vlastný certifikát. Hoci autori nešpecifikovali aké konkrétne hodnoty môže nadobúdať, upresnili, že východiskový stav je ten, kedy sa certifikát respondéra nevyžaduje.
+Atribút verzia má veľkosť jedného bajtu a slúži klientovi na to, keď chce od respondéra vyžiadať, aby ku odpovedi priložil svoj vlastný certifikát. Hoci autori nešpecifikovali aké konkrétne hodnoty môže nadobúdať, upresnili, že východiskový stav je ten, kedy sa certifikát respondéra nevyžaduje.\cite{tiny}
 
 Certifikáty, ktoré klient chce overiť sú definované ako pár AKID a sériového čísla 
-čísla certifikátu a dokopy majú dvanásť bajtov pre jeden certifikát.
+čísla certifikátu a dokopy majú dvanásť bajtov pre jeden certifikát.\cite{tiny}
 
-Jednorázová náhodná hodnota \texttt{nonce} je jedinou nepovinnou súčasťou dopytu.  Slúži ako ochrana pred útokmi opätovného prehratia, pri ktorých by útočník mohol zachytiť platnú OCSP odpoveď a neskôr ju neoprávnene znovu použiť. Vďaka jedinečnej hodnote \texttt{nonce} môže klient overiť, že odpoveď od OCSP respondéra zodpovedá konkrétnemu dopytu a nie je zneužitá.
+Jednorázová náhodná hodnota \texttt{nonce} je jedinou nepovinnou súčasťou dopytu.  Slúži ako ochrana pred útokmi opätovného prehratia, pri ktorých by útočník mohol zachytiť platnú OCSP odpoveď a neskôr ju neoprávnene znovu použiť. Vďaka jedinečnej hodnote \texttt{nonce} môže klient overiť, že odpoveď od OCSP respondéra zodpovedá konkrétnemu dopytu a nie je zneužitá.\cite{tiny}
 
 \begin{figure}[H]
 \centering
@@ -901,18 +889,18 @@ Jednorázová náhodná hodnota \texttt{nonce} je jedinou nepovinnou súčasťou
 \caption{Štruktúra Tiny OCSP odpovede zakódovaná pomocou CBOR.}
 \end{figure}
 
-Odpoveď v Tiny OCSP obsahuje tri hlavné atribúty, medzi ktoré patria podpis, sekvencia odpovedí na certifikáty z dopytu, a nepovinný zoznam certifikátov samotného respondéra.
+Odpoveď v Tiny OCSP obsahuje tri hlavné atribúty, medzi ktoré patria podpis, sekvencia odpovedí na certifikáty z dopytu, a nepovinný zoznam certifikátov samotného respondéra.\cite{tiny}
 
-Podpis slúži na autentizáciu správy takisto ako pri bežnom OCSP. Počíta sa nad konkatenáciou celého dopytu a sekvenciou stavov certifikátov v odpovedi a pre jeden certifikát má veľkosť 67 bajtov.
+Podpis slúži na autentizáciu správy takisto ako pri bežnom OCSP. Počíta sa nad konkatenáciou celého dopytu a sekvenciou stavov certifikátov v odpovedi a pre jeden certifikát má veľkosť 67 bajtov.\cite{tiny}
 
 Atribút \texttt{authenticated} obsahuje časovú pečiatku a pole stavov, ktoré mapuje stavy jednotlivých certifikátov v takom poradí v akom boli v dopyte.
-Časová pečiatka pečiatka udáva čas, kedy respondér naposledy aktualizoval informácie o danom certifikáte a je zakódovaná v POSIX štandarde, vďaka čomu má veľkosť iba štyri bajty. Celý tento atribút má tak pre jeden certifikát veľkosť päť bajtov.
+Časová pečiatka pečiatka udáva čas, kedy respondér naposledy aktualizoval informácie o danom certifikáte a je zakódovaná v POSIX štandarde, vďaka čomu má veľkosť iba štyri bajty. Celý tento atribút má tak pre jeden certifikát veľkosť päť bajtov.\cite{tiny}
 
 Posledným atribútom je zoznam certifikátov respondéra, ktorý nie je povinný, respondér ho uvádza iba na vyžiadanie od klienta.
 
 
 \subsubsubsection{Porovnanie s bežným OCSP}
-Keďže základný OCSP model obsahuje rôzne nepovinné rozšírenia, ktoré môžu pridať ďalšie bajty, veľkosti dopytov a odpovedí sú závislé na konkrétnych konfiguráciach. Všetky však musia obsahovať povinné polia definované v štandarde pre OCSP, z čoho vyplýva, že dopyty aj odpovede rastú lineárne s počtom certifikátov, ktoré obsahujú.
+Keďže základný OCSP model obsahuje rôzne nepovinné rozšírenia, ktoré môžu pridať ďalšie bajty, veľkosti dopytov a odpovedí sú závislé na konkrétnych konfiguráciach. Všetky však musia obsahovať povinné polia definované v štandarde pre OCSP, z čoho vyplýva, že dopyty aj odpovede rastú lineárne s počtom certifikátov, ktoré obsahujú.\cite{tiny}
 
 \begin{figure}[H]
 \centering
@@ -920,13 +908,13 @@ Keďže základný OCSP model obsahuje rôzne nepovinné rozšírenia, ktoré m�
 \caption{Porovnanie veľkostí správ v OCSP a TinyOCSP.}
 \end{figure}
 
-Autori pre účely porovnania zobrali konfiguráciu bežného OCSP, ktorá bola optimalizovná tak, aby správy mali čo najmenšiu veľkosť. Túto konfiguráciu následne porovnali s TinyOCSP modelom pre ilustráciu úšetrených dát.
+Autori pre účely porovnania zobrali konfiguráciu bežného OCSP, ktorá bola optimalizovná tak, aby správy mali čo najmenšiu veľkosť. Túto konfiguráciu následne porovnali s TinyOCSP modelom pre ilustráciu úšetrených dát.\cite{tiny}
 
-V bežnom OCSP modeli sa v odpovediach opätovne posielajú celé identifikátory všetkých certifikátov, ktoré boli súčasťou dopytu. Táto redundancia vedie k výraznému zväčšeniu správ, pri overovaní väčšieho počtu certifikátov.
+V bežnom OCSP modeli sa v odpovediach opätovne posielajú celé identifikátory všetkých certifikátov, ktoré boli súčasťou dopytu. Táto redundancia vedie k výraznému zväčšeniu správ, pri overovaní väčšieho počtu certifikátov.\cite{tiny}
 
-Naopak, Tiny OCSP eliminuje túto redundanciu tým, že pre každý dodatočne overovaný certifikát pridá do odpovede iba jeden bajt navyše, a síce stav certifikátu. Vďaka tomuto prístupu je rast veľkosti odpovedí v Tiny OCSP minimálny, čo prináša významné úspory dátovej prevádzky. Ako ilustruje graf vyššie, rozdiel medzi bežným OCSP a Tiny OCSP sa pri väčšom počte certifikátov stáva čoraz výraznejším. 
+Naopak, Tiny OCSP eliminuje túto redundanciu tým, že pre každý dodatočne overovaný certifikát pridá do odpovede iba jeden bajt navyše, a síce stav certifikátu. Vďaka tomuto prístupu je rast veľkosti odpovedí v Tiny OCSP minimálny, čo prináša významné úspory dátovej prevádzky. Ako ilustruje graf vyššie, rozdiel medzi bežným OCSP a Tiny OCSP sa pri väčšom počte certifikátov stáva čoraz výraznejším. \cite{tiny}
 
-Tiny OCSP predstavuje efektívnu optimalizáciu klasického OCSP protokolu, ktorá sa zameriava na minimalizáciu veľkosti prenášaných správ a zlepšenie výkonu v prostredí s obmedzenými zdrojmi. Vďaka využitiu kompaktného CBOR kódovania, efektívnemu AKID rozšíreniu a odstráneniu redundantných dát z odpovedí dokáže Tiny OCSP výrazne znížiť dátovú náročnosť komunikácie. Tieto optimalizácie umožňujú, aby veľkosť odpovedí rástla takmer konštantne aj pri zvyšujúcom sa počte certifikátov, čím Tiny OCSP prekonáva tradičný OCSP model. Vďaka týmto vlastnostiam je Tiny OCSP ideálnym riešením pre IoT zariadenia a iné aplikácie, kde je kľúčové šetriť dátovú prevádzku a energetické zdroje.
+Tiny OCSP predstavuje efektívnu optimalizáciu klasického OCSP protokolu, ktorá sa zameriava na minimalizáciu veľkosti prenášaných správ a zlepšenie výkonu v prostredí s obmedzenými zdrojmi. Vďaka využitiu kompaktného CBOR kódovania, efektívnemu AKID rozšíreniu a odstráneniu redundantných dát z odpovedí dokáže Tiny OCSP výrazne znížiť dátovú náročnosť komunikácie. Tieto optimalizácie umožňujú, aby veľkosť odpovedí rástla takmer konštantne aj pri zvyšujúcom sa počte certifikátov, čím Tiny OCSP prekonáva tradičný OCSP model. Vďaka týmto vlastnostiam je Tiny OCSP ideálnym riešením pre IoT zariadenia a iné aplikácie, kde je kľúčové šetriť dátovú prevádzku a energetické zdroje.\cite{tiny}
 
 
 \subsubsection{Zhrnutie}
@@ -940,7 +928,7 @@ Metódy ako TinyOCSP a CCSP sa odlišujú tým, že upravujú samotný protokol,
 Z manažérskeho hľadiska má efektívne overovanie platnosti digitálnych certifikátov kľúčový význam pre bezpečnosť, spoľahlivosť a dôveryhodnosť informačných systémov organizácie. V modernom IT ekosystéme, kde digitálne certifikáty hrajú kľúčovú úlohu pri zabezpečení komunikácie, môže neefektívny alebo nespoľahlivý systém overovania platnosti certifikátov predstavovať významné riziko. Táto kapitola analyzuje širšie súvislosti a význam projektu z pohľadu manažmentu a organizácií, ktoré OCSP protokol využívajú.
 
 \subsubsection{Dôsledky zlyhania certifikačných služieb}
-Zlyhanie alebo oneskorenie OCSP overovania môže mať závažné dôsledky pre organizácie a ich používateľov. Ak klienti nedokážu overiť platnosť certifikátov, môžu byť vystavení riziku útokov. To môže mať za následok únik citlivých informácií, finančné straty a oslabenie dôvery zákazníkov v služby organizácie. Nedostupnosť OCSP služieb môže viesť k neovereniu platnosti certifikátu, čo má za následok zníženie bezpečnosti spojenia a riziko akceptácie odvolaného certifikátu. V kritických odvetviach, ako je finančný sektor či zdravotníctvo, môžu byť tieto dôsledky ešte závažnejšie, vrátane právnych postihov a sankcií.
+Zlyhanie alebo oneskorenie OCSP overovania môže mať závažné dôsledky pre organizácie a ich používateľov. Ak klienti nedokážu overiť platnosť certifikátov, môžu byť vystavení riziku útokov. To môže mať za následok únik citlivých informácií, finančné straty a oslabenie dôvery zákazníkov v služby organizácie. Nedostupnosť OCSP služieb môže viesť k neovereniu platnosti certifikátu, čo má za následok zníženie bezpečnosti spojenia a riziko akceptácie odvolaného certifikátu. V kritických odvetviach, ako je finančný sektor či zdravotníctvo, môžu byť tieto dôsledky ešte závažnejšie, vrátane právnych postihov a sankcií.\cite{turin2}
 
 \subsubsection{Prevádzkové náklady}
 Prevádzka OCSP respondérov je náročná na zdroje, pretože vyžaduje rýchle spracovanie veľkého množstva požiadaviek v reálnom čase. Neefektívne overovanie certifikátov zvyšuje nároky na infraštruktúru, čo vedie k vyšším prevádzkovým nákladom. Zlepšením efektivity OCSP, napríklad prostredníctvom optimalizácie veľkosti správ alebo zavedením cacheovacích mechanizmov, je možné tieto náklady výrazne znížiť a umožniť efektívnejšie využitie zdrojov.
@@ -953,13 +941,13 @@ Investícia do zlepšenia OCSP protokolu prináša strategické výhody. Zníže
 
 
 \subsection{Prenos OCSP komunikácie}
-V rámci analýzy je ešte potrebné spomenúť protokol HTTP, ktorý slúži na transtport OCSP komunikácie. HTTP je protokol aplikačnej vrstvy, ktorý sa používa na prenos dát medzi klientom a serverom. V prípade OCSP je jeho úlohou sprostredkovať dopyty od klienta, napríklad webového prehliadača, smerom k OCSP respondéru a spätné odpovede od respondéra ku klientovi. HTTP je dôležitou súčasťou OCSP komunikácie a jeho vlastnosti významne ovplyvňujú výkon a efektivitu celého systému.
+V rámci analýzy je potrebné spomenúť protokol HTTP, ktorý slúži na transtport OCSP komunikácie.\cite{muni} HTTP je protokol aplikačnej vrstvy, ktorý sa používa na prenos dát medzi klientom a serverom. V prípade OCSP je jeho úlohou sprostredkovať dopyty od klienta, napríklad webového prehliadača, smerom k OCSP respondéru a spätné odpovede od respondéra ku klientovi. HTTP je dôležitou súčasťou OCSP komunikácie a jeho vlastnosti významne ovplyvňujú výkon a efektivitu celého systému.
 
 \subsubsection{Základné vlastnosti}
-HTTP funguje na princípe požiadavka-odpoveď, čo znamená, že klient pošle požiadavku na server a následne čaká na odpoveď. Tento model je pomerne jednoduchý a vychádza z neho aj model pre OCSP. HTTP má pre splnenie rôznych požiadaviek klientov implementované rôzne metódy, z hľadiska OCSP sú relevantné metódy GET a POST.
+HTTP funguje na princípe požiadavka-odpoveď, čo znamená, že klient pošle požiadavku na server a následne čaká na odpoveď. Tento model je pomerne jednoduchý a vychádza z neho aj model pre OCSP. HTTP má pre splnenie rôznych požiadaviek klientov implementované rôzne metódy, z hľadiska OCSP sú relevantné metódy GET a POST.\cite{rfc9110}
 
 \subsubsubsection{GET}
-Táto metóda sa používa prevažne na načítanie obsahu stránok. Jej hlavička obsahuje identifikátor metódy, URL, prípadné nepovinné parametre a verziu HTTP protokolu. Get metóda spravidla nemá telo.
+Táto metóda sa používa prevažne na načítanie obsahu stránok. Jej hlavička obsahuje identifikátor metódy, URL, prípadné nepovinné parametre a verziu HTTP protokolu. Get metóda spravidla nemá telo.\cite{rfc9110}
 
 \begin{figure}[H]
 \begin{lstlisting}
@@ -968,10 +956,10 @@ GET <URL>["?"<Parametre>] HTTP/Verzia
 \caption{Základná štruktúra GET metódy}
 \end{figure}
 
-V rámci OCSP komunikácie sa táto metóda používa pri jednoduchých dopytoch, kde sa všetky potrebné informácie po zahashovaní zmestia do poľa pre URL. Problémom tu však je limit pre počet charakterov v URL, ktorý je 2048 znakov. Preto ak klient potrebuje overiť viac certifikátov naraz, požíva sa nasledovná metóda.
+V rámci OCSP komunikácie sa táto metóda používa pri jednoduchých dopytoch, kde sa všetky potrebné informácie po zahashovaní zmestia do poľa pre URL. Problémom tu však je limit pre počet charakterov v URL, ktorý je 2048 znakov. Preto ak klient potrebuje overiť viac certifikátov naraz, požíva sa nasledovná metóda.\cite{rfc6960}
 
 \subsubsubsection{POST}
-Táto metóda slúži v kontexte HTTP komunikácie pre poslanie dát od klienta na server, napríkad pri vyplnení formulára na stránke alebo pri vytvorení konta. Jej hlavička vyzerá podobne ako pri GET, s tým rozdielom, že na začiatku je samozrejme odlišný identifikátor metódy. Na rozdiel od GET, metóda POST má spravidla telo.
+Táto metóda slúži v kontexte HTTP komunikácie pre poslanie dát od klienta na server, napríkad pri vyplnení formulára na stránke alebo pri vytvorení konta. Jej hlavička vyzerá podobne ako pri GET, s tým rozdielom, že na začiatku je samozrejme odlišný identifikátor metódy. Na rozdiel od GET, metóda POST má spravidla telo.\cite{rfc9110}
 
 \begin{figure}[H]
 \begin{lstlisting}
@@ -981,18 +969,18 @@ POST  <URL>["?"<Parametre>] HTTP/Verzia
 \caption{Základná štruktúra POST metódy}
 \end{figure}
 
-OCSP túto metódu využíva vtedy, keď sa požiadavka klienta nezmestí do URL poľa v metóde GET. V takom prípade sa požiadavka ukladá do tela POST metódy a OCSP  respondér na druhom konci ju spracováva rovnako ako tie ktoré mu prišli cez GET.
+OCSP túto metódu využíva vtedy, keď sa požiadavka klienta nezmestí do URL poľa v metóde GET. V takom prípade sa požiadavka ukladá do tela POST metódy a OCSP  respondér na druhom konci ju spracováva rovnako ako tie ktoré mu prišli cez GET.\cite{rfc6960}
 
 \subsubsection{HTTP cacheovanie}
-Okrem vyššie uvedených častí, HTTP metódy môžu obsahovať aj nepovinné hlavičky, ktoré slúžia na upresnenie informácií pre rôzne účely. Jednou z týchto hlavičiek je \texttt{Cache-Control}, ktorá umožňuje nastavenie pravidiel pre cacheovanie HTTP komunikácie.
+Okrem vyššie uvedených častí, HTTP metódy môžu obsahovať aj nepovinné hlavičky, ktoré slúžia na upresnenie informácií pre rôzne účely. Jednou z týchto hlavičiek je \texttt{Cache-Control}, ktorá umožňuje nastavenie pravidiel pre cacheovanie HTTP komunikácie.\cite{rfc9110}
 
 Cacheovanie spočíva v ukladaní odpovedí na často opakované požiadavky a je jednou z najväčších výhod HTTP protokolu. Keď klient pošle požiadavku, HTTP cache, napríklad v prehliadači, najskôr overí, či už má odpoveď uloženú a či je táto odpoveď stále platná. Ak je odpoveď dostupná a platná, cache okamžite vráti uložené dáta, čím sa eliminuje potreba komunikácie so vzdialeným serverom.
 Tento proces znižuje počet priamych komunikácií medzi klientom a serverom, čím znižuje latenciu, šetrí šírku pásma siete a znižuje záťaž na pôvodný server. V kontexte OCSP komunikácie je cacheovanie kľúčové, pretože tie isté OCSP odpovede sú často požadované viac krát.
 
 \subsubsubsection{Statický a dynamický obsah}
-Z hľadiska cacheovania poznáme dva druhy obsahu, statický a dynamický. Statický obsah predstavuje dáta, ktoré sa v čase menia len zriedkavo alebo vôbec. Typicky ide o súbory, akými sú obrázky, CSS a JavaScript súbory, či rôzne dokumenty, na ktoré sa bežne používajú GET požiadavky. Tieto súbory sa pri dodržaní vhodne zvolených hlavičiek na strane servera dajú efektívne cacheovať na dlhšie obdobie. Klient, prípadne sprostredkujúca cache, napríklad CDN, si tak dokáže ukladať a opakovane používať nezmenené verzie týchto súborov bez nutnosti opätovného kontaktu so serverom.
+Z hľadiska cacheovania poznáme dva druhy obsahu, statický a dynamický. Statický obsah predstavuje dáta, ktoré sa v čase menia len zriedkavo alebo vôbec. Typicky ide o súbory, akými sú obrázky, CSS a JavaScript súbory, či rôzne dokumenty, na ktoré sa bežne používajú GET požiadavky. Tieto súbory sa pri dodržaní vhodne zvolených hlavičiek na strane servera dajú efektívne cacheovať na dlhšie obdobie. Klient, prípadne sprostredkujúca cache, napríklad CDN, si tak dokáže ukladať a opakovane používať nezmenené verzie týchto súborov bez nutnosti opätovného kontaktu so serverom.\cite{rfc9110}
 
-Dynamický obsah, naopak, predstavuje dáta, ktoré sa môžu pri každej požiadavke meniť. Typickým príkladom sú odpovede z API služieb, výsledky vyhľadávania či personalizovaný obsah generovaný na strane servera, na ktoré sa zvyčajne používajú POST požiadavky. Keďže sa tieto dáta môžu meniť aj pri dvoch po sebe nasledujúcich požiadavkách, cacheovanie dynamického obsahu býva limitované a riadené dodatočnými mechanizmami, alebo úplne vypnuté.
+Dynamický obsah, naopak, predstavuje dáta, ktoré sa môžu pri každej požiadavke meniť. Typickým príkladom sú odpovede z API služieb, výsledky vyhľadávania či personalizovaný obsah generovaný na strane servera, na ktoré sa zvyčajne používajú POST požiadavky. Keďže sa tieto dáta môžu meniť aj pri dvoch po sebe nasledujúcich požiadavkách, cacheovanie dynamického obsahu býva limitované a riadené dodatočnými mechanizmami, alebo úplne vypnuté.\cite{rfc9110}
 
 V kontexte OCSP komunikácie slúžia aj GET aj POST metódy taký istý obsah. Aj keď nie je úplne statický, vzhľadom na dobu platnosti odpovede pre certifikát, stále sa dá správnym prístupom efektívne cacheovať. Tento nedostatok vychádza z toho, že POST požiadavky sú všeobecne zaužívané na iný druh použitia než na čo ich využíva OCSP. Práve tento nedostatok skúsime vylepšiť v tejto práci.
 
@@ -1076,6 +1064,13 @@ Platná odpoveď sa uloží do cache s príslušným časom exspirácie.
 \item \textbf{Odoslanie odpovede klientovi} \\ 
 OCSP odpoveď je vrátená klientovi v rámci HTTP odpovede.  
 \end{enumerate}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth, height=0.7\textwidth]{./images/server.png}
+    \caption{Sekvenčný diagram spracovania OCSP dopytu}
+    \label{fig:ocsp_diagram}
+\end{figure}
 
 
 \subsection{Návrh cache}
@@ -1177,32 +1172,6 @@ Nižšie je uvedený príklad konfiguračného súboru, ktorý definuje pravidl�
 Konfiguračný súbor poskytuje flexibilitu pri nastavovaní správania cache a logovania, čím umožňuje prispôsobenie aplikácie rôznym požiadavkám na výkon a údržbu. 
 
 
-\section{Implementácia}
-
-
-\subsection{Zmeny oproti návrhu}
-
-
-\subsection{Opis tried}
-
-
-\section{Overenie riešenia}
-
-
-\subsection{Splnenie špecifikovaných požiadaviek}
-
-
-
-\subsection{Testovanie}
-
-
-\subsection{Zhodnotenie overovania riešenia}
-
-
-
-\section{Zhodnotenie}
-
-
 
 \newpage\null\thispagestyle{empty}\newpage
 
@@ -1260,31 +1229,7 @@ V tejto prílohe sú v tabuľkách uvedené plány práce rozdelené na zimný a
 \end{center}
 \end{table}
 
-Tu bude uvedené ako sa darilo plniť plán na zimný semester
-
-\subsection*{Letný semester}
-
-\begin{table}[H]
-\begin{center}
-\renewcommand\thetable{A.2}
-\caption{Plán na letný semester pre bakalársku prácu}
-\begin{tabular}{ |c|C{10cm}| } 
- \hline
-\textbf{Týždeň} & \textbf{Plán} 
- \\ \hline
-x-x  & xxxxx
-\\ \hline
-x-x  & xxxxx
-\\ \hline
-x-x  & xxxxx
-\\ \hline
-x-x  & xxxxx
-\\ \hline
-\end{tabular}
-\end{center}
-\end{table}
-
-Tu bude uvedené ako sa darilo plniť plán na letný semester
+Plán na zimný semester bol z väčšej časti dodržaný, avšak dokončenie dokumentu trvalo dlhšie, než bolo pôvodne plánované. Dokument bol dokončený až po skončení semestra.
 
 \newpage
 \pagestyle{fancy}
@@ -1295,37 +1240,8 @@ Tu bude uvedené ako sa darilo plniť plán na letný semester
 \addtocontents{toc}{\def\string\@dotsep{4.5}}  % 4.5 might be a different value in your class
 \makeatother
 \phantomsection
-\addcontentsline{toc}{section}{Príloha B: Technická dokumentácia}
-
-\section*{Príloha B: Technická dokumentácia}
 
 
-
-\section*{Príloha C: Používateľská príručka}
-
-
-
-\subsection{Pred spustením}
-
-
-
-\section*{Príloha D: Obsah elektronického média}
-
-\bigskip
-\bigskip
-
-Adresáre:
-\begin{itemize}
-\item
-...
-\end{itemize}
-
-Súbory:
-\begin{itemize}
-\item 
-...
-\end{itemize}
- 
 \end{document}
 
 
